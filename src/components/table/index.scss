@@ -1,0 +1,180 @@
+.table {
+  width: 100%;
+  margin-top: 20px;
+
+  .table-container {
+    background: #002f32;
+    border-radius: 5px;
+    
+    img {
+      display: none;
+    }
+  }
+
+  .header-row,
+  .body-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    border-radius: 5px;
+    padding: 8px;
+
+    div {
+      text-align: center;
+      display: flex;
+      width: 100px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 13px;
+      font-family: Poppins, sans-serif;
+    }
+  }
+
+  .header-row {
+    background: #006066;
+
+    div {
+      color: #c4c4c4;
+    }
+  }
+
+  .body-row {
+    margin-top: 10px;
+    border-radius: 0;
+
+    div {
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .order-rate {
+      color: #ffe602;
+    }
+
+    .l-gold {
+      color: #d78f04;
+    }
+
+    .order-piece {
+      color: #33b4fd;
+    }
+
+    .close-rate {
+      color: #78ff56;
+    }
+
+    .sell-color {
+      color: #ff2e53;
+    }
+
+    .action-p {
+      background: #03cf9e;
+      border-radius: 2px;
+      width: 50px;
+      margin: 0 auto;
+      padding: 5px;
+    }
+
+    .buy-color {
+      color: #02ffc2;
+    }
+  }
+}
+
+.white {
+  color: #ffffff;
+}
+
+.hide-desktop {
+  display: none !important;
+}
+
+@media screen and (max-width: 800px) {
+  .table {
+    .header-row {
+      display: none;
+    }
+
+    .hide-mobile {
+      display: none !important;
+    }
+
+    .table-container {
+      display: flex;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+
+      .sub-menu {
+        display: none;
+      }
+
+      input {
+        display: block;
+      }
+
+      img {
+        display: block;
+        align-self: flex-start;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+
+      .body-row {
+        flex-direction: column;
+        display: flex;
+
+        p {
+          font-size: 12px;
+        }
+
+        .mv-left {
+          align-items: center;
+          margin-left: 0;
+
+          div {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+
+            align-items: flex-start;
+            justify-content: flex-end;
+
+            padding-top: 5px;
+
+            p {
+              width: 100%;
+            }
+          }
+        }
+
+        div {
+          flex-direction: row;
+          justify-content: space-between;
+          width: 100%;
+          margin-bottom: 12px;
+          font-size: 11px;
+
+          p {
+            font-size: 12px;
+            width: 50%;
+          }
+
+          .action-p {
+            width: 50px;
+            margin: 0 auto;
+          }
+        }
+      }
+    }
+
+    .table-container:target .sub-menu {
+      display: flex !important;
+    }
+  }
+
+  .hide-desktop {
+    display: block !important;
+  }
+}

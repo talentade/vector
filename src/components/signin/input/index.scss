@@ -1,0 +1,32 @@
+.signin-input {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #C4C4C4;
+
+  img {
+    width: 35px;
+    height: 35px;
+    align-self: flex-end;
+    padding: 7px;
+  }
+
+  input {
+    border: none;
+    align-self: flex-end;
+    background-color: inherit;
+  }
+
+  input:focus {
+    outline: none;
+  }
+}
+
+.signin-input:first-of-type {
+  margin-bottom: 50px;
+}
+
+@media screen and (max-width: 600px) {
+  .signin-input {
+    padding: 0px 10px
+  }
+}

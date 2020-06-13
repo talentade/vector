@@ -1,0 +1,51 @@
+.overlay {
+  .deposit-modal-section {
+    z-index: 20;
+    .upper-modal {
+      position: relative;
+      width: 180px;
+      margin: 0 auto;
+      display: flex;
+      padding: 10px 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #03cf9e;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+
+      .modal-cancel {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+      }
+    }
+
+    .lower-modal {
+      padding: 30px;
+      width: 280px;
+      text-align: center;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+      font-family: Poppins, sans-serif;
+      border-radius: 6px;
+
+      .lower-modal-content {
+        h6 {
+          color: #7b7e94;
+          font-size: 17px;
+        }
+
+        p {
+          color: #7b7e94;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}

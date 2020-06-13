@@ -1,0 +1,59 @@
+.debit-card {
+  position: relative;
+  width: 31%;
+  padding: 10px;
+  border-radius: 5px;
+
+  img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+
+  button {
+    background: #FFFFFF;
+    border: none;
+    color: #03CF9E;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  h3 {
+    font-size: 17px;
+    color: #FFFFFF;
+    font-weight: 300;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+.exp-info {
+  display: flex;
+  align-items: center;
+
+  p {
+    font-size: 10px;
+    color: #FFFFFF;
+  }
+
+  .expiry-date {
+    margin-left: 10px;
+  }
+}
+
+.debit-card:not(:first-of-type) {
+  margin-left: 2%;
+}
+
+@media screen and (max-width: 900px) {
+  .debit-card {
+    width: 70%;
+    margin-top: 20px;
+  }
+
+  .debit-card:not(:first-of-type) {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,150 @@
+.transactions-nav {
+  display: flex;
+  list-style: none;
+  width: 96.6%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+  font-size: 12px;
+  color: #ffffff;
+  margin: 0 auto;
+
+  li {
+    width: 150px;
+    transform: skew(30deg);
+    background: #00a880;
+    border-top-right-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    position: relative;
+    z-index: 2;
+    margin-left: 30px;
+    cursor: pointer;
+
+    div {
+      transform: skew(-30deg);
+    }
+  }
+
+  .trans-filter {
+    display: none;
+  }
+
+  li::before {
+    content: '';
+    position: absolute;
+    width: 35px;
+    height: 50px;
+    background: #00a880;
+    transform: skew(-30deg);
+    border-top-left-radius: 6px;
+    left: -21px;
+    z-index: -1 !important;
+  }
+
+  .selected-trans-tab {
+    background: #006066;
+  }
+
+  .selected-trans-tab::before {
+    background: #006066;
+  }
+
+  .minimize-trans {
+    display: flex;
+  }
+
+  .first {
+    position: relative;
+    z-index: 5;
+  }
+
+  .second {
+    position: relative;
+    z-index: 4;
+  }
+
+  .third {
+    position: relative;
+    z-index: 3;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .transactions-nav {
+    position: fixed;
+    width: 200px;
+    bottom: 50px;
+    height: 200px;
+    right: 0;
+    z-index: 100;
+    flex-direction: column;
+    background: #006066;
+    box-shadow: 2px -2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px 0px 0px 0px;
+
+    li {
+      transform: none;
+
+      div {
+        transform: none;
+      }
+
+      margin-left: 0;
+      background: #006066;
+      border-radius: 0;
+      align-items: flex-start;
+      width: inherit;
+      padding-left: 15px;
+    }
+
+    li::before {
+      display: none;
+    }
+
+    .selected-trans-tab {
+      background: #004044;
+    }
+
+    .trans-filter {
+      display: block;
+      padding-top: 20px;
+      cursor: pointer;
+    }
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 700px) {
+  .transactions-nav {
+    bottom: 0;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .transactions-nav {
+    .minimize-trans {
+      display: none;
+    }
+  }
+
+  .trans-nav-min {
+    width: 40px;
+  }
+
+  .hide-trans-nav {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 701px) and (max-width: 1100px) {
+  .transactions-nav {
+    width: 97.5%;
+    li {
+      width: 100px;
+    }
+  }
+}

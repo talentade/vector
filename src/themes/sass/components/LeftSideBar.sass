@@ -1,0 +1,141 @@
+@import '../mixins'
+.leftbar
+  padding: 15px 40px 10px 20px
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  height: 100%
+
+
+  .title
+    +fonts(Montserrat,24px,700,center,29px,0px, #fff)
+    align-self: flex-start
+    margin-bottom: 28px
+
+  .title_sub
+    +fonts(Montserrat,24px,700,center,29px,0px, #47CE66)
+
+
+  .profile
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+    width: 100%
+    +fonts(Open Sans,14px,400,left,19px,0px, #ffffffb3)
+
+    .user
+      display: flex
+      flex-direction: row;
+      justify-content: space-between
+      align-items: center
+
+
+    .online__status.offline
+      width: 5px
+      height: 5px
+      color: #FFFFFF4D
+      display: flex
+      justify-content: center
+      align-items: center
+
+
+    .online__status
+      width: 5px
+      height: 5px
+      color: #47CE66
+      display: flex
+      justify-content: center
+      align-items: center
+
+
+      .fa.fa-circle
+        font-size: 5px !important
+
+
+  .direct__message
+    display: flex
+    flex-direction: column
+    width: 100%
+    margin-top: 30px
+    justify-content: space-between
+
+    .section
+      display: flex
+      flex-direction: row
+      justify-content: space-between
+      align-items: center
+      +fonts(Open Sans,14px,700,left,19px,0px, #ffffff83)
+      opacity: 1
+
+    .profiles
+      display: flex
+      flex-direction: column
+      justify-content: space-evenly
+      margin-top: 20px
+      padding: 30px 10px 10px
+      height: 261px
+      overflow-y: auto
+      opacity: 1
+      +fonts(Open Sans,14px,400,left,19px,0px, #ffffffb3)
+
+      .profile
+        margin: 6px 0px
+
+  .channels
+    margin-top: 30px
+    width: 100%
+    display: flex
+    flex-direction: column
+
+    .section
+      display: flex
+      flex-direction: row
+      justify-content: space-between
+      align-items: center
+      +fonts(Open Sans,14px,700,left,19px,0px, #ffffff83)
+      opacity: 1
+
+
+    .hashtag
+      display: flex
+      flex-direction: column
+      padding: 0px
+      width: 100%
+
+      .list
+        display: flex
+        flex-direction: row
+        justify-content: space-between
+        +fonts(Open Sans,14px,400,left,19px,0px, #ffffff83)
+        list-style: none
+        margin: 5px 0px
+
+
+      .ellipse
+        width: 20px
+        height: 20px
+        border-radius: 100%
+        background: #06AF80
+        display: flex
+        justify-content: center
+        align-items: center
+
+        .ellipse_text
+          +fonts(Open Sans,14px,400,left,19px,0px, #ffffff83)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//fonts($fontfamily,$fontsize, $fontweight,$text-align, $lineheight, $letterspacing, $color)

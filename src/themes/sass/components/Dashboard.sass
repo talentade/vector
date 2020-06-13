@@ -1,0 +1,19 @@
+@import "../variables"
+.main
+  display: grid
+  grid-template-columns: $sidebarWidth 1fr $sidebarWidth
+  grid-template-rows: 1fr
+  grid-template-areas: "leftbar mainbar rightbar"
+  height: 100vh
+
+  .left-side-bar
+    grid-area: leftbar
+    background: $leftSidebarBgColor
+
+  .right-side-bar
+    grid-area: rightbar
+    background: $rightSidebarBgColor
+
+  .main-bar
+    grid-area: mainbar
+    background: $mainBarBgColor

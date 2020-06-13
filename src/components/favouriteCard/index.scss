@@ -1,0 +1,50 @@
+.favourite-card {
+  width: 32%;
+  background: #006066;
+  border-radius: 3px;
+  padding: 5px;
+
+  .star-section {
+    img {
+      width: 15px;
+      height: 15px;
+    }
+
+    display: flex;
+    align-items: center;
+
+    p {
+      margin-left: 10px;
+      font-size: 14px;
+      margin-top: 3px;
+      color: #ffffff;
+      font-family: Poppins, sans-serif;
+    }
+  }
+
+  .smaller-items {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    align-items: center;
+
+    p {
+      font-size: 12px;
+      font-family: Poppins, sans-serif;
+      color: #ffffff;
+    }
+  }
+}
+
+.favourite-card:not(:nth-child(1)),
+.favourite-card:not(:nth-child(2)),
+.favourite-card:not(:nth-child(3)) {
+  margin-top: 15px;
+}
+
+@media screen and (max-width: 400px) {
+  .favourite-card {
+    width: 120px;
+  }
+}

@@ -1,0 +1,149 @@
+.forgot-password {
+  background: url('../../themes/images/forgot_bg.png');
+  background-repeat: no-repeat;
+  background-size: 50vw 100vh;
+  height: 100%;
+  font-family: Poppins, sans-serif;
+}
+
+.forgot-password-container {
+  width: 100%;
+  display: flex;
+
+  .image {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      display: none;
+    }
+
+    img {
+      width: 400px;
+      height: 400px;
+    }
+  }
+
+  .forgot-password-form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form {
+      width: 400px;
+
+      .error {
+        margin-bottom: 7px;
+      }
+
+      .success {
+        text-align: center;
+        font-size: 12px;
+        margin-bottom: 7px;
+      }
+    }
+
+
+    .section {
+      background: #defff7;
+      border: 1px solid #03cf9e;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      padding: 0 8px 8px 8px;
+
+      label {
+        color: #03cf9e;
+      }
+
+      input {
+        border: none;
+        background: inherit;
+        font-weight: bolder;
+        color: #000000;
+      }
+
+      input:focus {
+        outline: none;
+      }
+    }
+
+    input[type='submit'] {
+      background: #03cf9e;
+      border-radius: 5px;
+      border: none;
+      color: #ffffff;
+      padding: 10px 0;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .forgot-password {
+    background: #f8fefa;
+  }
+
+  .forgot-password-container {
+    width: 100%;
+    flex-direction: column;
+
+    .image {
+      width: 100%;
+
+      h2 {
+        display: block;
+        text-align: center;
+        margin: 10px;
+        font-size: 32px;
+      }
+
+      img {
+        width: 85%;
+        height: 300px;
+      }
+    }
+
+    .forgot-password-form {
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 20px;
+
+      h2 {
+        display: none;
+      }
+
+      form {
+        width: 85%;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .forgot-password-container {
+    .image {
+      img {
+        width: 300px;
+        height: 300px;
+      }
+    }
+
+    .forgot-password-form {
+      form {
+        width: 300px;
+      }
+    }
+  }
+}

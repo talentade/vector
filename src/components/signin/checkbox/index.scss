@@ -1,0 +1,38 @@
+.login-checkbox {
+  display: flex;
+  margin-bottom: 20px;
+
+  input {
+    width: 15px;
+    height: 15px;
+    background: inherit;
+    border: 2px solid #05ffb4;
+    box-sizing: border-box;
+    border-radius: 3px;
+    align-self: center;
+  }
+
+  label {
+    margin-left: 10px;
+    color: #807E7E;
+  }
+}
+
+
+@media screen and (max-width: 600px) {
+  .login-checkbox {
+    justify-content: center;
+    width: 70%;
+    margin: 80px auto 40px auto;
+
+    label {
+      color: #FFFFFF;
+    }
+  }
+}
+
+@media screen and (min-height: 660px) and (max-height: 830px) and (max-width: 600px) {
+  .login-checkbox {
+    margin: 135px auto 40px auto;
+  }
+}

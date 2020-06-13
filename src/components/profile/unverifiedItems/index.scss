@@ -1,0 +1,24 @@
+.unverified-items {
+  border: 2px solid #03cf9e;
+  border-radius: 3px;
+  padding: 10px;
+  
+  h5,
+  ul li {
+    color: #03CF9E;
+    font-size: 14px;
+  }
+
+  h5 {
+    font-weight: 300;
+  }
+
+  ul {
+    list-style-type: none;
+
+    li {
+      margin-top: 10px;
+      font-size: 13px;
+    }
+  }
+}

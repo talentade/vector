@@ -1,0 +1,202 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import server from '../../services/server';
+import Balance from '../../components/balance/index';
+import Demo from '../../components/demo/index';
+import Margin from '../../components/margin/index';
+import Favourites from '../../components/favourites/index';
+import Chart from '../../components/chart/index';
+import Container from '../container/index';
+import MarketSideBar from '../../components/marketSidebar/index';
+import { setHotStocks } from '../../redux/actions/index';
+
+import './index.scss';
+
+class Market extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      clicked: false,
+      currentTab: 'Trade',
+      showNav: true,
+      accounts: [],
+      selectedAccount: '',
+      hotStocks: [],
+      showLoader: false,
+    };
+
+    this.profile = JSON.parse(localStorage.getItem('profile'));
+  }
+
+  async componentDidMount() {
+    this.setState({ showLoader: true });
+    const accountType = localStorage.getItem('accountType');
+
+    const userId = localStorage.getItem('id');
+
+    setInterval(async () => {
+      try {
+        const {
+          data: {
+            data: { hot_stocks },
+          },
+        } = await server.getMarketAndNewsData(userId);
+  
+        this.setState({ hotStocks: hot_stocks, showLoader: false });
+      } catch (error) {
+        this.setState({ showLoader: false });
+        if (!error.response) {
+          return error.message;
+        }
+      }  
+    }, 1000);
+
+    if (accountType) {
+      this.setState({ selectedAccount: accountType });
+    }
+
+    const myAccounts = localStorage.getItem('accounts');
+
+    this.setState({ accounts: JSON.parse(myAccounts) });
+  }
+
+  toggleSideBar = () => {
+    this.setState({ clicked: !this.state.clicked });
+  };
+
+  render() {
+    const userId = localStorage.getItem('id');
+
+    if (!userId) return <Redirect to='/Login' />;
+
+    const { hotStocks, showLoader } = this.state;
+
+    const stocksToDisplay = this.props.filter
+      ? hotStocks.filter((stock) =>
+          stock.stock.toLowerCase().match(this.props.filter.toLowerCase()),
+        )
+      : hotStocks;
+
+    const balanceItems = [
+      {
+        className: 'credit',
+        heading: 'Credit',
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.credit
+            : this.profile.live.credit
+        }`,
+      },
+      {
+        className: 'open',
+        heading: 'Open P/L',
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.open_p_l
+            : this.profile.live.open_p_l
+        }`,
+      },
+      {
+        className: 'equity',
+        heading: 'Equity',
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.equity
+            : this.profile.live.equity
+        }`,
+      },
+    ];
+
+    const marginItems = [
+      {
+        margin: 'Margin',
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.margin
+            : this.profile.live.margin
+        }`,
+      },
+      {
+        margin: 'Free Margin',
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.free_margin
+            : this.profile.live.free_margin
+        }`,
+      },
+      {
+        margin: 'M. Level',
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.margin_level
+            : this.profile.live.margin_level
+        }`,
+      },
+    ];
+
+    const favouriteItems = this.state.selectedAccount
+      .toLowerCase()
+      .match('demo')
+      ? this.profile.demo.favorites
+      : this.profile.live.favorites;
+
+    return (
+      <Container>
+        <div className='trade-section market-section'>
+          <MarketSideBar
+            pairs={stocksToDisplay}
+            clickHandler={this.toggleSideBar}
+            hideText={this.state.clicked}
+            showLoader={showLoader}
+          />
+          <div
+            className='right big-right'
+            style={{ width: this.state.clicked ? 'calc(100% - 50px)' : null }}
+          >
+            <div className='trade-comp-container trade-comp-container-market'>
+              <div className='trade-overview-row'>
+                <div className='balance-margin'>
+                  <div className='balance-demo'>
+                    <Balance
+                      balance={`$${
+                        this.state.selectedAccount.toLowerCase().match('demo')
+                          ? this.profile.demo.demo_balance
+                          : this.profile.live.live_balance
+                      }`}
+                      balanceItemData={balanceItems}
+                    />
+                    <Demo
+                      demoOptions={this.state.accounts}
+                      selectValue={this.state.selectedAccount}
+                      handleDemoChange={this.handleAccountChange}
+                    />
+                  </div>
+                  <div className='margin-stuff'>
+                    {marginItems.map((data) => (
+                      <Margin {...data} key={`${Math.random() * 1000000}`} />
+                    ))}
+                  </div>
+                </div>
+                <Favourites favouritePairs={favouriteItems} />
+              </div>
+              <Chart />
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
+  }
+}
+
+const mapDispatchToProps = dispatch => ({
+  setHotStocks: payload => dispatch(setHotStocks(payload)),
+})
+
+const mapStateToProps = ({ filter, topStocks }) => ({
+  filter,
+  topStocks,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Market);

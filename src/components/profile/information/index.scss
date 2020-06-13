@@ -1,0 +1,32 @@
+.information {
+  width: 90%;
+  margin: 5px auto;
+  padding: 10px 0;
+  font-family: Poppins, sans-serif;
+  border-bottom: 0.4px solid #888888;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    font-size: 12px;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    img {
+      margin-left: 10px;
+    }
+  }
+
+  .key {
+    color: #FFFFFF;
+  }
+
+  .value {
+    color: #FFFFFF;
+    font-weight: 300;
+  }
+}
