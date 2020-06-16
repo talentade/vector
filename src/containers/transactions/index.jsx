@@ -4,7 +4,9 @@ import Container from '../container/index';
 import TransactionNav from '../../components/transactionNav/index';
 import Deposit from '../../components/deposit/index';
 import TransactionModal from '../../components/depositModal/index';
+import ConfirmationModal from '../../components/confirmationModal/index';
 import CardsIcon from '../../themes/images/cards.svg';
+import con_request from '../../themes/images/con_request.png';
 import Spinner from '../../components/spinner/index';
 import Withdraw from '../../components/withdraw/index';
 import Transfer from '../../components/transfer/index';
@@ -24,8 +26,12 @@ class Transactions extends Component {
       cards: ['VISA- 5322 2489 2479 4823'],
       email: null,
       balance: '',
+      max_rows: 0,
+      page_no: 1,
+      page_size: 8,
       deposit: parseFloat(0.0).toFixed(2),
       showDepositModal: false,
+      confirmationModal: false,
       showTransferModal: false,
       showSpinner: false,
       errorMessage: null,
@@ -75,15 +81,18 @@ class Transactions extends Component {
       const account = this.state.account.toLowerCase().match('demo')
         ? 'demo'
         : 'live';
+      let _deposits = [];
       const {
         data: {
           data: {
             results: { deposits },
           },
         },
-      } = await server.getTransactionHistory(
+      } = _deposits = await server.getTransactionHistory(
         this.profile.email,
         this.id,
+        this.state.page_size,
+        this.state.page_no,
         account,
       );
       let arr = [];
@@ -110,9 +119,19 @@ class Transactions extends Component {
           reference: base[4].split(':')[1],
         };
       });
-      console.log(5555, info);
+
+      let max_rows = _deposits.data.data.max_rows;
+
+      let tr_h = _deposits.data.data.results;
+      let trans = [];
+      for (let tr = 0; tr < tr_h.length; tr++) {
+        trans[tr] = tr_h[tr];
+        trans[tr].date = trans[tr].date.split("-").join("/");
+      }
+
       this.setState({
-        transactions: info,
+        transactions: trans,
+        max_rows: max_rows,
         showSpinner: false,
         transactionsObject: deposits,
       });
@@ -123,7 +142,8 @@ class Transactions extends Component {
   };
 
   handleInputChange = (e) => {
-    console.log(e.target.value);
+    console.log(e.target.name, e.target.value);
+
     const {
       target: { name, value },
     } = e;
@@ -167,6 +187,14 @@ class Transactions extends Component {
     this.setState({ showDepositModal: false, showTransferModal: false });
   };
 
+  handleHistoryPage = (p) => {
+    console.log(p);
+    this.setState({ page_no: p });
+    setTimeout(() => {
+      this.fetchTransactions();
+    }, 10);
+  };
+
   setAccount = (e) => {
     const {
       target: { value },
@@ -192,8 +220,19 @@ class Transactions extends Component {
     this.setState({ selectedCurrency: value });
   };
 
+  pre_action = (e) => {
+    this.setState({ confirmationModal: true });
+    e.preventDefault();
+  };
+
+  cancel_action = (e) => {
+    this.setState({ confirmationModal: false });
+    e.preventDefault();
+  };
+
   deposit = async (e) => {
     e.preventDefault();
+    this.setState({ confirmationModal: false });
 
     const {
       email,
@@ -251,6 +290,7 @@ class Transactions extends Component {
           this.setState({ showTransferModal: true });
         }
         this.setState({ showSpinner: false });
+        await this.fetchTransactions();
       }
     } catch (error) {
       this.setState({ showSpinner: false });
@@ -285,6 +325,7 @@ class Transactions extends Component {
       email,
       deposit,
       showDepositModal,
+      confirmationModal,
       showSpinner,
       account,
       errorMessage,
@@ -293,6 +334,9 @@ class Transactions extends Component {
       showTransferModal,
       minimizeSideBar,
       transactions,
+      max_rows,
+      page_size,
+      page_no
     } = this.state;
 
     const myProfile = JSON.parse(localStorage.getItem('profile'));
@@ -311,6 +355,14 @@ class Transactions extends Component {
               imageUrl={CardsIcon}
               text={`The deposit you just made to your account was successful`}
               handleClick={this.handleDepositModalClick}
+            />
+          ) : null}
+          {confirmationModal ? (
+            <ConfirmationModal
+              imageUrl={con_request}
+              text={`Your request to withdraw the sum of USD ${deposit} was sent successfully`}
+              cancelClick={this.cancel_action}
+              confirmClick={this.deposit}
             />
           ) : null}
 
@@ -342,7 +394,7 @@ class Transactions extends Component {
                 toggleBlue={this.toggleBlue}
                 togglePink={this.togglePink}
                 toggleYellow={this.toggleYellow}
-                handleSubmit={this.deposit}
+                handleSubmit={this.pre_action}
                 selectHandler={this.setAccount}
                 handleCurrencySelect={this.handleCurrencySelect}
                 error={errorMessage}
@@ -389,7 +441,13 @@ class Transactions extends Component {
             ) : null}
             {
               selectedTab.match('transaction') ? (
-                <TransactionHistory transactions={transactions} />
+                <TransactionHistory
+                  transactions={transactions}
+                  max_rows={max_rows}
+                  page_size={page_size}
+                  page_no={page_no}
+                  paginationChange={this.handleHistoryPage}
+                />
               ) : null
             }
           </div>

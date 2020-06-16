@@ -1,0 +1,51 @@
+.pagination-div {
+  position: relative;
+  display: flex;
+  height: 30px;
+  justify-content: flex-end;
+
+  .pagination-ul {
+    display: block;
+    float: right;
+    margin: 5px;
+    margin-bottom: 1em;
+
+    li {
+      display: inline-block;
+      width: auto;
+      height: 40px;
+      width: 40px;
+      float: left;
+      margin: 0 2px;
+      text-align: center;
+      cursor: pointer;
+
+      img, span {
+        display: inline-block;
+        margin: 0 auto;
+      }
+      span {
+        font-size: 1em;
+        color: #fff;
+        top: 8px;
+        position: relative;
+      }
+      &._active {
+        span {
+          color: #00A880;
+        }
+      }
+    }
+    .one {
+      border-right: 1px solid #C4C4C4;
+    }
+    .three {
+      border-left: 1px solid #C4C4C4;
+    }
+    .one, .two, .three {
+      width: 28px;
+    }
+
+  }
+
+}

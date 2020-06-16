@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import qs from 'qs';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import AvarizLogo from '../../themes/images/avariz_logo.png';
 import Spinner from '../../components/spinner/index';
 import ResetImage from '../../themes/images/reset.svg';
@@ -137,7 +137,8 @@ class ResetPassword extends Component {
                 />
               </div>
 
-              <input type='submit' value='CONFIRM NEW PASSWORD' />
+              <input type='submit' value='CONFIRM NEW PASSWORD' /><br />
+              <p align="center" style={{marginTop: "10px"}}><Link to="Login">Back to Login</Link></p>
             </form>
           </div>
         </div>

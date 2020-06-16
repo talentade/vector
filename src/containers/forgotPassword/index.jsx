@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import AvarizLogo from '../../themes/images/avariz_logo.png';
 import ForgotPasswordImage from '../../themes/images/forgot.svg';
 import Spinner from '../../components/spinner/index';
@@ -97,7 +98,8 @@ class ForgotPassword extends Component {
                   required
                 />
               </div>
-              <input type='submit' value='RESET PASSWORD' />
+              <input type='submit' value='RESET PASSWORD' /><br />
+              <p align="center" style={{marginTop: "10px"}}><Link to="Login">Back to Login</Link></p>
             </form>
           </div>
         </div>

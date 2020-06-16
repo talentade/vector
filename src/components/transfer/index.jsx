@@ -50,6 +50,13 @@ const Transfer = ({
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>To</label>
+            <select value={account} onChange={selectHandler}>
+              {accounts.map((account) => (
+                <option key={`${Math.random()}-${Math.random()}`}>
+                  {account}
+                </option>
+              ))}
+            </select>
             {/* <select value={account} onChange={selectHandler}>
               {accounts.map((account) => (
                 <option key={`${Math.random()}-${Math.random()}`}>
@@ -57,14 +64,14 @@ const Transfer = ({
                 </option>
               ))}
             </select> */}
-            <input
+            {/*<input
               type='email'
               name='to'
               placeholder='Receiver Email'
               onChange={handleInputChange}
               value={toValue}
               required
-            />
+            />*/}
           </div>
           {/* <div className='deposit-flex-item-2'>
             <label>Balance</label>
