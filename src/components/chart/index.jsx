@@ -1,6 +1,9 @@
 import React, { Component, createRef } from 'react';
 // import axios from 'axios';
 import { createChart, CrosshairMode } from 'lightweight-charts';
+import BuyandsellModal from '../../components/buyandsellModal/index';
+import BsConfirmationModal from '../../components/bsConfirmationModal/index';
+import con_buysell from '../../themes/images/con_buysell.png';
 import StopWatch from '../../themes/images/tradeDashboard/stopwatch.svg';
 import Wave from '../../themes/images/tradeDashboard/wave.svg';
 import Wave2 from '../../themes/images/tradeDashboard/wave.svg';
@@ -35,6 +38,8 @@ class Chart extends Component {
       spread: 0,
       high: 0,
       low: 0,
+      buyandsellModal: false,
+      buyandsellConfirmed: false,
       showLoader: false,
       instruments: [],
     };
@@ -203,9 +208,39 @@ class Chart extends Component {
     });
   };
 
+  cancelBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellConfirmed: false });
+  }
+
+  showBsellModal = (e) => {
+    this.setState({ buyandsellModal: true, showLoader: false });
+  }
+
+  confirmBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false });
+  }
+
   render() {
     return (
       <div className='trade-comp-container'>
+
+          {this.state.buyandsellModal ? (
+            <BuyandsellModal
+              text={``}
+              cancelClick={this.cancelBsellModal}
+              confirmClick={this.confirmBsellModal}
+            />
+          ) : null}
+
+          {this.state.buyandsellConfirmed ? (
+            <BsConfirmationModal
+              imageUrl={con_buysell}
+              text={`Your request to withdraw the sum of USD was sent successfully`}
+              cancelClick={this.cancelBsellModal}
+              confirmClick={()=>{}}
+            />
+          ) : null}
+
         <div className='chart-section'>
           <div className='chart-section-top'>
             <div className='chart-section-top-left'>
@@ -265,7 +300,7 @@ class Chart extends Component {
             </div>
           </div>
           <div className='chart-cta-section'>
-            <div className='chart-sell'>
+            <div className='chart-sell' onClick={this.showBsellModal}>
               <div className='sell'>
                 <div className='sell-info'>
                   <p>SELL</p>
@@ -281,7 +316,7 @@ class Chart extends Component {
               </div>
               <p className='map-center'>S: {this.state.spread}</p>
             </div>
-            <div className='chart-buy'>
+            <div className='chart-buy' onClick={this.showBsellModal}>
               <div className='buy'>
                 <img src={WhiteDir} alt='' />
                 <div className='buy-info'>

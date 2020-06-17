@@ -4,7 +4,7 @@ import CancelIcon from '../../themes/images/cancel.svg';
 
 const ConfirmationModal = ({ imageUrl, text, cancelClick, confirmClick }) => {
   return (
-    <div className='overlay'>
+    <div className='overlay cfm'>
       <div className='deposit-modal-section'>
         <div className='upper-modal'>
           <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancelClick} />

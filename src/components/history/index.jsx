@@ -8,9 +8,17 @@ class TransactionHistory extends Component {
     super(props);
   }
 
+  handleClick = (e, i) => {
+    console.log(e.target, i);
+    document.querySelectorAll(".transaction-history-record").forEach(function(el) {
+      el.classList.remove("_active");
+    });
+    document.getElementById(i).classList.add("_active");
+  }
+
   render () {
-    console.log(this.props);
   const { transactions, max_rows, page_no, page_size, paginationChange } = this.props;
+  var cu_id;
   return (
     <div className='transaction-history'>
       <h2>Transaction History</h2>
@@ -26,14 +34,19 @@ class TransactionHistory extends Component {
             <li>Reference No</li>
           </ul>
           {transactions.map((transaction, idx) => (
-            <ul className='transaction-history-record' key={`${Math.random()}-${Math.random()}`}>
-              <li className="small-trans">{`${idx + 1}.`}</li>
-              <li className={`${transaction.type} trans-type`}>{transaction.type}</li>
-              <li className="trans-date">{transaction.date}</li>
-              <li className='t-from'><div>{transaction.account_from}</div></li>
-              <li className='t-to'>{transaction.account_to}</li>
-              <li className="small-trans">{transaction.amount}</li>
-              <li>{transaction.reference}</li>
+            <ul
+              className={'transaction-history-record '+(idx == 0 ? ' _active' : '')}
+              id={'transaction-history-record-'+idx}
+              key={`${Math.random()}-${Math.random()}`}
+              onClick={(e) => this.handleClick(e, 'transaction-history-record-'+idx)}>
+              <div className="tab-sn"><div>{idx + (page_size * (page_no - 1)) + 1}</div></div>
+              <li className="small-trans">{idx + (page_size * (page_no - 1)) + 1}</li>
+              <li className={`${transaction.type} trans-type`}><span className="th">Transaction type</span><span className="td"><button className="brn ttype">{transaction.type}</button></span></li>
+              <li className="trans-date"><span className="th">Date</span><span className="td">{transaction.date}</span></li>
+              <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
+              <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>
+              <li className="small-trans"><span className="th">Amount</span><span className="td">{transaction.amount}</span></li>
+              <li><span className="th">Reference No</span><span className="td">{transaction.reference}</span></li>
             </ul>
           ))}
           <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={paginationChange}/>

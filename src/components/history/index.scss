@@ -69,6 +69,14 @@
       justify-content: center;
     }
 
+    .th {
+      display: none;
+    }
+
+    .tab-sn {
+      display: none;
+    }
+
     .small-trans {
       width: 50px;
     }
@@ -104,5 +112,132 @@
     .withdraw {
       background: #FF5D02;
     }
+
+    .ttype {
+      width: 114px;
+      height: 30px;
+      border: 0px solid;
+      background: #FFE602;
+      border-radius: 50px;
+      color: #FFF;
+    }
   }
+}
+
+
+
+@media screen and (max-width: 1000px) {
+
+  .th, .td {
+    display: inline-block !important;
+    width: 50% !important;
+    float: left;
+    line-height: 13px;
+    position: relative;
+    word-break: break-all;
+    font-size: 13px;
+  }
+
+  .transaction-history > h2 {
+    display: none;
+  }
+
+  .th {
+    font-weight: 500;
+    text-align: left;
+    color: #B9B9B9;
+  }
+
+  .td {
+    float: right;
+    font-weight: 500;
+    text-align: right;
+    color: #FFFFFF;
+  }
+
+  .tab-sn {
+    display: flex !important;
+    width: 61px;
+    transform: skew(-20deg);
+    background: #006066;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 38px;
+    position: absolute;
+    z-index: 2;
+    margin-left: 32px;
+    cursor: pointer;
+    top: -36px;
+    padding: 0;
+    border-top-left-radius: 2em;
+  }
+
+  .tab-sn div {
+    transform: skew(20deg);
+    position: relative !important;
+    left: 37px;
+    display: block;
+    width: 49px;
+    padding-top: 10px;
+    text-align: left;
+    height: 38px;
+    background: #006066;
+    font-size: 1.2em;
+    border-top-right-radius: 1em;
+  }
+
+  .transaction-box {
+    background: transparent !important;
+  }
+
+  .transaction-history {
+    background: transparent;
+    padding: 0px;
+  }
+
+  .transaction-history .transaction-history-record .trans-type {
+    height: auto;
+  }
+
+  .transaction-history .transaction-history-record {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    background: #006066;
+    padding: 1em;
+    position: relative;
+    margin-top: 55px;
+    border-radius: 10px;
+  }
+
+  .transaction-history-header {
+    display: none !important;
+  }
+
+  .transaction-history .transaction-history-record li {
+    display: none !important;
+    width: 100% !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column;
+    height: 30px;
+    padding-top: 10px;
+  }
+
+
+  .transaction-history .transaction-history-record._active li {
+    display: block !important;
+  }
+
+  .transaction-history .transaction-history-record .trans-type {
+    display: block !important;
+  }
+
+  .transaction-history .transaction-history-record._active .small-trans {
+    display: none !important;
+  }
+
+
 }

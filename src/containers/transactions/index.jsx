@@ -101,6 +101,8 @@ class Transactions extends Component {
         arr.push(deposits[`${key}`]);
       }
 
+      console.log(_deposits);
+
       arr = arr.flat();
 
       const info = arr.map((el) => {
@@ -188,7 +190,7 @@ class Transactions extends Component {
   };
 
   handleHistoryPage = (p) => {
-    console.log(p);
+    // console.log(p);
     this.setState({ page_no: p });
     setTimeout(() => {
       this.fetchTransactions();
@@ -360,7 +362,7 @@ class Transactions extends Component {
           {confirmationModal ? (
             <ConfirmationModal
               imageUrl={con_request}
-              text={`Your request to withdraw the sum of USD ${deposit} was sent successfully`}
+              text={`Your request to deposit the sum of USD ${deposit} was sent successfully`}
               cancelClick={this.cancel_action}
               confirmClick={this.deposit}
             />

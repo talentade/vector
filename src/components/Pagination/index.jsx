@@ -24,6 +24,12 @@ class Pagination extends Component {
 	  let text_2 = page_no > 2 ? page_no : 2;
 	  let text_3 = max_rows > length*2 ? text_2+1 : 3;
 
+	  if(last == 3) {
+	  	text_1 = 1;
+	  	text_2 = 2;
+	  	text_3 = 3;
+	  }
+
 	  return (
 		max_rows > length ? (
 			<div className="pagination-div">

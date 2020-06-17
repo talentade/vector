@@ -1,4 +1,4 @@
-.overlay.cfm {
+.overlay.bsc {
   .deposit-modal-section {
     z-index: 20;
     .upper-modal {
@@ -33,15 +33,29 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: #ffffff;
+      background: #DEFFF7 !important;
       font-family: Poppins, sans-serif;
       border-radius: 6px;
       position: relative;
       top: 4em;
 
+      .modal-cancel {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+      }
+
+      .modal-main-img {
+        position: absolute;
+        top: -38px;
+        border-radius: 50%;
+        background-color: #fff;
+      }
+
       .lower-modal-content {
         h6 {
-          color: #7b7e94;
+          color: #000000 !important;
           font-size: 17px;
         }
 
