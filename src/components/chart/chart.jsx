@@ -27,9 +27,6 @@ class Chart extends Component {
     this.allPairs = localStorage.getItem('allPairs');
     this.pair = '';
     this.data = [];
-    this.currentGrpahType = "candle";
-    this.lineDataSeries = [];
-    this.seriesIterator = 0;
 
     this.state = {
       selectedOption: 'forex',
@@ -47,43 +44,6 @@ class Chart extends Component {
       instruments: [],
     };
   }
-
-  setGraphType = (type) => {
-    var option = {
-        upColor: '#03CF9E',
-        downColor: '#FF1E1E',
-        borderDownColor: '#FF1E1E',
-        borderUpColor: '#03CF9E',
-        wickDownColor: '#c4c4c4',
-        wickUpColor: '#c4c4c4',
-      };
-
-    this.currentGrpahType = type;
-    if(type == "candle") {
-      this.chartSeries = this.chart.current.addCandlestickSeries(option);
-    } else if(type == "line") {
-      this.chartSeries = this.chart.current.addLineSeries(option);
-    } else if(type == "area") {
-      this.chartSeries = this.chart.current.addAreaSeries(option);
-    } else if(type == "bar") {
-      this.chartSeries = this.chart.current.addBarSeries(option);
-    } else if(type == "hist") {
-      this.chartSeries = this.chart.current.addHistogramSeries(option);
-    }
-    this.seriesIterator = 0;
-  }
-
-  combineDateAndTime = (date) => {
-    let timeString = date.getHours() + ':' + date.getMinutes() + ':00';
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var dateString = '' + year + '-' + (parseInt(month) > 9 ? month : '0'+ month) + '-' + (day); //  + this.seriesIterator
-    // var combined = new Date(dateString + ' ' + timeString);
-    var ret = dateString+' '+timeString;
-    // this.seriesIterator += 1;
-    return ''+ret.toString()+'';
-  };
 
   async componentDidMount() {
     this.setState({ showLoader: true });
@@ -115,7 +75,14 @@ class Chart extends Component {
       },
     });
 
-    this.setGraphType("candle");
+    this.candleSeries = this.chart.current.addCandlestickSeries({
+      upColor: '#03CF9E',
+      downColor: '#FF1E1E',
+      borderDownColor: '#FF1E1E',
+      borderUpColor: '#03CF9E',
+      wickDownColor: '#c4c4c4',
+      wickUpColor: '#c4c4c4',
+    });
 
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
@@ -163,24 +130,9 @@ class Chart extends Component {
 
     setInterval(async () => {
       const data = await this.handleDataChange(this.pair);
+
       if (typeof data === 'object' && data.pair === this.pair) {
-        let plot_data = data;
-        if(this.currentGrpahType == "candle") {
-          // default
-        } else if(this.currentGrpahType == "line") {
-          plot_data = {time: data.time, value: data.open};
-        } else if(this.currentGrpahType == "area") {
-          plot_data = {time: data.time, value: data.open}
-        } else if(this.currentGrpahType == "bar") {
-          // default
-        } else if(this.currentGrpahType == "hist") {
-          plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
-        }
-        if(this.seriesIterator == 0) {
-          this.chartSeries.setData([plot_data]);
-        } else {
-          this.chartSeries.update(plot_data);
-        }
+        this.candleSeries.update(data);
 
         this.setState({
           showLoader: false,
@@ -191,7 +143,6 @@ class Chart extends Component {
           spread: data.spread,
         });
       }
-      this.seriesIterator += 1;
     }, 1000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
@@ -208,8 +159,8 @@ class Chart extends Component {
       selectedPair: this.state.allPairs[e.target.value.toLowerCase()][0],
     });
 
-    this.chart.current.removeSeries(this.chartSeries);
-    this.chartSeries = this.chart.current.addCandlestickSeries({
+    this.chart.current.removeSeries(this.candleSeries);
+    this.candleSeries = this.chart.current.addCandlestickSeries({
       upColor: '#03CF9E',
       downColor: '#FF1E1E',
       borderDownColor: '#FF1E1E',
@@ -246,8 +197,8 @@ class Chart extends Component {
   setNewPairData = (e) => {
     this.pair = e.target.value;
     this.setState({ selectedPair: e.target.value, showLoader: true });
-    this.chart.current.removeSeries(this.chartSeries);
-    this.chartSeries = this.chart.current.addCandlestickSeries({
+    this.chart.current.removeSeries(this.candleSeries);
+    this.candleSeries = this.chart.current.addCandlestickSeries({
       upColor: '#03CF9E',
       downColor: '#FF1E1E',
       borderDownColor: '#FF1E1E',
@@ -316,19 +267,19 @@ class Chart extends Component {
                   <option key={Math.random() + Math.random()}>{instr}</option>
                 ))}
               </select>
+              <select class="green-select"><option>commodities</option><option>indices</option><option>forex</option><option>crypto</option><option>stock</option></select>
               <ul className='forex-icons'>
                 <li>
                   <img src={StopWatch} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
                 </li>
-                {/*<img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />*/}
                 <li>
-                  <select onChange={(e) => this.setGraphType(e.target.value)} style={{background: "transparent", color: "#03cf9e", border: "0", outline: "none !important"}}>
-                    <option value="candle">C</option>
-                    <option value="line">L</option>
-                    <option value="area">A</option>
-                    <option value="bar">B</option>
-                    <option value="hist">H</option>
+                  {/*<img src={Wave} alt='' className='icon' />
+                  <img src={Tarrow} alt='' className='t-arrow' />*/}
+                  <select>
+                    <option><img src={Tarrow} alt='' className='t-arrow' /></option>
+                    <option></option>
+                    <option></option>
                   </select>
                 </li>
                 <li>

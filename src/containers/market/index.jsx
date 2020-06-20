@@ -4,6 +4,9 @@ import { Redirect } from 'react-router-dom';
 import server from '../../services/server';
 import Balance from '../../components/balance/index';
 import Demo from '../../components/demo/index';
+import BuyandsellModal from '../../components/buyandsellModal/index';
+import BsConfirmationModal from '../../components/bsConfirmationModal/index';
+import con_buysell from '../../themes/images/con_buysell.png';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
 import Chart from '../../components/chart/index';
@@ -25,6 +28,9 @@ class Market extends Component {
       selectedAccount: '',
       hotStocks: [],
       showLoader: false,
+      buyandsellModal: false,
+      buyandsellModalInfo: false,
+      buyandsellConfirmed: false
     };
 
     this.profile = JSON.parse(localStorage.getItem('profile'));
@@ -65,6 +71,23 @@ class Market extends Component {
   toggleSideBar = () => {
     this.setState({ clicked: !this.state.clicked });
   };
+
+
+  cancelBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: false });
+  }
+
+  showBsellModal = (e) => {
+    this.setState({ buyandsellModal: true, buyandsellModalInfo: false, showLoader: false });
+  }
+
+  showBsellModal2 = (e) => {
+    this.setState({ buyandsellModal: true, buyandsellModalInfo: true, showLoader: false });
+  }
+
+  confirmBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
+  }
 
   render() {
     const userId = localStorage.getItem('id');
@@ -145,11 +168,32 @@ class Market extends Component {
     return (
       <Container>
         <div className='trade-section market-section'>
+
+          {this.state.buyandsellModal ? (
+            <BuyandsellModal
+              text={``}
+              cancelClick={this.cancelBsellModal}
+              confirmClick={this.confirmBsellModal}
+              information={this.state.buyandsellModalInfo}
+            />
+          ) : null}
+
+          {this.state.buyandsellConfirmed ? (
+            <BsConfirmationModal
+              imageUrl={con_buysell}
+              text={``}
+              cancelClick={this.cancelBsellModal}
+              confirmClick={()=>{}}
+            />
+          ) : null}
+
           <MarketSideBar
             pairs={stocksToDisplay}
             clickHandler={this.toggleSideBar}
             hideText={this.state.clicked}
             showLoader={showLoader}
+            showBsellModal={this.showBsellModal}
+            showBsellModal2={this.showBsellModal2}
           />
           <div
             className='right big-right'

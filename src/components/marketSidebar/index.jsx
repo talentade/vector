@@ -15,7 +15,9 @@ const MarketSideBar = ({
   pairs,
   filter,
   filterInstrument,
-  showLoader
+  showLoader,
+  showBsellModal,
+  showBsellModal2
 }) => {
   return (
     <div
@@ -64,12 +66,12 @@ const MarketSideBar = ({
             >
               <div className='market-pair-flex'>
                 <h5>{pair.stock}</h5>
-                <img src={CommentIcon} alt='' />
+                <img src={CommentIcon} alt='' onClick={showBsellModal2} />
               </div>
               <div className='market-big-flex'>
                 <p className='pair-percentage'>{pair.change}</p>
                 <div className='market-cta-section'>
-                  <div className='market-sell'>
+                  <div className='market-sell' onClick={showBsellModal}>
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
@@ -85,7 +87,7 @@ const MarketSideBar = ({
                     </div>
                     <p>{pair.spread}</p>
                   </div>
-                  <div className='market-buy'>
+                  <div className='market-buy' onClick={showBsellModal}>
                     <div className='market-buy-data'>
                       <img src={DirectionIcon} alt='' />
                       <div className='market-buy-info'>

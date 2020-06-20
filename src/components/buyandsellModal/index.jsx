@@ -9,8 +9,15 @@ class BuyandsellModal extends Component {
   constructor(props) {
 
     super(props);
+
+    let info = false;
+    
+    if(props.information) {
+      info = props.information;
+    }
+
     this.state = {
-      information : true
+      information : info
     };
 
   }
