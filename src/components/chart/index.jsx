@@ -4,6 +4,12 @@ import { createChart, CrosshairMode } from 'lightweight-charts';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
+import candleGrf from './graph/candle.png';
+import lineGrf from './graph/line.png';
+import areaGrf from './graph/area.svg';
+import barGrf from './graph/bar.png';
+import histGrf from './graph/hist.png';
+
 import StopWatch from '../../themes/images/tradeDashboard/stopwatch.svg';
 import Wave from '../../themes/images/tradeDashboard/wave.svg';
 import Wave2 from '../../themes/images/tradeDashboard/wave.svg';
@@ -73,6 +79,15 @@ class Chart extends Component {
     this.seriesIterator = 0;
   }
 
+  switchGraphType = (e, id) => {
+    let el = document.getElementById(id);
+    if(el.className == "_active") {
+      el.classList.remove("_active");
+    } else {
+      el.classList.add("_active");
+    }
+  }
+
   combineDateAndTime = (date) => {
     let timeString = date.getHours() + ':' + date.getMinutes() + ':00';
     var year = date.getFullYear();
@@ -116,6 +131,7 @@ class Chart extends Component {
     });
 
     this.setGraphType("candle");
+    const user_id = localStorage.getItem('id');
 
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
@@ -127,8 +143,6 @@ class Chart extends Component {
 
     try {
       if (!this.allPairs) {
-        const user_id = localStorage.getItem('id');
-
         const {
           data: { data },
         } = await server.getAllPairs(user_id);
@@ -161,6 +175,10 @@ class Chart extends Component {
       return error.message;
     }
 
+    // const ph = await server.getPairHistory(user_id, this.pair, 2);
+
+    // console.log(ph, "========");
+
     setInterval(async () => {
       const data = await this.handleDataChange(this.pair);
       if (typeof data === 'object' && data.pair === this.pair) {
@@ -192,7 +210,7 @@ class Chart extends Component {
         });
       }
       this.seriesIterator += 1;
-    }, 1000); // 1000
+    }, 60 * 1000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 
@@ -321,15 +339,15 @@ class Chart extends Component {
                   <img src={StopWatch} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
                 </li>
-                {/*<img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />*/}
-                <li>
-                  <select onChange={(e) => this.setGraphType(e.target.value)} style={{background: "transparent", color: "#03cf9e", border: "0", outline: "none !important"}}>
-                    <option value="candle">C</option>
-                    <option value="line">L</option>
-                    <option value="area">A</option>
-                    <option value="bar">B</option>
-                    <option value="hist">H</option>
-                  </select>
+                <li id="switch-graph-type" onClick={(e) => this.switchGraphType(e, 'switch-graph-type')}>
+                  <img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />
+                  <div className="gr-dropdown">
+                    <span onChange={(e) => this.setGraphType("candle")}><img src={candleGrf} /> Candle</span>
+                    <span onChange={(e) => this.setGraphType("line")}><img src={lineGrf} /> Line</span>
+                    <span onChange={(e) => this.setGraphType("area")}><img src={areaGrf} /> Area</span>
+                    <span onChange={(e) => this.setGraphType("bar")}><img src={barGrf} /> Bar</span>
+                    <span onChange={(e) => this.setGraphType("hist")}><img src={histGrf} /> Histogram</span>
+                  </div>
                 </li>
                 <li>
                   <img src={Multi} alt='' className='icon' />

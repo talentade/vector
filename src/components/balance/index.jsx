@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import BalanceItem from "./balanceItem/index";
 import './index.scss';
 
@@ -15,7 +16,7 @@ const Balance = ({ balance, balanceItemData }) => {
       </div>
 
       <div className="btn">
-        <button>DEPOSIT</button>
+        <Link to="Transactions">DEPOSIT</Link>
       </div>
     </div>
   );

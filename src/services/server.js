@@ -49,6 +49,15 @@ export default {
       headers: {'Authorization': Authorization}
     })
   },
+  getPairHistory(user_id, pair, hr) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/trading/data/historical?pair='+pair+'&timecode='+hr+'H&email=adeoyetalent@gmail.com',
+      headers: {'Authorization': Authorization}
+    })
+  },
+
   // addPairs(Authorization, pairs) {
   //   return axios.request({
   //     method: 'PUT',

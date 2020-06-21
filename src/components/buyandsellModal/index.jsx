@@ -4,6 +4,8 @@ import CancelIcon from '../../themes/images/cancel.svg';
 import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
+import upVlv from '../../themes/images/up.png';
+import downVlv from '../../themes/images/down.png';
 
 class BuyandsellModal extends Component {
   constructor(props) {
@@ -24,6 +26,24 @@ class BuyandsellModal extends Component {
 
   handleClick = (p) => {
     this.setState({ information : p});
+  }
+
+  vlvChange = (u) => {
+    let vl = document.getElementById("vlv").value;
+        vl = vl > 0 ? parseFloat(vl) : 0;
+
+    if(u == "up") {
+      document.getElementById("vlv").value = vl + 1;
+    } else {
+      document.getElementById("vlv").value = vl - 1;
+    }
+  }
+
+  btnBsell = (i, r) => {
+    document.getElementById(i).classList.add("_active");
+    document.getElementById(r).classList.remove("_active");
+    document.getElementById(i+"-order").classList.add("_active");
+    document.getElementById(r+"-order").classList.remove("_active");
   }
 
   handleChange = (e) => {
@@ -82,13 +102,15 @@ class BuyandsellModal extends Component {
               <ul className="info-list">
                 <li style={{height: "50px", marginBottom: "2em"}}>
                 <span className="text-success">
-                  <button className="btn btn-sell">SELL</button>
-                  <button className="btn btn-buy">BUY</button>
+                  <button className="btn btn-sell _active" id="btnSell" onClick={(e) => this.btnBsell("btnSell", "btnBuy")}>SELL</button>
+                  <button className="btn btn-buy" id="btnBuy" onClick={(e) => this.btnBsell("btnBuy", "btnSell")}>BUY</button>
                 </span><span style={{paddingTop: "1em"}}>Current Price: <font className="text-success">0.42729</font></span></li>
               </ul>
               <p>Volume (lots)</p>
-              <p className="mt1 nolot">
-                <input type="number" placeholder="0.01" />
+              <p className="mt1 nolot" style={{position: "relative"}}>
+                <input type="number" id="vlv" placeholder="0.01" />
+                <img src={upVlv} className="uvlv" onClick={(e) => this.vlvChange("up")} />
+                <img src={downVlv} className="dvlv" onClick={(e) => this.vlvChange("down")} />
               </p>
               <ul className="info-list">
                 <li className=""><span className="text-success">Pip Value:</span><span className="text-success">0.10 $</span></li>
@@ -124,7 +146,8 @@ class BuyandsellModal extends Component {
                 </span>
               </div>
               <p align="center">
-                <button className="btn place_order" onClick={confirmClick}>Place Sell Order</button>
+                <button className="btn place_order _active" id="btnSell-order"  onClick={confirmClick}>Place Sell Order</button>
+                <button className="btn place_order" id="btnBuy-order" onClick={confirmClick}>Place Buy Order</button>
               </p>
             </div> : null }
           </div>

@@ -247,6 +247,41 @@ p.sell-left, p.buy-right, p.map-center {
   margin-top: 5px;
 }
 
+.gr-dropdown {
+  display: none;
+  position: absolute;
+  top: 34px;
+  z-index: 1000000000000;
+  text-align: left;
+  width: 180px;
+  height: auto;
+  background: #03CF9E;
+  color: #fff;
+  border: 0;
+}
+
+.gr-dropdown span {
+  padding: 10px 1em;
+  display: block;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.gr-dropdown span:hover {
+  background: #19d6a8;
+}
+
+.gr-dropdown span img {
+  float: left;
+  width: 20px;
+  height: auto;
+  margin-right: 1em; 
+}
+
+li#switch-graph-type._active .gr-dropdown {
+  display: block;
+}
+
 .buy-info {
   margin-left: 10px;
 }

@@ -33,10 +33,12 @@
     margin: 5px auto;
     border: none;
 
-    button {
+    a {
       width: 100%;
       border: none;
       height: 30px;
+      display: block;
+      text-align: center;
       background-color: #00a880;
       color: #ffffff;
     }
