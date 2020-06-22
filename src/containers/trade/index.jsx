@@ -3,6 +3,7 @@ import { withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 // import { favouritePairs, marginData } from '../../utils/dummyData';
 import SideBar from '../../components/sideBar2/index';
+import OpenTrade from '../../components/openTrade/index';
 import Balance from '../../components/balance/index';
 import Demo from '../../components/demo/index';
 import Margin from '../../components/margin/index';
@@ -192,24 +193,27 @@ class TradeDashboard extends Component {
               {currentTab === 'Trade' ? (
                 <Chart />
               ) : currentTab === 'Open Trades' ? (
-                <TradeSection
-                  filterOptions={['All Types']}
+                <OpenTrade type="open" filterOptions={['All Types']} />
+                // <TradeSection
+                  // filterOptions={['All Types']}
                   // theaderData={theaderDataOpen}
                   // tbodyData={tbodyDataOpen}
-                  text='No Open Trades Found'
-                />
+                  // text='No Open Trades Found'
+                // />
               ) : currentTab === 'Closed Trades' ? (
-                <TradeSection
-                  filterOptions={['All Types']}
+                <OpenTrade type="closed" filterOptions={['All Types']} />
+                // <TradeSection
+                //   filterOptions={['All Types']}
                   // theaderData={theaderDataClosed}
                   // tbodyData={tbodyDataClosed}
-                  text='No Closed Trades Found'
-                />
+                //   text='No Closed Trades Found'
+                // />
               ) : currentTab === 'Pending Trades' ? (
-                <TradeSection
-                  filterOptions={['All Types']}
-                  text='No Pending Trades Found'
-                />
+                <OpenTrade type="pending" filterOptions={['All Types']} />
+                // <TradeSection
+                //   filterOptions={['All Types']}
+                //   text='No Pending Trades Found'
+                // />
               ) : (
                 <MobileBalance
                   demoOptions={this.state.accounts}

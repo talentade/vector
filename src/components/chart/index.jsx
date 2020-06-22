@@ -55,6 +55,7 @@ class Chart extends Component {
   }
 
   setGraphType = (type) => {
+    this.seriesIterator = 0;
     var option = {
         upColor: '#03CF9E',
         downColor: '#FF1E1E',
@@ -76,7 +77,6 @@ class Chart extends Component {
     } else if(type == "hist") {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
     }
-    this.seriesIterator = 0;
   }
 
   switchGraphType = (e, id) => {
@@ -194,10 +194,11 @@ class Chart extends Component {
         } else if(this.currentGrpahType == "hist") {
           plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
         }
-        if(this.seriesIterator == 0) {
-          this.chartSeries.setData([plot_data]);
-        } else {
+        if(this.seriesIterator > 0) {
           this.chartSeries.update(plot_data);
+        } else {
+          this.seriesIterator += 1;
+          this.chartSeries.setData([plot_data]);
         }
 
         this.setState({
@@ -209,8 +210,7 @@ class Chart extends Component {
           spread: data.spread,
         });
       }
-      this.seriesIterator += 1;
-    }, 60 * 1000); // 1000
+    }, 1000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 
@@ -342,11 +342,11 @@ class Chart extends Component {
                 <li id="switch-graph-type" onClick={(e) => this.switchGraphType(e, 'switch-graph-type')}>
                   <img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />
                   <div className="gr-dropdown">
-                    <span onChange={(e) => this.setGraphType("candle")}><img src={candleGrf} /> Candle</span>
-                    <span onChange={(e) => this.setGraphType("line")}><img src={lineGrf} /> Line</span>
-                    <span onChange={(e) => this.setGraphType("area")}><img src={areaGrf} /> Area</span>
-                    <span onChange={(e) => this.setGraphType("bar")}><img src={barGrf} /> Bar</span>
-                    <span onChange={(e) => this.setGraphType("hist")}><img src={histGrf} /> Histogram</span>
+                    <span onClick={(e) => this.setGraphType("candle")}><img src={candleGrf} /> Candle</span>
+                    <span onClick={(e) => this.setGraphType("line")}><img src={lineGrf} /> Line</span>
+                    <span onClick={(e) => this.setGraphType("area")}><img src={areaGrf} /> Area</span>
+                    <span onClick={(e) => this.setGraphType("bar")}><img src={barGrf} /> Bar</span>
+                    <span onClick={(e) => this.setGraphType("hist")}><img src={histGrf} /> Histogram</span>
                   </div>
                 </li>
                 <li>

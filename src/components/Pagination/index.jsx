@@ -13,7 +13,12 @@ class Pagination extends Component {
 
   render () {
 
-	  const { length, max_rows, page_no, paginationChange } = this.props;
+	  let { length, max_rows, page_no, paginationChange } = this.props;
+
+		length 		= parseInt(length);
+		max_rows 	= parseInt(max_rows);
+		page_no 	= parseInt(page_no);
+
 	  let prev  = page_no - 1;
 	  	  prev  = prev < 1 ? 1 : prev;
 	  let last  = Math.ceil(max_rows / length);
@@ -29,7 +34,7 @@ class Pagination extends Component {
 	  	text_2 = 2;
 	  	text_3 = 3;
 	  }
-
+	  console.log(max_rows, length, max_rows > length);
 	  return (
 		max_rows > length ? (
 			<div className="pagination-div">
