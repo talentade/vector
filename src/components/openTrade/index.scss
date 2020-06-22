@@ -334,6 +334,14 @@
     padding-top: 10px;
   }
 
+  .trade-history .t-history-record._active small.time {
+    position: relative;
+    top: 5px;
+  }
+
+  .trade-history .t-history-record._active li {
+    height: 48px;
+  }
 
   .trade-history .t-history-record._active li {
     display: block !important;

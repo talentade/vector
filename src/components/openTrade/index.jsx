@@ -131,22 +131,176 @@ class OpenTrade extends Component {
                 </>
               ) : null}
             </ul>
-            {/*transactions.map((transaction, idx) => (
-              <ul
-                className={'transaction-history-record '+(idx == 0 ? ' _active' : '')}
-                id={'transaction-history-record-'+idx}
-                key={`${Math.random()}-${Math.random()}`}
-                onClick={(e) => this.handleClick(e, 'transaction-history-record-'+idx)}>
-                <div className="tab-sn"><div>{idx + (page_size * (page_no - 1)) + 1}</div></div>
-                <li className="small-trans">{idx + (page_size * (page_no - 1)) + 1}</li>
-                <li className={`${transaction.type} trans-type`}><span className="th">Transaction type</span><span className="td"><button className="brn ttype">{transaction.type}</button></span></li>
-                <li className="trans-date"><span className="th">Date</span><span className="td">{transaction.date}</span></li>
-                <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
-                <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>
-                <li className="small-trans"><span className="th">Amount</span><span className="td">{transaction.amount}</span></li>
-                <li><span className="th">Reference No</span><span className="td">{transaction.reference}</span></li>
-              </ul>
-            ))*/}
+            <ul className='t-history-record' id="t-history-record-3" onClick={(e) => this.handleClick(e, 't-history-record-3')}>
+              <li className="ins-name">
+              <img src={ins_down} className="ins_down" />
+              <img src={ins_up} className="ins_up" />
+              <span className="th">INSTRUMENT</span><span className="td">AUD/USD</span></li>
+              <li><span className="th">TYPE</span><span className="td">Forex</span></li>
+              <li><span className="th">TIME</span><span className="td">24-Mar-2020<br /><small className="time">12:29pm</small></span></li>
+              <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">$3.21</span></li>
+              <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">0.3245</span></li>
+              <li><span className="th">S/L</span><span className="td">-</span></li>
+              <li><span className="th">T/P</span><span className="td">-</span></li>
+              {type == 'open' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                  <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                </>
+              ) : null}
+              {type == 'closed' ? (
+                <>
+                  <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+              {type == 'pending' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+            </ul>
+            <ul className='t-history-record' id="t-history-record-4" onClick={(e) => this.handleClick(e, 't-history-record-4')}>
+              <li className="ins-name">
+              <img src={ins_down} className="ins_down" />
+              <img src={ins_up} className="ins_up" />
+              <span className="th">INSTRUMENT</span><span className="td">AUD/USD</span></li>
+              <li><span className="th">TYPE</span><span className="td">Forex</span></li>
+              <li><span className="th">TIME</span><span className="td">24-Mar-2020<br /><small className="time">12:29pm</small></span></li>
+              <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">$3.21</span></li>
+              <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">0.3245</span></li>
+              <li><span className="th">S/L</span><span className="td">-</span></li>
+              <li><span className="th">T/P</span><span className="td">-</span></li>
+              {type == 'open' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                  <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                </>
+              ) : null}
+              {type == 'closed' ? (
+                <>
+                  <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+              {type == 'pending' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+            </ul>
+            <ul className='t-history-record' id="t-history-record-5" onClick={(e) => this.handleClick(e, 't-history-record-5')}>
+              <li className="ins-name">
+              <img src={ins_down} className="ins_down" />
+              <img src={ins_up} className="ins_up" />
+              <span className="th">INSTRUMENT</span><span className="td">AUD/USD</span></li>
+              <li><span className="th">TYPE</span><span className="td">Forex</span></li>
+              <li><span className="th">TIME</span><span className="td">24-Mar-2020<br /><small className="time">12:29pm</small></span></li>
+              <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">$3.21</span></li>
+              <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">0.3245</span></li>
+              <li><span className="th">S/L</span><span className="td">-</span></li>
+              <li><span className="th">T/P</span><span className="td">-</span></li>
+              {type == 'open' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                  <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                </>
+              ) : null}
+              {type == 'closed' ? (
+                <>
+                  <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+              {type == 'pending' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+            </ul>
+            <ul className='t-history-record' id="t-history-record-6" onClick={(e) => this.handleClick(e, 't-history-record-6')}>
+              <li className="ins-name">
+              <img src={ins_down} className="ins_down" />
+              <img src={ins_up} className="ins_up" />
+              <span className="th">INSTRUMENT</span><span className="td">AUD/USD</span></li>
+              <li><span className="th">TYPE</span><span className="td">Forex</span></li>
+              <li><span className="th">TIME</span><span className="td">24-Mar-2020<br /><small className="time">12:29pm</small></span></li>
+              <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">$3.21</span></li>
+              <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">0.3245</span></li>
+              <li><span className="th">S/L</span><span className="td">-</span></li>
+              <li><span className="th">T/P</span><span className="td">-</span></li>
+              {type == 'open' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                  <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                </>
+              ) : null}
+              {type == 'closed' ? (
+                <>
+                  <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+              {type == 'pending' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+            </ul>
+            <ul className='t-history-record' id="t-history-record-7" onClick={(e) => this.handleClick(e, 't-history-record-7')}>
+              <li className="ins-name">
+              <img src={ins_down} className="ins_down" />
+              <img src={ins_up} className="ins_up" />
+              <span className="th">INSTRUMENT</span><span className="td">AUD/USD</span></li>
+              <li><span className="th">TYPE</span><span className="td">Forex</span></li>
+              <li><span className="th">TIME</span><span className="td">24-Mar-2020<br /><small className="time">12:29pm</small></span></li>
+              <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">$3.21</span></li>
+              <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">0.3245</span></li>
+              <li><span className="th">S/L</span><span className="td">-</span></li>
+              <li><span className="th">T/P</span><span className="td">-</span></li>
+              {type == 'open' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                  <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                </>
+              ) : null}
+              {type == 'closed' ? (
+                <>
+                  <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+              {type == 'pending' ? (
+                <>
+                  <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">0.3245</span></li>
+                  <li className="profit"><span className="th">PROFIT</span><span className="td">$3.42</span></li>
+                  <li className="d-sell"><span className="th">DETAILS</span><span className="td">SELL</span></li>
+                </>
+              ) : null}
+            </ul>
             <Pagination length="4" max_rows="4" page_no="1" paginationChange={() => {}}/>
           </div>
       </div>
