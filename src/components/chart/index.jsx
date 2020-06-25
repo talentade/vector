@@ -210,7 +210,7 @@ class Chart extends Component {
           spread: data.spread,
         });
       }
-    }, 1000); // 1000
+    }, 30000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 

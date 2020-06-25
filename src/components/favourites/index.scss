@@ -28,6 +28,8 @@
   }
 
   .favourite-flex {
+    height: 163px;
+    overflow: auto;
     .favourite-section-containers {
       width: 82%;
       display: flex;
@@ -46,6 +48,7 @@
       border-radius: 3px;
       border: 1px solid #03cf9e;
       margin-top: 14.5px;
+      margin-right: 5px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -57,6 +60,21 @@
       }
     }
   }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #004044;
+  cursor: pointer;
+}
+
 }
 
 .show-fav-under {

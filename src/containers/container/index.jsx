@@ -98,4 +98,5 @@ const mapDispatchToProps = (dispatch) => ({
   saveUserProfile: (profile) => dispatch(saveUserProfile(profile)),
   toggleTransactionNav: () => dispatch(toggleTransactionNav()),
 });
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Container));

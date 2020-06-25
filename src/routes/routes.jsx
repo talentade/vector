@@ -10,6 +10,8 @@ import ForgotPassword from '../containers/forgotPassword/index';
 import ChangePassword from '../containers/resetPassword/index';
 import Market from '../containers/market/index';
 import News from '../containers/news/index';
+import Accounts from '../containers/accounts/index';
+import BookCall from '../containers/book/index';
 import Transactions from '../containers/transactions/index';
 
 /**
@@ -23,7 +25,9 @@ export default props => (
     <Route exact path='/Login' component={Login} />
     <Route exact path='/VerifyEmail' component={VerifyEmail} />
     <Route exact path='/VerifyPhone' component={VerifyPhone} />
+    <Route path='/Book' exact component={BookCall} />
     <Route path='/Trade' exact component={Trade} />
+    <Route path='/Accounts' exact component={Accounts} />
     <Route path='/Profile' exact component={Profile} />
     <Route path='/ForgotPassword' exact component={ForgotPassword} />
     <Route path='/ChangePassword' exact component={ChangePassword} />

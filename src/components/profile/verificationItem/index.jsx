@@ -7,7 +7,7 @@ const VerificationItem = ({ verified, itemHead, itemContent, buttonText }) => {
   return (
     <div className="verification-item">
       <div className="doc-img-info-section">
-        <img src={verified ? Verified : Unverified} alt="verify-status" />
+        <img src={verified ? Unverified : Verified} alt="verify-status" />
         <div className="doc-info-section">
           <p className="verify-item-head">{itemHead}</p>
           <p className="verify-item-content">{itemContent}</p>

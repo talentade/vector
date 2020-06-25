@@ -1,0 +1,282 @@
+#book-container {
+	padding: .5em !important;
+	width: 100%;
+	position: relative;
+    height: calc(100% - 60px);
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    h2.bcw {
+		font-family: Poppins;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 20px;
+		max-width: 450px;
+		line-height: 30px;
+		display: block;
+		margin-top: 1em;
+		color: #FFFFFF;
+    }
+
+    img {
+   	    max-width: 95%;
+    }
+
+	.scheduled-date {
+		width: 260px;
+		height: 100px;
+		display: flex;
+		margin-top: 1em;
+		flex-direction: column;
+		justify-content: center;
+		vertical-align: center;
+		background: #006066;
+		border-radius: 5px;
+		padding: 1em;
+
+		h4, h5, h6 {
+			font-family: Poppins;
+			font-style: normal;
+			font-weight: 500;
+			font-size: 14px;
+			line-height: 21px;
+			display: flex;
+			align-items: center;
+			text-align: center;
+			color: #03CF9E;
+			margin: 5px auto;
+		}
+	}
+
+    .calendar-container {
+    	margin-top: 2em;
+    	margin-bottom: 1em;
+    	padding: 1em 0 0 0;
+    	width: 400px;
+		height: 381px;
+		height: auto;
+		background: #006066;
+		border-radius: 10px;
+
+		.calendar_icon {
+			top: 5px;
+			position: relative;
+			margin-left: 2em;
+		}
+
+		.brace-inp {
+			position: relative;
+		    width: auto;
+		    height: auto;
+		    display: inline-block;
+
+			.inp-el {
+				width: 100px;
+				height: 40px;
+				margin-left: 1.5em;
+				border: 0;
+				font-weight: 500;
+				font-size: 22px;
+				line-height: 33px;
+				color: #FFFFFF;
+				padding-left: 1em;
+				background: rgba(3, 207, 158, 0.3);
+				border-radius: 3px;
+			}
+
+			.inp-up {
+				position: absolute;
+			    right: 8px;
+			    top: 12px;
+			}
+
+			.inp-down {
+				position: absolute;
+			    right: 8px;
+			    bottom: 12px;
+			}
+		}
+
+		.month-list {
+			display: flex;
+		    list-style: none;
+		    width: 100%;
+		    margin-top: 1.5em;
+		    height: 40px;
+		    position: relative;
+		    padding-left: 1em;
+		    padding-right: 1em;
+
+		    #month-to-left {
+		    	position: absolute;
+		    	top: 1.1em;
+		    	left: 6px;
+		    	cursor: pointer;
+		    }
+
+		    #month-to-right {
+		    	position: absolute;
+		    	top: 1.1em;
+		    	right: 6px;
+		    	cursor: pointer;
+		    }
+
+		    li {
+		    	text-align: center;
+		    	width: 25%;
+		    	font-family: Poppins;
+				font-style: normal;
+		    	padding: 5px 0;
+		    	font-weight: 600;
+				font-size: 26px;
+				line-height: 39px;
+				color: #959595;
+
+				&._active {
+					color: #fff;
+				}
+		    }
+		}
+
+		.day-list {
+			display: flex;
+		    list-style: none;
+		    width: 100%;
+		    margin-top: 1em;
+		    height: 80px;
+		    position: relative;
+		    padding-left: 1em;
+		    padding-right: 1em;
+
+		    #day-to-left {
+		    	position: absolute;
+		    	top: 1.6em;
+		    	left: 6px;
+		    	cursor: pointer;
+		    }
+
+		    #day-to-right {
+		    	position: absolute;
+		    	top: 1.6em;
+		    	right: 6px;
+		    	cursor: pointer;
+		    }
+
+		    li {
+		    	text-align: center;
+		    	width: 10%;
+		    	margin-left: 2%;
+		    	margin-right: 2%;
+				font-size: 12px;
+				line-height: 18px;
+				color: #D7D7D7;
+		    	display: flex;
+		    	flex-direction: column;
+		    	font-family: Poppins;
+				font-style: normal;
+		    	padding: 10px 0;
+		    	position: relative;
+
+				&._active {
+					background: #004044;
+					border: 2px solid #03CF9E;
+					border-radius: 80px;
+				}
+
+		    	.d-date {
+		    		font-family: Poppins;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 16px;
+					line-height: 24px;
+					text-align: center;
+					color: #FFFFFF;
+					position: absolute !important;
+					bottom: 10px;
+					width: 100%;
+		    	}
+		    }
+		}
+
+		.time-list-parent {
+			display: block;
+			padding: 5px;
+		    margin-top: 1.5em;
+		    height: auto;
+		    background: #fff;
+		    border-radius: 10px;
+		
+			.time-list {
+				display: flex;
+				flex-direction: column;
+			    list-style: none;
+			    width: calc(100% - 10px);
+			    padding-top: 10px;
+			    position: relative;
+			    padding-left: 1em;
+			    height: 140px;
+			    overflow: auto;
+
+			    li {
+			    	display: inline-flex;
+
+			    	.d-time {
+			    		margin: 0 auto 1em;
+						width: 82%;
+						background: #FFFFFF;
+						border-radius: 10px;
+						height: 50px;
+						border: 2px solid #03CF9E;
+						border-radius: 3px;
+						text-align: center;
+						font-family: Poppins;
+						font-style: normal;
+						font-weight: 500;
+						font-size: 22px;
+						line-height: 33px;
+						color: #03CF9E;
+
+						&._active {
+							color: #fff;
+							background: #00A880;
+							border: 2px solid #03CF9E;
+						}
+			    	}
+			    }
+			}
+		}
+    }
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #004044;
+  border-radius: 1em;
+}
+
+::-webkit-scrollbar-track {
+    background: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #004044;
+  cursor: pointer;
+  border-radius: 1em;
+}
+
+.text-center {
+	text-align: center;
+}
+
+}
+
+
+
+@media screen and (max-width: 700px) {
+
+#book-container {
+
+}
+
+}

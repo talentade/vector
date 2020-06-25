@@ -9,6 +9,7 @@ import Demo from '../../components/demo/index';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
 import TradeSection from '../../components/tradesSection/index';
+import AddToFav from '../../components/addToFav/index';
 import MobileBalance from '../../components/balanceMobile/index';
 import Spinner from '../../components/spinner/index';
 import Chart from '../../components/chart/index';
@@ -151,6 +152,7 @@ class TradeDashboard extends Component {
       <Container>
         <Spinner showSpinner={showSpinner} />
         <div className='trade-section'>
+          <AddToFav />
           <SideBar
             clickHandler={this.toggleSideBar}
             hideText={this.state.clicked}
