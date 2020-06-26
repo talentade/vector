@@ -16,7 +16,7 @@ class AddToFav extends Component {
     
 
     this.state = {
-      step : 2,
+      step : 1,
       information: 0
     };
 
@@ -77,8 +77,8 @@ class AddToFav extends Component {
                   <h6>Select a trading account</h6>
                   <p>Do you wish view open trades with this account or rou want to switch account</p>
                   <p className="btns">
-                    <button className="continue">Continue</button>
-                    <button className="switch">Switch</button>
+                    <button className="continue" onClick={cancelClick}>Continue</button>
+                    <button className="switch" onClick={() => this.setState({step: 2})}>Switch</button>
                   </p>
                 </div>
               )}

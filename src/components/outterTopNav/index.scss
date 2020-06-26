@@ -50,7 +50,15 @@
   }
 }
 
-.dropdown:hover .profile-dropdown {
+// .dropdown:hover .profile-dropdown {
+//   display: block !important;
+// }
+
+.overlay.drop {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.dropdown.hover .profile-dropdown {
   display: block !important;
 }
 

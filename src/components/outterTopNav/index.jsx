@@ -10,6 +10,9 @@ import './index.scss';
 class OutterTopNav extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      hover: false
+    }
   }
 
   render() {
@@ -21,8 +24,11 @@ class OutterTopNav extends Component {
           <li><img src={Tnav1} alt='' /></li>
           <li><img src={Tnav2} alt='' /></li>
           <li className='hide-mobile'>{`${firstName} ${lastName}`}</li>
-          <li className='dropdown'>
-            <img src={profileImage ? profileImage : Tnav3} alt='' />
+          <li className={'dropdown'+(this.state.hover ? ' hover' : '')}>
+            {this.state.hover && (
+              <div className='overlay drop' onClick={() => this.setState({hover: false})}></div>
+            )}
+            <img src={profileImage ? profileImage : Tnav3} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
             <HoverDropdown
               name={`${firstName} ${lastName}`}
               email={email}

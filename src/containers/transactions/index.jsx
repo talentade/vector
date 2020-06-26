@@ -52,6 +52,27 @@ class Transactions extends Component {
       balance: this.profile.demo.demo_balance,
     });
 
+    if(localStorage.getItem("TSelected")) {
+      this.setState({
+        selectedTab: localStorage.getItem("TSelected")
+      });
+      localStorage.removeItem("TSelected");
+    }
+
+    var dis = this;
+    
+    window.addEventListener("click", function(e) {
+      if(e.target.className.match("navtotransaction")) {
+        if(localStorage.getItem("TSelected")) {
+          dis.setState({
+            selectedTab: localStorage.getItem("TSelected")
+          });
+          dis._toggleTabs(localStorage.getItem("TSelected"));
+          localStorage.removeItem("TSelected");
+        }
+      }
+    });
+
     try {
       const { data } = await axios.get(
         'https://openexchangerates.org/api/currencies.json',
@@ -307,6 +328,10 @@ class Transactions extends Component {
   };
 
   toggleTabs = (e) => {
+    this._toggleTabs(e.currentTarget.querySelector('div').innerHTML.toLowerCase());
+  };
+
+  _toggleTabs = (tab) => {
     this.setState({
       selectedCurrency: 'USD',
       deposit: parseFloat(0.0).toFixed(2),
@@ -314,9 +339,9 @@ class Transactions extends Component {
       to: '',
       balance: this.profile.demo.demo_balance,
       account: JSON.parse(localStorage.getItem('accounts'))[0],
-      selectedTab: e.currentTarget.querySelector('div').innerHTML.toLowerCase(),
+      selectedTab: tab
     });
-  };
+  }
 
   render() {
     const {

@@ -2,7 +2,7 @@ import React from 'react';
 import FavouriteCard from '../favouriteCard/index';
 import './index.scss';
 
-const Favourites = ({ favouritePairs, secondClassName }) => {
+const Favourites = ({ showClick, favouritePairs, secondClassName }) => {
   return (
     <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
       <h2>Favourites</h2>
@@ -26,7 +26,7 @@ const Favourites = ({ favouritePairs, secondClassName }) => {
               <FavouriteCard {...props} key={`${idx}-1`} />
             ))}
           </div>
-          <div className='rect-box'>
+          <div className='rect-box' onClick={showClick}>
             <p>+</p>
           </div>
         </div>

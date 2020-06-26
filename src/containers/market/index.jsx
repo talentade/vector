@@ -9,6 +9,7 @@ import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
+import AddToFav from '../../components/addToFav/index';
 import Chart from '../../components/chart/index';
 import Container from '../container/index';
 import MarketSideBar from '../../components/marketSidebar/index';
@@ -28,6 +29,7 @@ class Market extends Component {
       selectedAccount: '',
       hotStocks: [],
       showLoader: false,
+      showAddFav: false,
       buyandsellModal: false,
       buyandsellModalInfo: false,
       buyandsellConfirmed: false
@@ -79,6 +81,14 @@ class Market extends Component {
 
   showBsellModal = (e) => {
     this.setState({ buyandsellModal: true, buyandsellModalInfo: false, showLoader: false });
+  }
+
+  addFavPop = (e) => {
+    this.setState({showAddFav: true});
+  }
+
+  cancelFavPop = (e) => {
+    this.setState({showAddFav: false});
   }
 
   showBsellModal2 = (e) => {
@@ -168,7 +178,7 @@ class Market extends Component {
     return (
       <Container>
         <div className='trade-section market-section'>
-
+          { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               text={``}
@@ -223,7 +233,7 @@ class Market extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites favouritePairs={favouriteItems} />
+                <Favourites showClick={this.addFavPop} favouritePairs={favouriteItems} />
               </div>
               <Chart />
             </div>

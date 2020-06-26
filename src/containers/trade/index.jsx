@@ -33,6 +33,7 @@ class TradeDashboard extends Component {
       showNav: true,
       showSpinner: false,
       accounts: [],
+      showAddFav: false,
       selectedAccount: '',
     };
 
@@ -55,6 +56,14 @@ class TradeDashboard extends Component {
     this.setState({ accounts: JSON.parse(myAccounts) });
 
     window.addEventListener('resize', this.updateDimensions);
+  }
+
+  addFavPop = (e) => {
+    this.setState({showAddFav: true});
+  }
+
+  cancelFavPop = (e) => {
+    this.setState({showAddFav: false});
   }
 
   updateDimensions = () => {
@@ -152,7 +161,7 @@ class TradeDashboard extends Component {
       <Container>
         <Spinner showSpinner={showSpinner} />
         <div className='trade-section'>
-          <AddToFav />
+          { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
           <SideBar
             clickHandler={this.toggleSideBar}
             hideText={this.state.clicked}
@@ -190,7 +199,7 @@ class TradeDashboard extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites favouritePairs={favouriteItems} />
+                <Favourites showClick={this.addFavPop} favouritePairs={favouriteItems} />
               </div>
               {currentTab === 'Trade' ? (
                 <Chart />

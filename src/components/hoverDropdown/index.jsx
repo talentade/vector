@@ -17,10 +17,10 @@ const HoverDropdown = ({ name, email, balance }) => {
       <div className="section2">
         <p className="grey">FINANCE</p>
         <ul>
-          <li><NavLink to="/Transactions">Deposit Funds</NavLink></li>
-          <li><NavLink to="/Transactions">Transfer Funds</NavLink></li>
-          <li><NavLink to="/Transactions">Withdraw Funds</NavLink></li>
-          <li><NavLink to="/Transactions">Transfer Funds</NavLink></li>
+          <li onClick={() => localStorage.setItem("TSelected", "deposit")}><NavLink className="navtotransaction" to="/Transactions">Deposit Funds</NavLink></li>
+          <li onClick={() => localStorage.setItem("TSelected", "transfer")}><NavLink className="navtotransaction" to="/Transactions">Transfer Funds</NavLink></li>
+          <li onClick={() => localStorage.setItem("TSelected", "withdraw")}><NavLink className="navtotransaction" to="/Transactions">Withdraw Funds</NavLink></li>
+          <li onClick={() => localStorage.setItem("TSelected", "transaction")}><NavLink className="navtotransaction" to="/Transactions">Transaction History</NavLink></li>
         </ul>
       </div>
       <div className="section3">
