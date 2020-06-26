@@ -234,6 +234,7 @@
 		left: 2em;
 		color: #fff;
 		font-size: 12px;
+		top: 18px;
 		background: #008EDE;
 		border-radius: 40px;
 	}
@@ -677,18 +678,6 @@
 	}
 
 }
-
-// .open-trades-container {
-//   padding: 10px 0 0 0;
-// }
-
-// .open-trades-container-top {
-//   display: flex;
-
-//   .filter-section {
-//     margin-left: 20px;
-//   }
-// }
 
 @media screen and (max-width: 500px) {
 	#account-container {
