@@ -217,11 +217,14 @@ export default {
     let Authorization = user_id;
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/signup/secondary/form?account='+account,
+      url: 'https://avariz-core.herokuapp.com/signup/secondary/form',
       headers: {
-        'Authorization': Authorization
+        'Authorization': Authorization,
+        'auth': user_id,
+        'password': pwd,
+        'account_type': account
       },
-      data: {account: account, password: pwd}
+      // data: {account: account, password: pwd}
     });
   },
 
@@ -235,7 +238,14 @@ export default {
     })
   },
 
-
+  tradeAnalysis(user_id, pair, mode) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/trading/analysis?pair='+pair+'&mode='+mode+'&leverage=200&lots=0.01',
+      headers: {'Authorization': Authorization}
+    })
+  },
 
 
 

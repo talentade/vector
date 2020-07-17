@@ -18,20 +18,29 @@ class Favourites extends Component {
   async componentDidMount () {
     let that = this;
     this.fetchFavs();
-
-    document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
-      that.fetchFavs();
-    })
+    if(document.getElementById("favContainers")) {
+       document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
+        that.fetchFavs();
+      });
+    }
   }
 
   fetchFavs = async () => {
     let user_id = localStorage.getItem('id');
     let account = localStorage.getItem('accountType').split("-")[0].toLowerCase();
-    const { data: { data, code } } = await server.fetchFav(user_id, account);
-    if(code == 200) {
-      if(data.length) {
-        this.setState({cards: data});
+    try {
+      const { data: { data, code } } = await server.fetchFav(user_id, account);
+      if(code == 200) {
+        if(data.length) {
+          this.setState({cards: data});
+        }
       }
+    } catch (error) {
+      setTimeout(() => {
+        this.fetchFavs();
+      }, 2000);
+      console.log("Fav is err");
+      return error.message;
     }
   }
 
@@ -40,13 +49,13 @@ class Favourites extends Component {
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
         <h2>Favourites</h2>
-        {favouritePairs.length > 0 || 1 ? (
+        {favouritePairs ? (
           <div className='favourite-flex'>
             <div className='favourite-section-containers' id="favContainers">
-              {
+              {this.state.cards && this.state.cards.length ?
                 this.state.cards.map((card) => (
                   <FavouriteCard direction="up" color="" pair={card.pair} price={card.open} />
-                ))
+                )) : (null)
               }
             </div>
             <Link to="/Market" className='rect-box'>
