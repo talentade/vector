@@ -6,6 +6,7 @@ import ai_n from '../../themes/images/ai-normal.png';
 import sp from '../../themes/images/circle-plus.png';
 import ai_b from '../../themes/images/ai-bookmark.png';
 import '../../components/standard/standard.scss';
+import AddAccount from '../../components/addAccount/index';
 import './index.scss';
 
 class Accounts extends Component {
@@ -14,6 +15,7 @@ class Accounts extends Component {
 
     this.state = {
       selectedNews: null,
+      addAcc: false,
     }
   }
 
@@ -27,11 +29,12 @@ class Accounts extends Component {
   render() {
     return (
       <Container>
+      { this.state.addAcc ? <AddAccount confirmClick={(e) => this.setState({addAcc: false})} cancelClick={(e) => this.setState({addAcc: false})} /> : null }
         <div className="col-12" id="account-container">
 
           <h1 className="page-title">Accounts
             <div className="btn-list">
-              <button className="add_account"><img src={sp} /> Add account</button>
+              <button className="add_account" onClick={(e) => this.setState({addAcc: true})}><img src={sp} /> Add account</button>
             </div>
           </h1>
           

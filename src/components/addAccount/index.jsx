@@ -5,6 +5,7 @@ import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
+import server from '../../services/server';
 import downVlv from '../../themes/images/down.png';
 
 class AddAccount extends Component {
@@ -25,10 +26,15 @@ class AddAccount extends Component {
     // this.setState({ information : p});
   }
 
-  btnSave = () {
+  btnSave = async () => {
     let sel = document.getElementById("tr-sel").value;
     let pas = document.getElementById("tr-pass").value;
-    console.log(sel, pas);
+
+    let resp = await server.addAccount(localStorage.getItem("id"), sel, pas);
+
+    console.log(resp);
+
+    this.props.cancelClick();
   }
 
   render () {

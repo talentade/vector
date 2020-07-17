@@ -60,18 +60,15 @@ class Transactions extends Component {
     }
 
     var dis = this;
-    
-    window.addEventListener("click", function(e) {
-      if(e.target.className.match("navtotransaction")) {
-        if(localStorage.getItem("TSelected")) {
-          dis.setState({
-            selectedTab: localStorage.getItem("TSelected")
-          });
-          dis._toggleTabs(localStorage.getItem("TSelected"));
-          localStorage.removeItem("TSelected");
-        }
+    const navt = document.querySelectorAll('navtotransaction');
+
+    navt.forEach(el => el.addEventListener('click', event => {
+      if(localStorage.getItem("TSelected")) {
+        dis.setState({ selectedTab: localStorage.getItem("TSelected") });
+        dis._toggleTabs(localStorage.getItem("TSelected"));
+        localStorage.removeItem("TSelected");
       }
-    });
+    }));
 
     try {
       const { data } = await axios.get(

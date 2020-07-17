@@ -78,7 +78,6 @@ export default {
     return Api().post('/utils/resetPassword', credentials);
   },
   getRealTimeData(pair, Authorization) {
-    console.log(pair, "---", Authorization);
     return axios.request({
       method: 'GET',
       url:  `https://avariz-core.herokuapp.com/trading/ticker/fetch?pair=${pair}`,
@@ -211,6 +210,18 @@ export default {
         'Authorization': Authorization
       },
       data: {pair: pair, account: account}
+    });
+  },
+
+  addAccount(user_id, account, pwd) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/signup/secondary/form?account='+account,
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {account: account, password: pwd}
     });
   },
 
