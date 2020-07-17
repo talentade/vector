@@ -44,7 +44,7 @@ export default {
   getAllPairs(Authorization) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/trading/pairs/fetch?category=all&showFavs=true&account='+localStorage.getItem("accountType").split("-")[0].toLowerCase(),
+      url: 'https://avariz-core.herokuapp.com/trading/pairs/fetch?category=all',
       headers: {'Authorization': Authorization}
     })
   },
@@ -52,7 +52,7 @@ export default {
     let Authorization = user_id;
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/trading/data/historical?pair='+pair+'&timecode='+hr+'H&email=adeoyetalent@gmail.com',
+      url: 'https://avariz-core.herokuapp.com/trading/data/historical?pair='+pair+'&timecode='+hr+'H&email='+localStorage.getItem("email"),
       headers: {'Authorization': Authorization}
     })
   },
@@ -78,6 +78,7 @@ export default {
     return Api().post('/utils/resetPassword', credentials);
   },
   getRealTimeData(pair, Authorization) {
+    console.log(pair, "---", Authorization);
     return axios.request({
       method: 'GET',
       url:  `https://avariz-core.herokuapp.com/trading/ticker/fetch?pair=${pair}`,
