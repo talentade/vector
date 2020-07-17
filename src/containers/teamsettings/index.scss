@@ -1,0 +1,182 @@
+#team-container {
+	padding: 2em !important;
+	width: 100%;
+	position: relative;
+    height: calc(100% - 120px);
+    display: flex;
+
+
+    .team-list {
+    	display: inline-block;
+    	position: relative;
+    	padding-left: 0;
+    	float: left;
+    	width: 60%;
+
+
+    	li {
+    		display: inline-flex;
+    		width: 50%;
+    		justify-content: center;
+    		list-style: none;
+    		min-height: 250px;
+
+    		.team-card {
+    			display: flex;
+    			width: 320px;
+    			border-radius: 5px 5px 0px 0px;
+    			margin: 0 50px;
+	    		background: #fff;
+	    		height: 188px;
+	    		flex-direction: column;
+	    		position: relative;
+
+	    		.tc {
+	    			width: 100%;
+	    			height: auto;
+	    			height: 99px;
+	    		}
+
+	    		.tdp {
+	    			top: 47px;
+				    left: 20px;
+				    width: 100px;
+				    height: 100px;
+	    			position: absolute;
+	    		}
+    		}
+
+    		.team-info {
+    			display: flex;
+    			width: 200px;
+    			margin-left: 120px;
+    			padding: 10px;
+    			height: 100px;
+    			position: relative;
+    			flex-direction: column;
+
+    			b {
+    				font-family: Poppins;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 14px;
+					line-height: 21px;
+					align-items: center;
+					color: #000000;
+    			}
+
+    			span.em {
+    				font-family: Poppins;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 12px;
+					// margin-top: 10px;
+					line-height: 18px;
+					color: #A6A6A6;
+    			}
+
+    			span.ph {
+					font-family: Poppins;
+					font-style: normal;
+					font-weight: 300;
+					font-size: 12px;
+					line-height: 18px;
+					color: #000000;
+					position: absolute;
+					bottom: 1em;
+					left: 10px;
+
+					.tp {
+						margin-right: 5px;
+					}
+    			}
+    		}
+    	}
+    }
+
+    .add-team {
+	    display: inline-flex;
+	    float: left;
+	    width: 40%;
+	    align-items: center;
+	    justify-content: center;
+
+    	&>div {
+    		width: 420px;
+			height: 310px;
+			display: inline-flex;
+			flex-direction: column;
+			background: #DEFFF7;
+			border-radius: 3px;
+			padding: 1em;
+
+			&>h3 {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: normal;
+				font-size: 22px;
+				line-height: 33px;
+				color: #000000;
+				margin-bottom: 20px;
+			}
+
+			input.tf {
+				height: 30px;
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: normal;
+				font-size: 13px;
+				line-height: 19px;
+				color: #A09F9F;
+				border: 0;
+				background: transparent;
+			    box-shadow: none;
+			    outline: none;
+			    margin: 10px 0;
+			    border-radius: 0;
+				border-bottom: 1px solid #03CF9E;
+			}
+			p.labs {
+				display: flex;
+				flex-direction: row;
+				margin: 1em 0;
+
+				label {
+					width: 35%;
+					font-size: 14px;
+					flex-direction: row;
+					display: inline-flex;
+
+					input {
+						display: inline;
+					    font-size: 20px;
+					    height: 20px;
+					    width: auto;
+					    position: relative;
+					    top: 0px;
+					    margin-right: 10px;
+					}
+				}
+			}
+    	}
+    }
+
+    .create-btn {
+    	width: 100px;
+		height: 40px;
+		background: #03CF9E;
+		border-radius: 2px;
+		font-family: Poppins;
+		font-style: normal;
+		font-weight: normal;
+		font-size: 13px;
+		line-height: 19px;
+		color: #FFFFFF;
+		border: 0;
+    }
+
+    .team-section-right {
+    	width: 100%;
+    }
+
+}

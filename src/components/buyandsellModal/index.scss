@@ -1,4 +1,18 @@
 .overlay.bs {
+
+  #btnBuy-price, #btnSell-price {
+    display: none;
+  }
+
+  #btnBuy-price._active {
+    display: inline-block;
+  }
+
+  #btnSell-price._active {
+    display: inline-block;
+  }
+
+
   z-index: 1111111111111;
   .deposit-modal-section {
     z-index: 1111;
@@ -260,10 +274,11 @@
               outline: none;
             }
             .btn-sell {
-              color: #fff;
-              background: #ff8787;
+              color: #959595;
+              background: #feafaf;
             }
             .btn-sell._active {
+              color: #fff;
               background: #FF1E1E;
             }
             .btn-buy {

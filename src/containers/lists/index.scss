@@ -1,0 +1,130 @@
+#lists-container {
+	padding: 2em !important;
+	width: 100%;
+	position: relative;
+    height: calc(100% - 120px);
+    display: flex;
+
+    .p-tabs {
+    	color: #fff;
+    	li > svg {
+    		margin: unset;
+    	}
+    }
+
+    .page-title {
+	    justify-content: space-between;
+	}
+
+	.table-header li, .table-body li {
+		width: calc(100% / 6);
+		position: relative;
+
+
+		.fil-u {
+			position: relative;
+		    top: -6px;
+		    right: -8px;
+		}
+
+		.fil-d {
+			position: relative;
+		    bottom: -4px;
+		    left: -4px;
+		}
+	}
+
+	.table-body._all {
+		background: #4E7300;
+		.checkbox-container-2 .checkmark:after {
+		  border-color: #C4C4C4;
+		}
+		.checkbox-container-2 .checkmark {
+		  border: 1px solid #FFF;
+		}
+	}
+
+	.table-body._users {
+		background: #008EDE;
+		.checkbox-container-2 .checkmark:after {
+		  border-color: #C4C4C4;
+		}
+		.checkbox-container-2 .checkmark {
+		  border: 1px solid #FFF;
+		}
+	}
+
+	.table-body._admins {
+		background: #FF06D7;
+		.checkbox-container-2 .checkmark:after {
+		  border-color: #C4C4C4;
+		}
+		.checkbox-container-2 .checkmark {
+		  border: 1px solid #FFF;
+		}
+	}
+
+    .create-list {
+		width: 120px;
+		height: 50px;
+		border: 0;
+		background: #00A880;
+		border-radius: 3px;
+		font-family: Poppins;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 21px;
+		align-items: center;
+		text-align: center;
+		color: #FFFFFF;
+		margin-left: 1em;
+
+		&.imp {
+			color: #00A880;
+			background: transparent;
+			border: 2px solid #00A880;
+		}
+    }
+
+	.lists-section-right {
+		width: 100%;
+
+		&.shared {
+			width: calc(100% - 342px);
+			margin-left: 342px;
+		}
+
+		.pagination-div {
+		    justify-content: center;
+		    margin-top: 1em;
+		}
+	}
+}
+
+html, body, #root {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 1000px) {
+	#lists-container {
+	
+	}
+}
+
+@media screen and (max-width: 900px) {
+
+#lists-container {
+
+}
+
+}
+
+
+@media screen and (max-width: 700px) {
+
+#lists-container {
+
+}
+
+}

@@ -10,13 +10,11 @@ import ForgotPassword from '../containers/forgotPassword/index';
 import ChangePassword from '../containers/resetPassword/index';
 import Market from '../containers/market/index';
 import News from '../containers/news/index';
+import PostNews from '../containers/postnews/index';
 import Accounts from '../containers/accounts/index';
 import BookCall from '../containers/book/index';
+import Restrictions from '../containers/restrictions/index';
 import Transactions from '../containers/transactions/index';
-
-/**
- * pages
- */
 
 export default props => (
   <Switch>

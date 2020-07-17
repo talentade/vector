@@ -36,6 +36,7 @@ class Chart extends Component {
     this.currentGrpahType = "candle";
     this.lineDataSeries = [];
     this.seriesIterator = 0;
+    this.lastPlotable = {};
 
     this.state = {
       selectedOption: 'forex',
@@ -48,23 +49,30 @@ class Chart extends Component {
       high: 0,
       low: 0,
       buyandsellModal: false,
+      buyandsellAct: 'buy',
       buyandsellConfirmed: false,
       showLoader: false,
-      instruments: [],
+      instruments: []
     };
   }
 
-  setGraphType = (type) => {
+  setGraphType = (type, no = 1) => {
     this.seriesIterator = 0;
     var option = {
-        upColor: '#03CF9E',
-        downColor: '#FF1E1E',
-        borderDownColor: '#FF1E1E',
-        borderUpColor: '#03CF9E',
+        upColor: '#26a69a',
+        downColor: '#ef5350',
+        scaleMargins: { bottom: 0.4, top: 0.4 },
+        entireTextOnly: true,
+        borderDownColor: '#ef5350',
+        borderUpColor: '#26a69a',
         wickDownColor: '#c4c4c4',
         wickUpColor: '#c4c4c4',
       };
-
+    if(no) {
+      // this.chartSeries = this.chart.current.removeSeries(option);
+      // this.chartSeries.setData([this.lastPlotable[type]]);
+      this.chart.current.removeSeries(this.chartSeries);
+    }
     this.currentGrpahType = type;
     if(type == "candle") {
       this.chartSeries = this.chart.current.addCandlestickSeries(option);
@@ -130,7 +138,7 @@ class Chart extends Component {
       },
     });
 
-    this.setGraphType("candle");
+    this.setGraphType("candle", 0);
     const user_id = localStorage.getItem('id');
 
     this.resizeObserver.current = new ResizeObserver((entries) => {
@@ -183,6 +191,7 @@ class Chart extends Component {
       const data = await this.handleDataChange(this.pair);
       if (typeof data === 'object' && data.pair === this.pair) {
         let plot_data = data;
+        // this.lastPlotable = {candle: data, bar: data, line: {time: data.time, value: data.open}, area: {time: data.time, value: data.open}, hist: {time: data.time, value: data.open, color: "#03cf9e"}};
         if(this.currentGrpahType == "candle") {
           // default
         } else if(this.currentGrpahType == "line") {
@@ -210,7 +219,7 @@ class Chart extends Component {
           spread: data.spread,
         });
       }
-    }, 30000); // 1000
+    }, 1000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 
@@ -279,8 +288,8 @@ class Chart extends Component {
     this.setState({ buyandsellModal: false, buyandsellConfirmed: false });
   }
 
-  showBsellModal = (e) => {
-    this.setState({ buyandsellModal: true, showLoader: false });
+  showBsellModal = (e, s) => {
+    this.setState({ buyandsellModal: true, showLoader: false, buyandsellAct: s});
   }
 
   confirmBsellModal = (e) => {
@@ -294,6 +303,10 @@ class Chart extends Component {
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               text={``}
+              pair={this.pair}
+              buy={this.state.buy}
+              sell={this.state.sell}
+              act={this.state.buyandsellAct}
               cancelClick={this.cancelBsellModal}
               confirmClick={this.confirmBsellModal}
             />
@@ -373,7 +386,7 @@ class Chart extends Component {
             </div>
           </div>
           <div className='chart-cta-section'>
-            <div className='chart-sell' onClick={this.showBsellModal}>
+            <div className='chart-sell' onClick={(e) => this.showBsellModal(e, "sell")}>
               <div className='sell'>
                 <div className='sell-info'>
                   <p>SELL</p>
@@ -389,7 +402,7 @@ class Chart extends Component {
               </div>
               <p className='map-center'>S: {this.state.spread}</p>
             </div>
-            <div className='chart-buy' onClick={this.showBsellModal}>
+            <div className='chart-buy' onClick={(e) => this.showBsellModal(e, "buy")}>
               <div className='buy'>
                 <img src={WhiteDir} alt='' />
                 <div className='buy-info'>

@@ -1,0 +1,150 @@
+.profile-details {
+	.detail-row, .detail-row-2 {
+		width: 100%;
+		height: 230px;
+		padding: 1.5em;
+		margin-bottom: 2em;
+
+		background: #EAFFFA;
+		border-radius: 3px;
+
+		&>h3 {
+			font-family: Poppins;
+			font-style: normal;
+			font-weight: 500;
+			font-size: 14px;
+			line-height: 21px;
+			display: flex;
+			align-items: center;
+			color: #03CF9E;
+			position: relative;
+
+			img {
+				width: 20px;
+				height: 20px;
+				position: relative;
+				top: -1px;
+				margin-right: 10px;
+			}
+		}
+
+		table, tr, td {
+			border: 0;
+		}
+
+		table {
+			width: 100%;
+		}
+
+		tr {
+			height: 55px;
+		}
+
+		td {
+			.std {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: normal;
+				font-size: 12px;
+				line-height: 18px;
+				display: flex;
+				align-items: center;
+				color: #B4B4B4;
+			}
+
+			.stv {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: 300;
+				font-size: 14px;
+				line-height: 21px;
+				display: flex;
+				align-items: center;
+				color: #000000;
+			}
+		}
+	}
+
+
+
+    .enbtn {
+		width: 100px;
+		height: 30px;
+		border: 0;
+		background: #00A880;
+		border-radius: 3px;
+		font-family: Poppins;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 21px;
+		align-items: center;
+		text-align: center;
+		color: #FFFFFF;
+		margin-left: 1em;
+
+		&.imp {
+			color: #00A880;
+			background: transparent;
+			border: 1px solid #00A880;
+		}
+    }
+
+	.detail-row-2 {
+		margin-bottom: 10px;
+		ul {
+	    	display: flex;
+		    list-style: none;
+		    margin-top: 20px;
+		    color: #03CF9E;
+		    font-family: Poppins;
+		    font-style: normal;
+		    font-weight: normal;
+		    padding-left: 0;
+
+		    flex-direction: row;
+		    text-align: left;
+
+		    li {
+		    	width: 33.3%;
+
+		    	&>div {
+			    	border: 1px solid #03CF9E;
+					box-sizing: border-box;
+					border-radius: 2px;
+					width: 244px;
+					margin: 0 auto;
+					flex-direction: column;
+					height: 120px;
+					display: flex;
+					padding: 1em;
+
+					.d-title {
+						font-family: Poppins;
+						font-style: normal;
+						font-weight: 300;
+						font-size: 13px;
+						line-height: 19px;
+						color: #000000;
+					}
+
+					.d-label {
+						margin-top: 1.5em;
+						font-family: Poppins;
+						font-style: normal;
+						font-weight: 500;
+						font-size: 10px;
+						line-height: 15px;
+						color: #B4B4B4;
+					}
+				}
+		    }
+		}
+	}
+
+	.pencil {
+		position: relative;
+		cursor: pointer;
+		margin-left: 1em;
+	}
+}

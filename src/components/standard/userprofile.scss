@@ -1,0 +1,240 @@
+.user-profile-body {
+	width: 340px;
+    height: calc(100% - 70px);
+    display: flex;
+    bottom: 0;
+    top: 70px;
+    background: #EAFFFA;
+    position: absolute;
+    z-index: 100000;
+    flex-direction: column;
+    overflow: auto;
+
+    .udp {
+    	width: 100px;
+		height: 100px;
+		margin: 30px auto 30px;
+    }
+
+    h2.proflle-name {
+    	font-family: Poppins;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 22px;
+		line-height: 33px;
+		text-align: center;
+		color: #00A880;
+    }
+
+    h6.user-id {
+    	font-family: Poppins;
+		font-style: normal;
+		font-weight: 300;
+		font-size: 13px;
+		line-height: 19px;
+		text-align: center;
+		color: #00A880;
+    }
+
+    .profile-actions {
+    	display: flex;
+	    list-style: none;
+	    margin-top: 20px;
+	    color: #03CF9E;
+	    text-align: center;
+	    font-family: Poppins;
+	    font-style: normal;
+	    font-weight: normal;
+	    font-size: 12px;
+	    line-height: 18px;
+	    padding-left: 0;
+	    margin-left: 2em;
+	    margin-right: 2em;
+    }
+
+    .user-info {
+    	display: flex;
+    	margin-top: 20px;
+    	padding: 1em 2.5em;
+   	    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    	position: relative;
+    	flex-direction: inherit;
+
+    	h4 {
+    		font-family: Poppins;
+			font-style: normal;
+			font-weight: 500;
+			font-size: 14px;
+			line-height: 21px;
+			color: #00A880;
+    	}
+
+    	.drp-down {
+    		position: absolute;
+		    left: 10px;
+		    top: 22px;
+    	}
+
+    	ul {
+	    	display: flex;
+		    list-style: none;
+		    margin-top: 20px;
+		    color: #03CF9E;
+		    font-family: Poppins;
+		    font-style: normal;
+		    font-weight: normal;
+		    padding-left: 0;
+
+		    flex-direction: column;
+		    text-align: left;
+
+		    li {
+		    	font-family: Poppins;
+				font-style: normal;
+				font-weight: 500;
+				font-size: 13px;
+				line-height: 19px;
+				margin-bottom: 10px;
+				color: #03CF9E;
+
+				span {
+					font-weight: bold;
+					margin-right: 14px; 
+				}
+		    }
+    	}
+
+    	table {
+    		margin-top: 20px;
+
+    		td {
+    			width: 50%;
+    			display: inline-flex;
+    			flex-direction: column;
+    			margin-bottom: 1em;
+
+    			&.full {
+    				width: 100%;
+    			}
+    		}
+
+			.txt-default {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: 500;
+				font-size: 12px;
+				line-height: 18px;
+			}
+
+			.td-v {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: 500;
+				font-size: 14px;
+				line-height: 21px;
+				color: #FFA24D;
+			}
+
+			.td-b {
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: 500;
+				font-size: 14px;
+				line-height: 21px;
+				color: #03CF9E;
+			}
+
+			.btn-down {
+				width: 140px;
+				height: 34px;
+				border: 0;
+				font-family: Poppins;
+				font-style: normal;
+				font-weight: 500;
+				font-size: 12px;
+				line-height: 18px;
+				color: #FFFFFF;
+				margin-top: 5px;
+				background: #03CF9E;
+				border-radius: 2px;
+			}
+    	}
+    }
+
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #C4C4C4;
+  border-radius: 1em;
+}
+
+::-webkit-scrollbar-track {
+    background: #EAFFFA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C4C4C4;
+  cursor: pointer;
+}
+
+.users-section-right {
+	::-webkit-scrollbar {
+	  width: 8px;
+	  background: #004044;
+	  border-radius: 1em;
+	}
+
+	::-webkit-scrollbar-track {
+	    background: #004044;
+	}
+
+	::-webkit-scrollbar-thumb {
+	  background: #ddd;
+	  cursor: pointer;
+	  border-radius: 10px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+	  background: #C4C4C4;
+	  cursor: pointer;
+	}	
+}
+
+
+.tab-row {
+	width: 100%;
+	flex-direction: column;
+	height: calc(100% - 272px);
+	overflow: auto;
+	margin-bottom: 0;
+	padding-right: 7px;
+	padding-bottom: 0px !important;
+	display: none;
+	background: #004044;
+
+	&._active {
+		display: flex;
+		height: calc(100% - 219px);
+	}
+
+	&._active.profile-accounts {
+		display: flex;
+		height: calc(100% - 175px;);
+	}
+
+	&._active.profile-files, &._active.profile-notes {
+		display: flex;
+		height: calc(100% - 16px);
+	}
+	&._active.profile-email {
+	    display: flex;
+	    height: calc(100% - 19px);
+	}
+}

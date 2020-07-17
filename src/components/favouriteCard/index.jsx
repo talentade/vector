@@ -2,12 +2,19 @@ import React from 'react';
 import Star from '../../themes/images/tradeDashboard/star.svg';
 import Comment from '../../themes/images/tradeDashboard/comment.svg';
 import './index.scss';
+import server from '../../services/server';
 
+const removeFav = async (pair) => {
+  const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
+  if(status == 200) {
+    document.getElementById("fav-pair-"+pair).remove();
+  }
+}
 
 const FavouriteCard = ({ direction, color, pair, price }) => (
-  <div className="favourite-card">
+  <div className="favourite-card" id={"fav-pair-"+pair}>
     <div className="star-section">
-      <img src={Star} alt="" />
+      <img src={Star} alt="" onClick={() => removeFav(pair)} />
       <p>{pair}</p>
     </div>
     <div className="smaller-items">

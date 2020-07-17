@@ -18,17 +18,30 @@ class Container extends Component {
 
     this.profile = JSON.parse(localStorage.getItem('profile'));
     this.id = localStorage.getItem('id');
+    // this.isAdmin = !!(localStorage.getItem("avad") || 1);
+    this.isAdmin = false;
   }
 
   componentDidMount() {
     this.props.saveUserProfile(this.profile);
+    if(this.isAdmin) {
+      if(!window.__toggleOutterNav) {
+        this.props.toggleOutterNav();
+        window.__toggleOutterNav = true;
+      }
+
+    }
   }
 
   logout = async () => {
     try {
       const user_id = localStorage.getItem('id');
       const email = this.profile.email;
+      const scheduled = localStorage.getItem("scheduled") || false;
       localStorage.clear();
+      if(scheduled) {
+        localStorage.setItem("scheduled", 1);
+      }
 
       this.props.history.push('/Login');
 
@@ -64,15 +77,19 @@ class Container extends Component {
       }
     }
 
+    let isAdmin = this.isAdmin;
+
     return (
       <div className='dash-container'>
         <OutterLeftNav
+          isAdmin={isAdmin}
           handleNavClick={this.props.toggleSideNav}
           handleOutterClick={this.props.toggleOutterNav}
           handleTransactionNavClick={this.props.toggleTransactionNav}
         />
         <div className={`right ${this.props.outterNav ? 'smaller-right' : ''}`}>
           <OutterTopNav
+            isAdmin={isAdmin}
             profileImage={profile_image}
             email={localStorage.getItem('email')}
             firstName={first_name}

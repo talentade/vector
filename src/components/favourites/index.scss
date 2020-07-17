@@ -29,6 +29,7 @@
 
   .favourite-flex {
     height: 163px;
+    position: relative;
     overflow: auto;
     .favourite-section-containers {
       width: 82%;
@@ -52,6 +53,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: fixed;
+      right: 3em;
+      top: 6.5em;
 
       p {
         color: #03cf9e;

@@ -1,0 +1,141 @@
+#instrument-container {
+	padding: 2em !important;
+	width: 100%;
+	position: relative;
+    height: calc(100% - 235px);
+    overflow: auto;
+    display: flex;
+
+	table {
+		width: 100%;
+		border: 0;
+		background: #002022;
+		border-collapse: collapse;
+		thead, tbody {
+			width: 100%;
+			border: 0;
+			border-collapse: collapse;
+			tr {
+				width: 100%;
+				border: 0;
+				height: 50px;
+				left: 136px;
+				top: 265px;
+				background: #00A880;
+				border-collapse: collapse;
+				border-radius: 5px 5px 0px 0px;
+
+				th {
+					border: 0;
+					border-collapse: collapse !important;
+					font-family: Poppins;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 14px;
+					line-height: 21px;
+					text-align: left;
+					padding-left: 50px;
+					align-items: left;
+					color: #FFFFFF;
+				}
+			}
+		}
+
+		tbody {
+			tr {
+				background: transparent;
+				td {
+					font-family: Poppins;
+					font-style: normal;
+					font-weight: 500;
+					font-size: 18px;
+					line-height: 27px;
+					text-align: left;
+					padding-left: 50px;
+					align-items: left;
+					color: #fff;
+
+					&.ins-td {
+						padding-left: 40px;
+					}
+
+					.td-ins {
+						font-family: Poppins;
+						font-style: normal;
+						font-weight: 500;
+						font-size: 22px;
+						line-height: 33px;
+						align-items: center;
+						color: #FFFFFF;
+					}
+
+					.flag {
+						width: 28px;
+						height: 28px;
+						top: 7px;
+						position: relative;
+						margin-left: 1em;
+						margin-right: 1em;
+					}
+
+					.td-buy {
+						color: #C20404;
+					}
+					.td-sell {
+						color: #00A880;
+					}
+					.td-rate {
+
+					}
+					.td-high {
+
+					}
+					.td-low {
+
+					}
+				}
+			}
+		}
+	}
+
+	.users-section-right {
+		width: 100%;
+
+		&.shared {
+			width: calc(100% - 342px);
+			margin-left: 342px;
+		}
+
+		.pagination-div {
+		    justify-content: center;
+		    margin-top: 1em;
+		}
+	}
+}
+
+html, body, #root {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 1000px) {
+	#users-container {
+	
+	}
+}
+
+@media screen and (max-width: 900px) {
+
+#users-container {
+
+}
+
+}
+
+
+@media screen and (max-width: 700px) {
+
+#users-container {
+
+}
+
+}

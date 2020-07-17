@@ -3,6 +3,7 @@ import './index.scss';
 import CancelIcon from '../../themes/images/cancel.svg';
 import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
+import server from '../../services/server';
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
 import downVlv from '../../themes/images/down.png';
@@ -44,6 +45,32 @@ class BuyandsellModal extends Component {
     document.getElementById(r).classList.remove("_active");
     document.getElementById(i+"-order").classList.add("_active");
     document.getElementById(r+"-order").classList.remove("_active");
+    document.getElementById(i+"-price").classList.add("_active");
+    document.getElementById(r+"-price").classList.remove("_active");
+    this.placeOrderBuy();
+  }
+
+  placeOrderBuy = async () => {
+    const {
+          data: {
+            data: {}, code, order
+          },
+      } = await server.placeOrderBuy(
+      localStorage.getItem('id'),
+      localStorage.getItem('email'),
+      localStorage.getItem('accountType'),
+      this.props.pair
+    );
+
+    console.log(order);
+  }
+
+  componentDidMount() {
+    if(this.props.act == "buy") {
+      this.btnBsell("btnBuy", "btnSell");
+    } else {
+      this.btnBsell("btnSell", "btnBuy");
+    }
   }
 
   handleChange = (e) => {
@@ -65,7 +92,7 @@ class BuyandsellModal extends Component {
   }
 
   render () {
-    const { text, cancelClick, confirmClick } = this.props;
+    const { text, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
     const { information } = this.state;
     return (
       <div className='overlay bs'>
@@ -77,7 +104,7 @@ class BuyandsellModal extends Component {
               <li className={information ? '' : '_active'} onClick={() => this.handleClick(false)}><span>Markets</span></li>
             </ul>
             { information ? <div className='bsell-modal-content'>
-              <h6>BTCUSD</h6>
+              <h6>{pair}</h6>
               <p>Bitcoin vs US Dollar</p>
               <ul className="info-list">
                 <li className="mt1"><span className="text-success">Quote Asset</span><span className="text-success">USD</span></li>
@@ -98,13 +125,13 @@ class BuyandsellModal extends Component {
             </div> : null }
 
             { !this.state.information ? <div className='bsell-modal-content'>
-              <h6>BTCUSD</h6>
+              <h6>{pair}</h6>
               <ul className="info-list">
                 <li style={{height: "50px", marginBottom: "2em"}}>
                 <span className="text-success">
                   <button className="btn btn-sell _active" id="btnSell" onClick={(e) => this.btnBsell("btnSell", "btnBuy")}>SELL</button>
                   <button className="btn btn-buy" id="btnBuy" onClick={(e) => this.btnBsell("btnBuy", "btnSell")}>BUY</button>
-                </span><span style={{paddingTop: "1em"}}>Current Price: <font className="text-success">0.42729</font></span></li>
+                </span><span style={{paddingTop: "1em"}}>Current Price: <font className="text-success" id="btnSell-price">{sell}</font><font className="text-success" id="btnBuy-price">{buy}</font></span></li>
               </ul>
               <p>Volume (lots)</p>
               <p className="mt1 nolot" style={{position: "relative"}}>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import './index.scss';
 import FilterIcon from '../../themes/images/tradeDashboard/filter.svg';
+import starIcon from '../../themes/images/fstar.svg';
+import starIcon2 from '../../themes/images/tradeDashboard/star.svg';
 import CommentIcon from '../../themes/images/comment.svg';
 import DirectionIcon from '../../themes/images/direction.svg';
 import CompassIcon from '../../themes/images/compass.svg';
@@ -17,8 +19,11 @@ const MarketSideBar = ({
   filterInstrument,
   showLoader,
   showBsellModal,
-  showBsellModal2
+  showBsellModal2,
+  addToFav,
+  remFav
 }) => {
+
   return (
     <div
       style={{
@@ -59,14 +64,19 @@ const MarketSideBar = ({
         style={{ display: hideText ? 'none' : 'block' }}
       >
         <div className='market-pairs'>
-          {pairs.map((pair) => (
+          {pairs.map((pair, index) => (
             <div
               className='market-pair'
               key={`${Math.random()}-${Math.random()}`}
             >
               <div className='market-pair-flex'>
                 <h5>{pair.stock}</h5>
-                <img src={CommentIcon} alt='' onClick={showBsellModal2} />
+                <span>
+                { pair.isFav
+                  ? <img src={starIcon2} alt='' onClick={(e) => { remFav(e); pairs[index].isFav = false; }} pair={pair.stock} />
+                  : <img src={starIcon} alt='' onClick={(e) => { addToFav(e); pairs[index].isFav = true; }} pair={pair.stock} /> }
+                  <img src={CommentIcon} alt='' onClick={showBsellModal2} />
+                </span>
               </div>
               <div className='market-big-flex'>
                 <p className='pair-percentage'>{pair.change}</p>

@@ -11,6 +11,7 @@ import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
 import AddToFav from '../../components/addToFav/index';
 import Chart from '../../components/chart/index';
+import Spinner from '../../components/spinner/index';
 import Container from '../container/index';
 import MarketSideBar from '../../components/marketSidebar/index';
 import { setHotStocks } from '../../redux/actions/index';
@@ -30,12 +31,36 @@ class Market extends Component {
       hotStocks: [],
       showLoader: false,
       showAddFav: false,
+      showSpinner: false,
       buyandsellModal: false,
       buyandsellModalInfo: false,
       buyandsellConfirmed: false
     };
 
     this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.fireFavRef = new CustomEvent('refreshFav', {
+      detail: {
+        code: 200
+      }
+    });
+  }
+
+  fetchStock = async () => {
+    const userId = localStorage.getItem('id');
+    try {
+      const {
+        data: {
+          data: { hot_stocks },
+        },
+      } = await server.getMarketAndNewsData(userId);
+
+      this.setState({ hotStocks: hot_stocks, showLoader: false });
+    } catch (error) {
+      this.setState({ showLoader: false });
+      if (!error.response) {
+        return error.message;
+      }
+    }
   }
 
   async componentDidMount() {
@@ -43,23 +68,8 @@ class Market extends Component {
     const accountType = localStorage.getItem('accountType');
 
     const userId = localStorage.getItem('id');
-
-    setInterval(async () => {
-      try {
-        const {
-          data: {
-            data: { hot_stocks },
-          },
-        } = await server.getMarketAndNewsData(userId);
-  
-        this.setState({ hotStocks: hot_stocks, showLoader: false });
-      } catch (error) {
-        this.setState({ showLoader: false });
-        if (!error.response) {
-          return error.message;
-        }
-      }  
-    }, 1000);
+    this.fetchStock();
+    setInterval(async () => this.fetchStock(), 30000);
 
     if (accountType) {
       this.setState({ selectedAccount: accountType });
@@ -97,6 +107,27 @@ class Market extends Component {
 
   confirmBsellModal = (e) => {
     this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
+  }
+
+  addToFav = async (e) => {
+    this.setState({showSpinner: true});
+    const { data : { data: {}, code, message } } = await server.addToFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), e.target.getAttribute("pair"));
+    if(code == 200) {
+      document.getElementById("favContainers").dispatchEvent(this.fireFavRef);
+      this.fetchStock();
+    }
+    this.setState({showSpinner: false});
+  }
+
+  remFav = async (e) => {
+    this.setState({showSpinner: true});
+    let pair = e.target.getAttribute("pair");
+    const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
+    if(status == 200) {
+      document.getElementById("fav-pair-"+pair).remove();
+      this.fetchStock();
+    }
+    this.setState({showSpinner: false});
   }
 
   render() {
@@ -177,6 +208,7 @@ class Market extends Component {
 
     return (
       <Container>
+        <Spinner showSpinner={this.state.showSpinner} />
         <div className='trade-section market-section'>
           { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
           {this.state.buyandsellModal ? (
@@ -203,6 +235,8 @@ class Market extends Component {
             hideText={this.state.clicked}
             showLoader={showLoader}
             showBsellModal={this.showBsellModal}
+            addToFav={this.addToFav}
+            remFav={this.remFav}
             showBsellModal2={this.showBsellModal2}
           />
           <div

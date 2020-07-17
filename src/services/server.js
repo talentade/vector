@@ -21,7 +21,6 @@ export default {
     return Api().post('/login/user', credentials);
   },
   getProfile(id, email) {
-    // return Api().get(`/profile/fetch/${email}/${id}`)
     let Authorization = id;
     return axios.request({
       method: 'GET',
@@ -45,7 +44,7 @@ export default {
   getAllPairs(Authorization) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/trading/pairs/fetch?category=all',
+      url: 'https://avariz-core.herokuapp.com/trading/pairs/fetch?category=all&showFavs=true&account='+localStorage.getItem("accountType").split("-")[0].toLowerCase(),
       headers: {'Authorization': Authorization}
     })
   },
@@ -57,23 +56,6 @@ export default {
       headers: {'Authorization': Authorization}
     })
   },
-
-  // addPairs(Authorization, pairs) {
-  //   return axios.request({
-  //     method: 'PUT',
-  //     url: 'https://avariz-core.herokuapp.com/trading/pairs/add?category=all',
-  //     headers: {'Authorization': Authorization},
-  //     data: pairs,
-  //   })
-  // },
-  // removePairs(Authorization, pairs) {
-  //   return axios.request({
-  //     method: 'PUT',
-  //     url: 'https://avariz-core.herokuapp.com/trading/pairs/remove?category=all',
-  //     headers: {'Authorization': Authorization},
-  //     data: pairs,
-  //   })
-  // },
   uploadImage(id, credentials) {
     return Api().post(`/utils/upload/profile_image/${id}`, credentials);
   },
@@ -107,7 +89,7 @@ export default {
   getMarketAndNewsData(Authorization) {
     return axios.request({
       method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/trading/market`,
+      url:  `https://avariz-core.herokuapp.com/trading/market?&account=`+localStorage.getItem("accountType").split("-")[0].trim().toLowerCase(),
       headers: {'Authorization': Authorization}
     })
   },
@@ -137,5 +119,112 @@ export default {
         'Authorization': id,
       }
     })
-  }
+  },
+
+  // ===============================================================
+
+  getMeeting (user_id) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/utils/calendar/booking/history',
+      headers: {
+        'Authorization': Authorization
+      }
+    });
+  },
+
+  deleteMeeting (user_id, date, id) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'DELETE',
+      url: 'http://avariz-core.herokuapp.com/calendar/meeting/delete/'+date+'/'+id,
+      headers: {
+        'Authorization': Authorization
+      }
+    });
+  },
+
+  bookMeeting (user_id, email, year, month, day, h, m, am_pm) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'POST',
+      url: 'http://avariz-core.herokuapp.com/calendar/meeting/new?year='+year+'&month='+month+'&day='+day+'&h='+h+'&m='+m+'&am_pm='+am_pm+'&dur_h=1&dur_m=30',
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {
+            "meeting_title" :         "Scheduled call with broker", 
+            "meeting_description":    "We're meeting for 30 minutes, to talk about the basics of trading on Avariz platform", 
+            "meeting_host" :          "dean@avarizgroup.com",
+            "meeting_participants" :  [email]
+          }
+    });
+  },
+
+  placeOrderBuy(user_id, email, account, currency) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'PUT',
+      url: 'https://avariz-core.herokuapp.com/wallet/buy/order?email='+email+'&account='+account+'&currency='+currency,
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {email: email, currency: currency, account: account}
+    });
+  },
+
+  fetchFav(user_id, account) {
+    // account => [demo, live]
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/trading/favorites/fetch?account='+account,
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {account: account}
+    });
+  },
+
+  addToFav(user_id, account, pair) {
+    // account => [demo, live]
+    let Authorization = user_id;
+    return axios.request({
+      method: 'PUT',
+      url: 'https://avariz-core.herokuapp.com/trading/favorites/add?account='+account+'&pair='+pair,
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {pair: pair, account: account}
+    });
+  },
+
+  removeFav(user_id, account, pair) {
+    // account => [demo, live]
+    let Authorization = user_id;
+    return axios.request({
+      method: 'PUT',
+      url: 'https://avariz-core.herokuapp.com/trading/favorites/remove?account='+account+'&pair='+pair,
+      headers: {
+        'Authorization': Authorization
+      },
+      data: {pair: pair, account: account}
+    });
+  },
+
+  tradeHistory(user_id, email, account, type) {
+    // type => [pending, open, closed]
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/wallet/history?email='+email+'&account='+account+'&tracker_code=trades.'+type,
+      headers: {'Authorization': Authorization}
+    })
+  },
+
+
+
+
+
 };

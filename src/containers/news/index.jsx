@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Container from '../container/index';
+import TableFilters from '../../components/tablefilters/index';
 import Pagination from '../../components/Pagination/index';
 import news1 from '../../themes/images/news1.png';
 import ss1 from '../../themes/images/ss1.png';
 import ss2 from '../../themes/images/ss2.png';
 import ss3 from '../../themes/images/ss3.png';
 import tn from '../../themes/images/tn.png';
+import addstory from '../../themes/images/addstory.png';
 import todays_news from '../../themes/images/todays_news.png';
 import './index.scss';
 
@@ -23,6 +26,7 @@ class News extends Component {
       <Container>
       <div className="col-12" id="news-container">
           <div className="news-section-left">
+            <TableFilters table="news" />
             <img src={news1} className="ifm" />
             <h1 className="news-header">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -103,6 +107,7 @@ class News extends Component {
                 </span>
               </li>
             </ul>
+            {/*<Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link>*/}
             <Pagination length="4" max_rows="20" page_no="1" paginationChange={() => {}}/>
           </div>
         </div>

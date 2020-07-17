@@ -1,4 +1,20 @@
 #book-container {
+
+
+::selection {
+    color: none;
+    background: none;
+}
+/* For Mozilla Firefox */
+::-moz-selection {
+    color: none;
+    background: none;
+}
+
+	#year-inp {
+		outline: none;
+	}
+
 	padding: .5em !important;
 	width: 100%;
 	position: relative;
@@ -7,6 +23,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    button.clear {
+   	    border: 0;
+	    background: transparent;
+	    padding: 0;
+	    width: auto;
+	    height: auto;
+	    outline: none;
+    }
 
     h2.bcw {
 		font-family: Poppins;
@@ -87,15 +112,19 @@
 			}
 
 			.inp-up {
-				position: absolute;
-			    right: 8px;
-			    top: 12px;
+			    position: absolute;
+			    right: 3px;
+			    cursor: pointer;
+			    top: 4px;
+			    padding: 0 5px;
 			}
 
 			.inp-down {
 				position: absolute;
-			    right: 8px;
-			    bottom: 12px;
+			    right: 3px;
+			    padding: 0 5px;
+			    cursor: pointer;
+			    bottom: 9px;
 			}
 		}
 
@@ -124,8 +153,9 @@
 		    }
 
 		    li {
-		    	text-align: center;
 		    	width: 25%;
+		    	cursor: pointer;
+		    	text-align: center;
 		    	font-family: Poppins;
 				font-style: normal;
 		    	padding: 5px 0;
@@ -167,6 +197,7 @@
 		    li {
 		    	text-align: center;
 		    	width: 10%;
+		    	cursor: pointer;
 		    	margin-left: 2%;
 		    	margin-right: 2%;
 				font-size: 12px;
@@ -223,8 +254,9 @@
 			    	display: inline-flex;
 
 			    	.d-time {
-			    		margin: 0 auto 1em;
 						width: 82%;
+						outline: none;
+			    		margin: 0 auto 1em;
 						background: #FFFFFF;
 						border-radius: 10px;
 						height: 50px;
@@ -269,6 +301,28 @@
 	text-align: center;
 }
 
+.schedule-call {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+	align-items: center;
+	text-align: center;
+	color: #FFFFFF;
+	width: 400px;
+	height: 50px;
+    min-height: 40px;
+	background: #03CF9E;
+	border-radius: 5px;
+	border: 0;
+
+	&.re {
+	    width: 260px;
+	    margin-top: 1em;
+	}
+}
+
 }
 
 
@@ -279,4 +333,8 @@
 
 }
 
+}
+
+.hide {
+	display: none !important;
 }

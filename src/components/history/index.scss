@@ -101,6 +101,15 @@
       height: 40px;
     }
 
+    .ttype {
+      width: 114px;
+      height: 30px;
+      border: 0px solid;
+      background: #FFE602;
+      border-radius: 50px;
+      color: #FFF;
+    }
+
     .transfer {
       background: #DC02FF;
     }
@@ -111,15 +120,6 @@
 
     .withdraw {
       background: #FF5D02;
-    }
-
-    .ttype {
-      width: 114px;
-      height: 30px;
-      border: 0px solid;
-      background: #FFE602;
-      border-radius: 50px;
-      color: #FFF;
     }
   }
 }

@@ -19,6 +19,11 @@
   flex-direction: column;
   justify-content: space-between;
 
+  &.isAdmin {
+    height: calc(100vh - 100px);
+    min-height: 500px;
+  }
+
   li:nth-child(1) {
     align-self: center;
 

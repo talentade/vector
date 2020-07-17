@@ -1,0 +1,135 @@
+#users-container {
+	padding: 2em !important;
+	width: 100%;
+	position: relative;
+    height: calc(100% - 120px);
+    display: flex;
+
+
+	.users-section-right {
+		width: 100%;
+
+		&.shared {
+			width: calc(100% - 342px);
+			margin-left: 342px;
+		}
+
+		.pagination-div {
+		    justify-content: center;
+		    margin-top: 1em;
+		}
+	}
+}
+
+.det {
+	padding: 0;
+	margin-top: 10px;
+}
+
+.det-flex {
+  width: 100% !important;
+  display: flex !important;
+  margin-bottom: 35px !important;
+  justify-content: flex-start !important;
+
+  .ml-10 {
+    margin-left: 10%;
+  }
+
+  .det-flex-item-1 {
+    width: 280px;
+
+    select {
+      width: 100%;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: transparent;
+      background-image: url('../../themes/images/down_caret.svg');
+      background-repeat: no-repeat;
+      background-position-x: 97%;
+      background-position-y: 15px;
+      border: 1px solid #03cf9e;
+      border-radius: 3px;
+      height: 36px;
+      padding-left: 5px;
+      font-family: Poppins, sans-serif;
+      color: #03CF9E;
+      font-weight: 100;
+    }
+
+    select:focus {
+      outline: none;
+    }
+  }
+
+  .det-flex-item-2 {
+    width: 160px;
+
+    label {
+      color: #03cf9e;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .bal-sym {
+      display: flex;
+      border: 2px solid #03cf9e;
+      box-sizing: border-box;
+      border-radius: 3px;
+      padding-right: 10px;
+
+      input {
+        background: inherit;
+        border: none;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 100;
+      }
+
+      input::placeholder {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 100;
+      }
+
+      input:focus {
+        outline: none;
+      }
+
+      p {
+        align-self: center;
+        color: #ffffff;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+
+html, body, #root {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 1000px) {
+	#users-container {
+	
+	}
+}
+
+@media screen and (max-width: 900px) {
+
+#users-container {
+
+}
+
+}
+
+
+@media screen and (max-width: 700px) {
+
+#users-container {
+
+}
+
+}

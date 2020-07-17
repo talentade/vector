@@ -1,0 +1,32 @@
+.breadcrumbs {
+	display: flex;
+    flex-direction: row;
+    list-style: none;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 19px;
+    align-items: center;
+    color: #C4C4C4;
+    padding-left: 0;
+
+    li {
+    	margin: 0 5px;
+
+    	&>svg {
+    		position: relative;
+    		top: 2px;
+    	}
+
+    	&>img {
+    		margin-left: 5px;
+    		position: relative;
+    		top: 1px;
+    	}
+    }
+
+    li:last-child {
+    	color: #03CF9E;
+    }
+}

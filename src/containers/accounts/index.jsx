@@ -3,7 +3,9 @@ import Container from '../container/index';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
 import ai_n from '../../themes/images/ai-normal.png';
+import sp from '../../themes/images/circle-plus.png';
 import ai_b from '../../themes/images/ai-bookmark.png';
+import '../../components/standard/standard.scss';
 import './index.scss';
 
 class Accounts extends Component {
@@ -26,6 +28,12 @@ class Accounts extends Component {
     return (
       <Container>
         <div className="col-12" id="account-container">
+
+          <h1 className="page-title">Accounts
+            <div className="btn-list">
+              <button className="add_account"><img src={sp} /> Add account</button>
+            </div>
+          </h1>
           
           <ul className='t-history-header'>
             <li className="acc-name">TRADING ACCOUNT</li>

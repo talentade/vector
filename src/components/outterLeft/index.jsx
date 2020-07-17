@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { leftNavData } from '../../utils/dummyData';
+import { leftNavData, adminLeftNavData } from '../../utils/dummyData';
 import Lnav1 from '../../themes/images/tradeDashboard/l_nav1.svg';
 import { NavLink } from 'react-router-dom';
 import './index.scss';
@@ -26,16 +26,19 @@ class OutterLeftNav extends Component {
       borderRadius: '5px !important',
     };
 
+    const isAdmin  = this.props.isAdmin;
+    const navData  = isAdmin ? adminLeftNavData : leftNavData;
+    let nClicked   = this.props.outterNavClicked;
     return (
       <div
         className='outter-left'
-        style={this.props.outterNavClicked ? this.navClickedStyles : null}
+        style={nClicked ? this.navClickedStyles : null}
       >
-        <ul className='left-nav'>
+        <ul className={'left-nav'+(isAdmin ? ' isAdmin' : '')}>
           <li onClick={this.props.handleOutterClick} className='outter-ham'>
             <img src={Lnav1} alt='' />
           </li>
-          {leftNavData.map((nav, idx) => (
+          {navData.map((nav, idx) => (
             <li
               key={`${idx}-1`}
               onClick={
@@ -45,7 +48,7 @@ class OutterLeftNav extends Component {
                   ? this.props.handleTransactionNavClick
                   : null
               }
-              style={{ width: this.props.outterNavClicked ? '35px' : null }}
+              style={{width: nClicked ? '35px' : null}}
               className='link-icons'
             >
               <NavLink
@@ -53,11 +56,11 @@ class OutterLeftNav extends Component {
                 activeStyle={activeStyle}
                 className={nav.className}
                 style={
-                  this.props.outterNavClicked ? this.props.listStyles : null
+                  nClicked ? this.props.listStyles : null
                 }
               >
                 <img src={nav.imageUrl} alt='nav-logo' />
-                {!this.props.outterNavClicked ? (
+                {!nClicked ? (
                   <p className='outter-lnav-text'>{nav.text}</p>
                 ) : null}
               </NavLink>

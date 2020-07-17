@@ -1,0 +1,61 @@
+.p-tabs {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    align-items: center;
+    padding-left: 0;
+    font-family: Poppins;
+    font-style: normal;
+    width: 100%;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 21px;
+    color: #00A880;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    border-bottom: 0.5px solid #00A880;
+
+    li {
+        margin: 0 1em;
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        cursor: pointer;
+        padding-bottom: 10px;
+        justify-content: center;
+
+        &>img {
+            margin-left: 5px;
+            position: relative;
+            top: 1px;
+        }
+
+        &>svg {
+            position: relative;
+            margin: 0 auto;
+            top: 10px;
+            opacity: 0;
+        }
+    }
+
+    li._active > svg {
+        opacity: 1;
+    }
+
+    &.center {
+        justify-content: center;
+
+        li {
+            margin: 0 2em;
+        }
+
+        li._active {
+            color: #03CF9E;
+
+            img, svg {
+                margin: 0 auto !important;
+            }
+        }
+    }
+}

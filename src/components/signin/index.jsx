@@ -83,7 +83,8 @@ class SignIn extends Component {
 
       this.setState({ showSpinner: false });
 
-      this.props.history.push('/Trade');
+      this.props.history.push((localStorage.getItem("scheduled") || false) ? '/Trade' : '/Book');
+      // this.props.history.push('/Forms');
     } catch (error) {
       this.setState({ showSpinner: false });
 

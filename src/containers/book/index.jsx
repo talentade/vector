@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import Container from '../container/index';
 import book_call from '../../themes/images/book-call.png';
 import scheduled from '../../themes/images/scheduled.png';
 import check_mark from '../../themes/images/check-mark.png';
+import server from '../../services/server';
+import Spinner from '../../components/spinner/index';
 import calendar_icon from '../../themes/images/calendar-icon.png';
 import './index.scss';
 
@@ -11,13 +14,221 @@ class BookCall extends Component {
     super(props);
 
     this.state = {
-      bookState: 1,
+      showLoader: false,
+      activeM: null,
+      thisYear: 2020,
+      lestEdge: 0,
+      currentHour: 1,
+      daysEdge: null,
+      bookState: 0,
+      weekDay: 7,
+      maxDay: 30,
+      today: 1,
+      month: 0,
+      days: [],
+      email: localStorage.getItem("email"),
+      meeting_date: null,
+      meeting_time: null,
+      meeting_id: null
     }
+  }
+
+  async componentDidMount() {
+    let d = new Date();
+    let m = d.getMonth();
+    this.setState({thisYear: d.getFullYear()});
+    setTimeout(() => {
+      this.monthList(m);
+    }, 100);
+
+    let meetings = await server.getMeeting(localStorage.getItem("id"));
+    if(meetings.status == 200) {
+      meetings = meetings.data.data;
+      if(meetings.length) {
+        this.setState({ bookState: 1, showLoader: false});
+        this.monthListActive(m);
+        for (var i = 0; i < meetings.length; i++) {
+          if(i != meetings.length-1) {
+            let del = this.deleteMeeting(meetings[i].meeting_date, meetings[i].meeting_id);
+          } else {
+            this.setState({ meeting_date: meetings[i].meeting_date, meeting_time: meetings[i].meeting_starts, meeting_id: meetings[i].meeting_id});
+          }
+        }
+      }
+    }
+  }
+
+  deleteMeeting = async (meeting_date, meeting_id, x = -1) =>  {
+    if(x > -1) {
+      this.setState({ showLoader: true });
+    }
+    let del = await server.deleteMeeting(localStorage.getItem("id"), meeting_date, meeting_id);
+    if(del.status == 200 && x > -1) {
+      window.location.reload(false);
+    } else {
+      this.setState({ showLoader: false });
+    }
+  }
+
+  monthList = (i = -1) => {
+    this.monthListActive(i > -1 ? i : this.state.activeM);
+  }
+
+  monthListActive = (act) => {
+    act = act < 0 ? 0 : (act > 11 ? 11 : act);
+
+    this.setState({month: act});
+    setTimeout(() => {
+      this.dayListActive();
+    }, 100);
+
+    let last = this.state.activeM;
+    let ledge = this.state.lestEdge;
+    let edge = act > 8 ? 8 : act;
+    let range = true;
+
+    if(last !== null) {
+      edge = last > 8 ? 8 : last;
+      if(act < ledge) {
+        edge = ledge-1;
+        range = false;
+      } else if(act > ledge+3) {
+        edge = ledge+1;
+        range = false;
+      } else {
+        range = true;
+        edge = ledge;
+      }
+    }
+
+
+    this.setState({activeM: act, lestEdge: edge});
+    console.log(this.state.activeM);
+
+    if(!range || last === null) {
+      $("#monthList li").attr("class", "hide");
+      $("#monthList li:eq("+edge+"),#monthList li:eq("+(edge+1)+"),#monthList li:eq("+(edge+2)+"),#monthList li:eq("+(edge+3)+")").removeClass("hide");
+      $("#monthList li:eq("+act+")").addClass("_active");
+    } else {
+      $("#monthList li._active").removeClass("_active");
+      $("#monthList li:eq("+act+")").addClass("_active");
+    }
+  }
+
+  dayListActive = () => {
+    let year = this.state.thisYear;
+    let month = this.state.activeM+1;
+    let last_day = new Date(year, month, 0).toString();
+    let ld = last_day.split(" ")[2];
+    let ldn = last_day.split(" ")[0];
+    this.populateDays(ld, ldn);
+  }
+
+  populateDays = (ld, ldn) => {
+    let dow = ["su", "mo", "tu", "we", "th", "fr", "sa"];
+        ldn = ldn.toLowerCase().substr(0, 2);
+
+    let mod = 7 - dow.indexOf(ldn);
+    let u   = dow.indexOf(ldn) > 0 ? dow.indexOf(ldn) - (ld%7) : dow.indexOf(ldn);
+    let days = [];
+
+    for (var i = ld, k = 0; i > 0; i--, k++) {
+      let ldni = dow.indexOf(ldn) - k%7;
+          ldni = ldni < 0 ? 7+(parseInt(ldni)%7) : ldni;
+      days[k] = {"day": dow[ldni].charAt(0).toUpperCase(), "date": i, "key": i-1};
+    }
+
+    this.setState({days: days.reverse(), weekDay: 7, today: 1, maxDay: ld});
+  }
+
+  sevenLeft = () => {
+    let wd = this.state.weekDay;
+    let td = this.state.today - 1;
+    if(td > 0) {
+      if(td <= (wd-7)) {
+        wd -= 1;
+      }
+      this.setState({weekDay: wd, today: td});
+    }
+  }
+
+  sevenRight = () => {
+    let wd = this.state.weekDay;
+    let td = this.state.today + 1;
+    if(td > wd) {
+      wd += 1;
+    }
+    if(wd > this.state.maxDay || td > this.state.maxDay) {
+      wd = td = this.state.maxDay;
+    }
+    this.setState({weekDay: wd, today: td});
+  }
+
+  sevenActive = (td) => {
+    this.setState({today: td}); 
+  }
+
+  yearDown = () => {
+    let dy = Number(this.state.thisYear) - 1;
+    this.setState({thisYear: dy});
+    this.monthList();
+  }
+
+  yearUp = () => {
+    let dy = Number(this.state.thisYear) + 1;
+    this.setState({thisYear: dy});
+    this.monthList();
+  }
+
+  twentyFour = () => {
+    let tme = [];
+    for (var i = 1; i <= 24; i++) {
+      tme[i] = {"hour": i, "time": (i < 10 ? "0" : "")+i+":00"};
+    }
+    return tme;
+  }
+
+  setCurHour = (h) => {
+    $("#timeList .d-time._active").removeClass("_active");
+    this.setState({currentHour: h});
+  }
+
+  scheduleCall = async () => {
+    this.setState({ showLoader: true });
+    let m = this.state.activeM+1;
+    // m = m > 9 ? m : "0"+m;
+    let t = this.state.today;
+    // t = t > 9 ? t : "0"+t;
+    let ampm = this.state.currentHou >= 12 ? "PM" : "AM";
+    let ch = this.state.currentHour%12;
+    // ch = ch > 9 ? ch : "0"+ch;
+    try {
+      const req = await server.bookMeeting(localStorage.getItem('id'), localStorage.getItem('email'), this.state.thisYear, this.state.activeM+1, t, ch, 0, ampm);
+      if(req.data.code == 201) {
+        localStorage.setItem("scheduled", "1");
+        let md = this.state.thisYear+"-"+m+"-"+t;
+        this.setState({ meeting_date: md, meeting_time: ch+":00 "+ampm+" on "+md, meeting_id: req.data.data.meeting_id});
+        this.setState({ bookState: 1, showLoader: false });
+      } else {
+        // alert(req.data.message);
+        this.setState({ showLoader: false });
+      }
+    } catch (error) {
+      this.setState({ showLoader: false });
+      if (!error.response) {
+        return error.message;
+      }
+    }
+  }
+
+  rescheduleCall = async () => {
+    this.deleteMeeting(this.state.meeting_date, this.state.meeting_id, 0);
   }
 
   render() {
     return (
       <Container>
+        <Spinner showSpinner={this.state.showLoader} />
         { this.state.bookState == 0 ? (
           <div className="col-12" id="book-container">
             <img src={book_call} />
@@ -25,57 +236,79 @@ class BookCall extends Component {
             <div className="calendar-container">
               <img src={calendar_icon} className="calendar_icon" />
               <span className="brace-inp">
-                <input type="number" className="inp-el" id="year-inp" Value="2020" />
-                <svg className="inp-up" width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.28485 4L8 3.39332L4 -1.74846e-07L-1.48327e-07 3.39332L0.715152 4L4 1.21337L7.28485 4Z" fill="white"/>
-                </svg>
-                <svg className="inp-down" width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0.715152 -4.68309e-07L4.04649e-08 0.606683L4 4L8 0.606684L7.28485 -3.89966e-07L4 2.78663L0.715152 -4.68309e-07Z" fill="white"/>
-                </svg>
+                <input type="number" className="inp-el" id="year-inp" Value={this.state.thisYear} onChange={(e) => {this.monthList(); this.setState({thisYear: e.target.value.trim()})}}/>
+
+                <button onClick={() => this.yearUp()} className="clear inp-up">
+                  <svg width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.28485 4L8 3.39332L4 -1.74846e-07L-1.48327e-07 3.39332L0.715152 4L4 1.21337L7.28485 4Z" fill="white"/>
+                  </svg>
+                </button>
+
+                <button onClick={() => this.yearDown()} className="clear inp-down">
+                  <svg width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.715152 -4.68309e-07L4.04649e-08 0.606683L4 4L8 0.606684L7.28485 -3.89966e-07L4 2.78663L0.715152 -4.68309e-07Z" fill="white"/>
+                  </svg>
+                </button>
               </span>
 
-              <ul className="month-list">
-                <svg id="month-to-left" width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 0.983334L5.08997 8.89959e-07L-9.61651e-07 5.5L5.08997 11L6 10.0167L1.82005 5.5L6 0.983334Z" fill="#03CF9E"/>
-                </svg>
-                <svg id="month-to-right" width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M-8.59657e-08 10.0167L0.910026 11L6 5.5L0.910025 4.4498e-07L-8.75685e-07 0.983334L4.17995 5.5L-8.59657e-08 10.0167Z" fill="#03CF9E"/>
-                </svg>
-                <li>March</li>
-                <li className="_active">April</li>
-                <li>May</li>
-                <li>June</li>
+              <ul className="month-list" id="monthList">
+                
+                <button onClick={() => this.monthListActive(this.state.activeM-1)} id="month-to-left" className="clear">
+                  <svg width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 0.983334L5.08997 8.89959e-07L-9.61651e-07 5.5L5.08997 11L6 10.0167L1.82005 5.5L6 0.983334Z" fill="#03CF9E"/>
+                  </svg>
+                </button>
+
+                <button onClick={() => this.monthListActive(this.state.activeM+1)} id="month-to-right" className="clear">
+                  <svg width="6" height="11" viewBox="0 0 6 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-8.59657e-08 10.0167L0.910026 11L6 5.5L0.910025 4.4498e-07L-8.75685e-07 0.983334L4.17995 5.5L-8.59657e-08 10.0167Z" fill="#03CF9E"/>
+                  </svg>
+                </button>
+
+                <li className="hide" onClick={(e) => this.monthListActive(0)} data-index="0">Jan</li>
+                <li className="hide" onClick={(e) => this.monthListActive(1)} data-index="1">Feb</li>
+                <li className="hide" onClick={(e) => this.monthListActive(2)} data-index="2">March</li>
+                <li className="hide" onClick={(e) => this.monthListActive(3)} data-index="3">April</li>
+                <li className="hide" onClick={(e) => this.monthListActive(4)} data-index="4">May</li>
+                <li className="hide" onClick={(e) => this.monthListActive(5)} data-index="5">June</li>
+                <li className="hide" onClick={(e) => this.monthListActive(6)} data-index="6">July</li>
+                <li className="hide" onClick={(e) => this.monthListActive(7)} data-index="7">August</li>
+                <li className="hide" onClick={(e) => this.monthListActive(8)} data-index="8">Sept</li>
+                <li className="hide" onClick={(e) => this.monthListActive(9)} data-index="9">Oct</li>
+                <li className="hide" onClick={(e) => this.monthListActive(10)} data-index="10">Nov</li>
+                <li className="hide" onClick={(e) => this.monthListActive(11)} data-index="11">Dec</li>
               </ul>
 
               <ul className="day-list">
-                <svg id="day-to-left" width="12" height="22" viewBox="0 0 12 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 1.96667L10.1799 1.77992e-06L-1.9233e-06 11L10.1799 22L12 20.0333L3.6401 11L12 1.96667Z" fill="#03CF9E"/>
-                </svg>
-                <svg id="day-to-right" width="12" height="22" viewBox="0 0 12 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7.81743e-07 20.0333L1.82005 22L12 11L1.82005 -1.01739e-06L-7.97695e-07 1.96667L8.3599 11L7.81743e-07 20.0333Z" fill="#03CF9E"/>
-                </svg>
-                <li className="_active"><span className="d-name">M</span><span className="d-date">14</span></li>
-                <li><span className="d-name">T</span><span className="d-date">15</span></li>
-                <li><span className="d-name">W</span><span className="d-date">16</span></li>
-                <li><span className="d-name">T</span><span className="d-date">17</span></li>
-                <li><span className="d-name">F</span><span className="d-date">18</span></li>
-                <li><span className="d-name">S</span><span className="d-date">19</span></li>
-                <li><span className="d-name">S</span><span className="d-date">20</span></li>
+                <button onClick={() => this.sevenLeft()} id="day-to-left" className="clear">
+                  <svg width="12" height="22" viewBox="0 0 12 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 1.96667L10.1799 1.77992e-06L-1.9233e-06 11L10.1799 22L12 20.0333L3.6401 11L12 1.96667Z" fill="#03CF9E"/>
+                  </svg>
+                </button>
+                <button onClick={() => this.sevenRight()} id="day-to-right" className="clear">
+                  <svg width="12" height="22" viewBox="0 0 12 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.81743e-07 20.0333L1.82005 22L12 11L1.82005 -1.01739e-06L-7.97695e-07 1.96667L8.3599 11L7.81743e-07 20.0333Z" fill="#03CF9E"/>
+                  </svg>
+                </button>
+                {
+                  this.state.days.map(({key, day, date}) => (
+                    <li onClick={() => this.sevenActive(date)} className={(date == this.state.today ? '_active' : '')+(key > this.state.weekDay-1 || key < (this.state.weekDay - 7) ? ' hide' : '')}><span className="d-name">{day}</span><span className="d-date">{date}</span></li>
+                  ))
+                }
               </ul>
 
               <div className="time-list-parent">
-                <ul className="time-list">
-                  <li><button className="d-time">01:00</button></li>
-                  <li><button className="d-time _active">02:00</button></li>
-                  <li><button className="d-time">03:00</button></li>
-                  <li><button className="d-time">04:00</button></li>
-                  <li><button className="d-time">05:00</button></li>
-                  <li><button className="d-time">06:00</button></li>
-                  <li><button className="d-time">07:00</button></li>
-                  <li><button className="d-time">08:00</button></li>
+                <ul className="time-list" id="timeList">
+                {
+                  this.twentyFour().map(({hour, time}) => (
+                    <li><button className={"d-time"+(this.state.currentHour == hour ? " _active" : "")} onClick={(e) => this.setCurHour(hour)}>{time}</button></li>
+                  ))
+                }
                 </ul>
               </div>
             </div>
+
+            <button className="schedule-call" onClick={() => this.scheduleCall()}>SCHEDULE CALL</button>
           </div>
         ) : null }
         { this.state.bookState == 1 ? (
@@ -84,10 +317,11 @@ class BookCall extends Component {
             <img src={scheduled} style={{marginTop: "10px"}}/>
             <h2 className="bcw text-center">We will activate your account after our call on:</h2>
             <div className="scheduled-date">
-              <h4>14th of April, 2019</h4>
-              <h5>adeoyetalent@gmail.com</h5>
-              <h6>19:00</h6>
+              <h4>{this.state.meeting_date}</h4>
+              <h5>{this.state.email}</h5>
+              <h6>{this.state.meeting_time}</h6>
             </div>
+            <button className="schedule-call re" onClick={() => this.rescheduleCall()}>RE-SCHEDULE CALL</button>
           </div>
         ) : null}
       </Container>
