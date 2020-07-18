@@ -54,7 +54,7 @@ class Favourites extends Component {
             <div className='favourite-section-containers' id="favContainers">
               {this.state.cards && this.state.cards.length ?
                 this.state.cards.map((card) => (
-                  <FavouriteCard direction="up" color="" pair={card.pair} price={card.open} />
+                  (card) ? (<FavouriteCard direction="up" color="" pair={card.pair} price={card.open} />) : (null)
                 )) : (null)
               }
             </div>

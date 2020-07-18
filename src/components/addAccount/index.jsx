@@ -20,19 +20,38 @@ class AddAccount extends Component {
       step : 0
     };
 
+    this.fireAccList = new CustomEvent('refreshAccList', {
+      detail: {
+        code: 200
+      }
+    });
+
   }
 
   handleClick = (p) => {
     // this.setState({ information : p});
   }
 
+  componentDidMount () {
+
+  }
+
   btnSave = async () => {
     let sel = document.getElementById("tr-sel").value;
     let pas = document.getElementById("tr-pass").value;
 
-    let resp = await server.addAccount(localStorage.getItem("id"), sel, pas);
-
-    console.log(resp);
+    try {
+      let resp = await server.addAccount(localStorage.getItem("id"), sel, pas);
+      // const { data: { data: { profile } } } = await server.getProfile(localStorage.getItem("id"), localStorage.getItem("email"));
+      // localStorage.setItem('email', localStorage.getItem("email"));
+      // localStorage.setItem('id', profile.user_id);
+      // this.props.saveUserProfile(profile);
+      // localStorage.setItem('profile', JSON.stringify(profile));
+      document.getElementById("account-container").dispatchEvent(this.fireAccList);
+      this.props.cancelClick();
+    } catch (error) {
+      return error.message;
+    }
 
     this.props.cancelClick();
   }

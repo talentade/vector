@@ -78,17 +78,18 @@
 			li.todays-li {
 				padding: 1em;
 				background: #004448;
-				justify-content: center;
+				justify-content: end;
 				display: flex;
 				border: .5px solid #CCCCCC;
 
 				img {
-				    min-width: 80px;
 				    height: 80px;
-				    margin-right: 2em;
+				    float: left;
+				    min-width: 80px;
 				    padding-right: 0;
 				}
 				span {
+				    margin-left: 2em;
 					float: left;
 					font-family: Poppins;
 					font-style: normal;
@@ -178,6 +179,7 @@
 		width: 73px;
 		height: 30px;
 		float: right;
+		cursor: pointer;
 		border: 0px solid;
 		color: #fff;
 		margin-top: 5px;

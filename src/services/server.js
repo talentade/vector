@@ -123,6 +123,17 @@ export default {
 
   // ===============================================================
 
+  loadCore(user_id, link) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: link,
+      headers: {
+        'Authorization': Authorization
+      }
+    });
+  },
+
   getMeeting (user_id) {
     let Authorization = user_id;
     return axios.request({
@@ -210,6 +221,17 @@ export default {
         'Authorization': Authorization
       },
       data: {pair: pair, account: account}
+    });
+  },
+
+  getAccounts(user_id) {
+    let Authorization = user_id;
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/utils/accounts/list',
+      headers: {
+        'Authorization': Authorization
+      },
     });
   },
 
