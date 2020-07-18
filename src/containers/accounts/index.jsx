@@ -119,7 +119,7 @@ class Accounts extends Component {
             ))
           }
 
-          {<ul className='t-history-record nofw' id={"t-history-record-"+this.state.accounts.length} onClick={(e) => this.handleClick(e, 't-history-record-'+this.state.accounts.length)}>
+          {/*<ul className='t-history-record nofw' id={"t-history-record-"+this.state.accounts.length} onClick={(e) => this.handleClick(e, 't-history-record-'+this.state.accounts.length)}>
             <li className="acc-name">
               <svg className="arr_down" width="32" height="18" viewBox="0 0 32 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2.86061 1.94146e-06L1.82092e-07 2.73008L16 18L32 2.73008L29.1394 2.25483e-06L16 12.5398L2.86061 1.94146e-06Z" fill="#03CF9E"/>
@@ -192,7 +192,7 @@ class Accounts extends Component {
                 </tr>
               </table>
             </li>
-          </ul>}
+          </ul>*/}
         </div>
       </Container>
     );

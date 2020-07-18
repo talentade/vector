@@ -15,7 +15,7 @@ const FavouriteCard = ({ direction, color, pair, price }) => (
   <div className="favourite-card" id={"fav-pair-"+pair}>
     <div className="star-section">
       <img src={Star} alt="" onClick={() => removeFav(pair)} />
-      <p>{pair}</p>
+      <p>{pair.split("(")[0].trim()}</p>
     </div>
     <div className="smaller-items">
       <p>{price}</p>

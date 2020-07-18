@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import $ from 'jquery';
 import Container from '../container/index';
 import TableFilters from '../../components/tablefilters/index';
 import Pagination from '../../components/Pagination/index';
@@ -24,6 +25,7 @@ class News extends Component {
       showLoader: false,
       hotStocks: [],
       news: [],
+      similar: [],
       activeNews: null
     }
   }
@@ -45,7 +47,8 @@ class News extends Component {
         },
       } = await server.getMarketAndNewsData(userId);
       // console.log(news);
-      this.setState({ news: news, activeNews: news[0], showLoader: false });
+      this.setState({ news: news, showLoader: false });
+      this.readNews(0);
     } catch (error) {
       this.setState({ showLoader: false });
       if (!error.response) {
@@ -54,8 +57,22 @@ class News extends Component {
     }
   }
 
-  readNews = (i) => {
-    this.setState({ activeNews: this.state.news[i] });
+  readNews = (i, h = -1) => {
+    $("#news-container").scrollTop(0);
+    if(h > -1) {
+      this.setState({ activeNews: this.state.similar[i] });
+      return;
+    } else if(this.state.news.length) {
+      this.setState({ activeNews: this.state.news[i] });
+      let cat = this.state.news[i].category;
+      let similar = [];
+      for(let j = 0; j < this.state.news.length; j++) {
+        if(this.state.news[j].category == cat && similar.length < 3 && j != i) {
+          similar[similar.length] = this.state.news[j];
+        }
+      }
+      this.setState({similar: similar});
+    }
   }
 
   readMore = async (link) => {
@@ -107,63 +124,38 @@ class News extends Component {
               </h1>
 
               <ul className="stories">
-                <li>
-                  <img src={ss1} className="ss-thumbnail"/>
-                  <p>Breaking: Soldiers on rampage in Bomadi over shooting of colleague by police</p>
-                  <button className="read btn btn-primary">Read</button>
-                </li>
-                <li>
-                  <img src={ss2} className="ss-thumbnail"/>
-                  <p>Breaking: Soldiers on rampage in Bomadi over shooting of colleague by police</p>
-                  <button className="read btn btn-primary">Read</button>
-                </li>
-                <li>
-                  <img src={ss3} className="ss-thumbnail"/>
-                  <p>Breaking: Soldiers on rampage in Bomadi over shooting of colleague by police</p>
-                  <button className="read btn btn-primary">Read</button>
-                </li>
+              {
+                this.state.similar.map((news, key) => (
+                  <li className="todays-li">
+                    <img src={news.image_mini.url} style={{width: "auto"}} className="ss-thumbnail"/>
+                    <p>{news.title}</p>
+                    <button className="read btn btn-primary" onClick={() => this.readNews(key, 0)}>Read</button>
+                  </li>
+                ))
+              }
               </ul>
             </div>
           </div>) : (null)}
-          <div className="news-section-right">
-            <h1 className="news-header">Today’s News</h1>
-            <img src={todays_news} className="fti" />
-            <ul className="todays-ul">
-            {
-              this.state.news.map((news, key) => (
-                <li className="todays-li">
-                  <img src={news.image_mini.url} style={{width: "auto"}} />
-                  <span>{news.title}<button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(key)}>Read</button>
-                  </span>
-                </li>
-              ))
-            }
-              {/*<li className="todays-li">
-                <img src={tn} />
-                <span>
-                  Lorem ipsum dolor sit amet, consectetur amet sirlobo...
-                  <button className="read btn btn-primary btn-bottom">Read</button>
-                </span>
-              </li>
-              <li className="todays-li">
-                <img src={tn} />
-                <span>
-                  Lorem ipsum dolor sit amet, consectetur amet sirlobo...
-                  <button className="read btn btn-primary btn-bottom">Read</button>
-                </span>
-              </li>
-              <li className="todays-li">
-                <img src={tn} />
-                <span>
-                  Lorem ipsum dolor sit amet, consectetur amet sirlobo...
-                  <button className="read btn btn-primary btn-bottom">Read</button>
-                </span>
-              </li>*/}
-            </ul>
-            {/*<Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link>*/}
-            <Pagination length="4" max_rows="20" page_no="1" paginationChange={() => {}}/>
+          {this.state.news.length ? (
+            <div className="news-section-right">
+              <h1 className="news-header">Today’s News</h1>
+              {/*<img src={todays_news} className="fti" />*/}
+              <ul className="todays-ul">
+              {
+                this.state.news.map((news, key) => (
+                  <li className="todays-li">
+                    <img src={news.image_mini.url} style={{width: "auto"}} />
+                    <span>{news.title}<button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(key)}>Read</button>
+                    </span>
+                  </li>
+                ))
+              }
+              </ul>
+              {/*<Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link>*/}
+              {/*<Pagination length="4" max_rows="20" page_no="1" paginationChange={() => {}}/>*/}
+            </div>
+          ): null}
           </div>
-        </div>
       </Container>
     );
   }
