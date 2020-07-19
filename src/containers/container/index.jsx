@@ -37,11 +37,7 @@ class Container extends Component {
     try {
       const user_id = localStorage.getItem('id');
       const email = this.profile.email;
-      const scheduled = localStorage.getItem("scheduled") || false;
       localStorage.clear();
-      if(scheduled) {
-        localStorage.setItem("scheduled", 1);
-      }
 
       this.props.history.push('/Login');
 

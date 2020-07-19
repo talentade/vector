@@ -138,7 +138,7 @@ class Chart extends Component {
       },
     });
 
-    this.setGraphType("candle", 0);
+    this.setGraphType("area", 0);
     const user_id = localStorage.getItem('id');
 
     this.resizeObserver.current = new ResizeObserver((entries) => {
@@ -185,41 +185,19 @@ class Chart extends Component {
 
     // const ph = await server.getPairHistory(user_id, this.pair, 2);
 
-    // console.log(ph, "========");
+    let { data: { data } } = await server.getSeries(this.pair, 30);
+    console.log(data.length, "========");
+    for (let x = 0; x < (data.length > 200 ? data.length : data.length); x++) { // data.length
+      data[x]["time"] = data[x].when/1000;
+      // console.log(data[x].open);
+      this.plotGraph(data[x]);
+    }
 
     setInterval(async () => {
-      const data = await this.handleDataChange(this.pair);
-      if (typeof data === 'object' && data.pair === this.pair) {
-        let plot_data = data;
-        // this.lastPlotable = {candle: data, bar: data, line: {time: data.time, value: data.open}, area: {time: data.time, value: data.open}, hist: {time: data.time, value: data.open, color: "#03cf9e"}};
-        if(this.currentGrpahType == "candle") {
-          // default
-        } else if(this.currentGrpahType == "line") {
-          plot_data = {time: data.time, value: data.open};
-        } else if(this.currentGrpahType == "area") {
-          plot_data = {time: data.time, value: data.open}
-        } else if(this.currentGrpahType == "bar") {
-          // default
-        } else if(this.currentGrpahType == "hist") {
-          plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
-        }
-        if(this.seriesIterator > 0) {
-          this.chartSeries.update(plot_data);
-        } else {
-          this.seriesIterator += 1;
-          this.chartSeries.setData([plot_data]);
-        }
-
-        this.setState({
-          showLoader: false,
-          buy: data.bid,
-          sell: data.ask,
-          low: data.low,
-          high: data.high,
-          spread: data.spread,
-        });
-      }
-    }, 1000); // 1000
+      data = await this.handleDataChange(this.pair);
+      // console.log(data, data.time);
+      this.plotGraph(data);
+    }, 10 * 1000);
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 
@@ -245,6 +223,38 @@ class Chart extends Component {
       wickUpColor: '#c4c4c4',
     });
   };
+
+  plotGraph = (data) => {
+    if (typeof data === 'object' && data.pair === this.pair) {
+      let plot_data = data;
+      if(this.currentGrpahType == "candle") {
+        // default
+      } else if(this.currentGrpahType == "line") {
+        plot_data = {time: data.time, value: data.open};
+      } else if(this.currentGrpahType == "area") {
+        plot_data = {time: data.time, value: data.open}
+      } else if(this.currentGrpahType == "bar") {
+        // default
+      } else if(this.currentGrpahType == "hist") {
+        plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
+      }
+      if(this.seriesIterator > 0) {
+        this.chartSeries.update(plot_data);
+      } else {
+        this.seriesIterator += 1;
+        this.chartSeries.setData([plot_data]);
+      }
+
+      this.setState({
+        showLoader: false,
+        buy: data.bid,
+        sell: data.ask,
+        low: data.low,
+        high: data.high,
+        spread: data.spread,
+      });
+    }
+  }
 
   handleDataChange = async (pair) => {
     const id = localStorage.getItem('id');

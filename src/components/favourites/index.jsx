@@ -26,10 +26,8 @@ class Favourites extends Component {
   }
 
   fetchFavs = async () => {
-    let user_id = localStorage.getItem('id');
-    let account = localStorage.getItem('accountType').split("-")[0].toLowerCase();
     try {
-      const { data: { data, code } } = await server.fetchFav(user_id, account);
+      const { data: { data, code } } = await server.fetchFav();
       if(code == 200) {
         if(data.length) {
           this.setState({cards: data});

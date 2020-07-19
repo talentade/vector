@@ -46,10 +46,7 @@ class SignIn extends Component {
     try {
       this.setState({ showSpinner: true });
 
-      const { data: { data: { profile } } } = await server.login({
-        username: email,
-        password,
-      });    
+      const { data: { data: { profile } } } = await server.login({username: email, password: password});    
 
       localStorage.setItem('email', email);
 
@@ -71,20 +68,20 @@ class SignIn extends Component {
         profile.demo.demo_account_id,
       );
 
-      const accounts = [
-        profile.demo.demo_account_id,
-        profile.live.live_account_id,
-      ];
+
+      const { data: { data: { accounts } } } = await server.getAccounts(profile.user_id);
+
+      Object.entries(accounts).forEach(([key, val]) => {
+        accounts[key] = val.charAt(0).toUpperCase()+val.slice(1);
+      });
 
       this.props.setAccounts(accounts);
 
       localStorage.setItem('accounts', JSON.stringify(accounts));
 
-
       this.setState({ showSpinner: false });
 
-      this.props.history.push((localStorage.getItem("scheduled") || false) ? '/Trade' : '/Book');
-      // this.props.history.push('/Forms');
+      this.props.history.push((profile.booking_history.data.length) ? '/Trade' : '/Book');
     } catch (error) {
       this.setState({ showSpinner: false });
 

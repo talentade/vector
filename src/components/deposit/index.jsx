@@ -26,11 +26,9 @@ const Deposit = ({
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>Select Trading Account</label>
-            <select value={account} onChange={selectHandler}>
-              {accounts.map((account) => (
-                <option key={`${Math.random()}-${Math.random()}`}>
-                  {account}
-                </option>
+            <select value={account} id="dep-acc-sel" onChange={selectHandler}>
+              {accounts.map((acc) => (
+                <option value={acc} key={`${Math.random()}-${Math.random()}`}>{acc}</option>
               ))}
             </select>
           </div>
@@ -90,6 +88,7 @@ const Deposit = ({
           className='transaction-submit-btn'
         />
       </form>
+      {() => { document.getElemntById("dep-acc-sel").value = account}}
     </div>
   );
 };

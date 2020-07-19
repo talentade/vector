@@ -11,6 +11,7 @@ import Spinner from '../../components/spinner/index';
 import Withdraw from '../../components/withdraw/index';
 import Transfer from '../../components/transfer/index';
 import TransactionHistory from '../../components/history/index';
+import app from '../../services/app';
 import server from '../../services/server';
 import './index.scss';
 
@@ -19,8 +20,8 @@ class Transactions extends Component {
     super(props);
 
     this.state = {
-      accounts: JSON.parse(localStorage.getItem('accounts')),
-      account: JSON.parse(localStorage.getItem('accounts'))[0],
+      accounts: app.accounts(),
+      account: app.account(),
       currencies: [],
       selectedCurrency: 'USD',
       cards: ['VISA- 5322 2489 2479 4823'],
@@ -57,6 +58,13 @@ class Transactions extends Component {
         selectedTab: localStorage.getItem("TSelected")
       });
       localStorage.removeItem("TSelected");
+
+      if(localStorage.getItem("TSelectedAcc")) {
+        this.setState({
+          account: localStorage.getItem("TSelectedAcc")
+        });
+        localStorage.removeItem("TSelectedAcc");
+      }
     }
 
     var dis = this;
