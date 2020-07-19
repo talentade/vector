@@ -8,6 +8,7 @@ import EmailIcon from '../../themes/images/signin_email.svg';
 import PasswordIcon from '../../themes/images/password.svg';
 import CheckBox from './checkbox/index';
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../spinner/index';
 import { saveUserProfile, setAccountType, setAccounts } from '../../redux/actions/index';
 import { profileImage } from '../../redux/reducers/reducers';
@@ -54,20 +55,11 @@ class SignIn extends Component {
 
       this.props.saveUserProfile(profile);
 
-      localStorage.setItem(
-        'profile',
-        JSON.stringify(profile),
-      );
+      localStorage.setItem('profile', JSON.stringify(profile));
 
-      this.props.setAccountType(
-        profile.demo.demo_account_id,
-      );
+      this.props.setAccountType(app.accounts()[0]);
 
-      localStorage.setItem(
-        'accountType',
-        profile.demo.demo_account_id,
-      );
-
+      localStorage.setItem('accountType', app.accounts()[0]);
 
       const { data: { data: { accounts } } } = await server.getAccounts(profile.user_id);
 

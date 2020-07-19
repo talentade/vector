@@ -1,17 +1,44 @@
 export default {
-  id: function () {
+  id: () => {
     return localStorage.getItem("id").toLowerCase();
   },
-  auth: function () {
+  userid: () => {
     return localStorage.getItem("id").toLowerCase();
   },
-  account: function () {
-    return localStorage.getItem("accountType");
+  auth: () => {
+    return localStorage.getItem("id").toLowerCase();
   },
-  accounts: function () {
-    return JSON.parse(localStorage.getItem('accounts'));
+  account: (a = "") => {
+    return a.length ? localStorage.setItem("accountType", a) : localStorage.getItem("accountType");
   },
-  email: function () {
+  accountDetail: () => {
+    let profile = JSON.parse(localStorage.getItem("profile"));
+    let account = profile[localStorage.getItem("accountType")];
+        account = account.live ? account.live : account.demo;
+    let ret = [];
+    Object.keys(account).forEach(key => {
+      if(key.toLowerCase().match(/(demo|live)/g)) {
+        ret[key.replace(/(demo_|live_)/g, "")] = account[key];
+      } else {
+        ret[key] = account[key];
+      }
+    });
+    return ret;
+  },
+  accounts: () => {
+    let profile = JSON.parse(localStorage.getItem("profile"));
+    let accounts = [];
+    Object.keys(profile).forEach(key => {
+      if(key.toLowerCase().match(/(demo|live)/g)) {
+        accounts.push(key);
+      }
+    });
+    return accounts;
+  },
+  email: () => {
     return localStorage.getItem("email").trim();
-  }
+  },
+  profile: () => {
+    return JSON.parse(localStorage.getItem("profile"));
+  },
 };

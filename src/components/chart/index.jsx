@@ -19,6 +19,7 @@ import WhiteDir from '../../themes/images/tradeDashboard/white_dir.svg';
 import MapIcon from '../../themes/images/tradeDashboard/map.svg';
 // import { priceData } from '../../utils/index';
 import server from '../../services/server';
+import app from '../../services/app';
 // import { instrumentsData } from '../../utils/dummyData';
 import './index.scss';
 
@@ -42,6 +43,7 @@ class Chart extends Component {
       selectedOption: 'forex',
       currentPairs: [],
       allPairs: {},
+      pair: '',
       selectedPair: '',
       buy: 0,
       sell: 0,
@@ -96,18 +98,6 @@ class Chart extends Component {
     }
   }
 
-  combineDateAndTime = (date) => {
-    let timeString = date.getHours() + ':' + date.getMinutes() + ':00';
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var day = date.getDate();
-    var dateString = '' + year + '-' + (parseInt(month) > 9 ? month : '0'+ month) + '-' + (day); //  + this.seriesIterator
-    // var combined = new Date(dateString + ' ' + timeString);
-    var ret = dateString+' '+timeString;
-    // this.seriesIterator += 1;
-    return ''+ret.toString()+'';
-  };
-
   async componentDidMount() {
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
@@ -138,8 +128,11 @@ class Chart extends Component {
       },
     });
 
-    this.setGraphType("area", 0);
-    const user_id = localStorage.getItem('id');
+    this.setGraphType("candle", 0);
+    this.plotGraphData();
+  }
+
+  plotGraphData = async (p = "") => {
 
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
@@ -153,14 +146,12 @@ class Chart extends Component {
       if (!this.allPairs) {
         const {
           data: { data },
-        } = await server.getAllPairs(user_id);
+        } = await server.getAllPairs(app.id());
 
         localStorage.setItem('allPairs', JSON.stringify(data));
 
         const instruments = Object.keys(data);
-
         this.pair = data.forex[0];
-
         this.setState({
           allPairs: data,
           currentPairs: data.forex,
@@ -173,7 +164,7 @@ class Chart extends Component {
         this.setState({
           allPairs: allPairsParsed,
           currentPairs: allPairsParsed.forex,
-          selectedPair: allPairsParsed.forex[0],
+          selectedPair: this.state.selectedPair.length ? this.state.selectedPair : allPairsParsed.forex[0],
           instruments,
         });
 
@@ -183,19 +174,14 @@ class Chart extends Component {
       return error.message;
     }
 
-    // const ph = await server.getPairHistory(user_id, this.pair, 2);
-
     let { data: { data } } = await server.getSeries(this.pair, 30);
-    console.log(data.length, "========");
-    for (let x = 0; x < (data.length > 200 ? data.length : data.length); x++) { // data.length
-      data[x]["time"] = data[x].when/1000;
-      // console.log(data[x].open);
-      this.plotGraph(data[x]);
+    data = data.slice(Math.max(data.length - 100, 0));
+    for (let x = 0; x < data.length; x++) {
+      this.plotGraph(this.graphData(data[x]));
     }
 
     setInterval(async () => {
       data = await this.handleDataChange(this.pair);
-      // console.log(data, data.time);
       this.plotGraph(data);
     }, 10 * 1000);
 
@@ -222,6 +208,7 @@ class Chart extends Component {
       wickDownColor: '#c4c4c4',
       wickUpColor: '#c4c4c4',
     });
+
   };
 
   plotGraph = (data) => {
@@ -257,41 +244,36 @@ class Chart extends Component {
   }
 
   handleDataChange = async (pair) => {
-    const id = localStorage.getItem('id');
-
     try {
       const {
         data: { data },
-      } = await server.getRealTimeData(pair, id);
-
-      return {
-        time: data.when / 1000,
-        open: parseFloat(data.open),
-        high: parseFloat(data.high),
-        low: parseFloat(data.low),
-        close: parseFloat(data.close),
-        ask: parseFloat(data.ask),
-        spread: parseFloat(data.spread),
-        bid: parseFloat(data.bid),
-        pair: data.pair,
-      };
+      } = await server.getRealTimeData(pair, app.id());
+      return this.graphData(data);
     } catch (error) {
       return error.message;
     }
   };
+  
+  graphData = (data) => {
+    return {
+      time: data.when / 1000,
+      open: parseFloat(data.open),
+      high: parseFloat(data.high),
+      low: parseFloat(data.low),
+      close: parseFloat(data.close),
+      ask: parseFloat(data.ask),
+      spread: parseFloat(data.spread),
+      bid: parseFloat(data.bid),
+      pair: data.pair,
+    };
+  }
 
   setNewPairData = (e) => {
     this.pair = e.target.value;
     this.setState({ selectedPair: e.target.value, showLoader: true });
-    this.chart.current.removeSeries(this.chartSeries);
-    this.chartSeries = this.chart.current.addCandlestickSeries({
-      upColor: '#03CF9E',
-      downColor: '#FF1E1E',
-      borderDownColor: '#FF1E1E',
-      borderUpColor: '#03CF9E',
-      wickDownColor: '#c4c4c4',
-      wickUpColor: '#c4c4c4',
-    });
+    // this.chart.current.removeSeries(this.chartSeries);
+    this.setGraphType(this.currentGrpahType, 1);
+    this.plotGraphData();
   };
 
   cancelBsellModal = (e) => {

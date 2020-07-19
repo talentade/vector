@@ -88,7 +88,7 @@ const Deposit = ({
           className='transaction-submit-btn'
         />
       </form>
-      {() => { document.getElemntById("dep-acc-sel").value = account}}
+      {/*() => { document.getElemntById("dep-acc-sel").value = account}*/}
     </div>
   );
 };

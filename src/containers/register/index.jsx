@@ -12,6 +12,7 @@ import {
   saveUserProfile,
 } from '../../redux/actions/index';
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 import './index.scss';
 
@@ -72,6 +73,10 @@ class Register extends Component {
       confirmPasswordError: null,
     });
   };
+
+  componentDidMount () {
+    // console.log();
+  }
 
   submitForm = async (e) => {
     e.preventDefault();
@@ -149,23 +154,12 @@ class Register extends Component {
 
         this.props.saveUserProfile(user.userdata);
 
-        localStorage.setItem(
-          'profile',
-          JSON.stringify(user.userdata),
-        );
+        localStorage.setItem('profile', JSON.stringify(user.userdata));
 
-        this.props.setAccountType(
-          user.userdata.demo.demo_account_id,
-        );
-        localStorage.setItem(
-          'accountType',
-          user.userdata.demo.demo_account_id,
-        );
+        this.props.setAccountType(app.accounts()[0]);
+        localStorage.setItem('accountType', app.accounts()[0]);
 
-        const accounts = [
-          user.userdata.demo.demo_account_id,
-          user.userdata.live.live_account_id,
-        ];
+        const accounts = app.accounts();
 
         this.props.setAccounts(accounts);
 

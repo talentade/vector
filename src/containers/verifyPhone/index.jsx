@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import AvarizLogo from "../../themes/images/avariz_logo.png";
 import PhoneImage from "../../themes/images/phone.svg";
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 import "./index.scss";
 
@@ -54,11 +55,11 @@ class VerifyPhone extends Component {
     this.setState({ showSpinner: true });;
 
     try {
-      await server.verifyPhone(this.props.id, `${name}${name_2}${name_3}${name_4}`);
+      let result = await server.verifyPhone(app.userid(), `${name}${name_2}${name_3}${name_4}`);
       this.setState({ showSpinner: false });
-      this.props.history.push('/Trade');
+      this.props.history.push('/Book');
     } catch (error) {
-      const verificationError = error.response.data.message;
+      const verificationError = (error.response.data.message) || "An error occured";
       this.setState({ showSpinner: false });
 
       this.setState({ error: verificationError });

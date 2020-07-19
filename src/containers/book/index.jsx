@@ -14,10 +14,11 @@ class BookCall extends Component {
     super(props);
 
     this.state = {
-      showLoader: false,
+      showLoader: true,
       activeM: null,
       thisYear: 2020,
-      lestEdge: 0,
+      iLoader: true,
+      lastEdge: 0,
       currentHour: 1,
       daysEdge: null,
       bookState: 0,
@@ -37,24 +38,28 @@ class BookCall extends Component {
     let d = new Date();
     let m = d.getMonth();
     this.setState({thisYear: d.getFullYear()});
-    setTimeout(() => {
-      this.monthList(m);
-    }, 100);
+    this.monthList(m);
 
-    let meetings = await server.getMeeting(localStorage.getItem("id"));
-    if(meetings.status == 200) {
-      meetings = meetings.data.data;
-      if(meetings.length) {
-        this.setState({ bookState: 1, showLoader: false});
-        this.monthListActive(m);
-        for (var i = 0; i < meetings.length; i++) {
-          if(i != meetings.length-1) {
-            let del = this.deleteMeeting(meetings[i].meeting_date, meetings[i].meeting_id);
-          } else {
-            this.setState({ meeting_date: meetings[i].meeting_date, meeting_time: meetings[i].meeting_starts, meeting_id: meetings[i].meeting_id});
+    try {
+      let meetings = await server.getMeeting(localStorage.getItem("id"));
+      if(meetings.status == 200) {
+        meetings = meetings.data.data;
+        if(meetings.length) {
+          this.setState({ bookState: 1, showLoader: false, iLoader: false});
+          this.monthListActive(m);
+          for (var i = 0; i < meetings.length; i++) {
+            if(i != meetings.length-1) {
+              let del = this.deleteMeeting(meetings[i].meeting_date, meetings[i].meeting_id);
+            } else {
+              this.setState({ meeting_date: meetings[i].meeting_date, meeting_time: meetings[i].meeting_starts, meeting_id: meetings[i].meeting_id});
+            }
           }
+        } else {
+          this.setState({ bookState: 0, showLoader: false, iLoader: false});
         }
       }
+    } catch (error) {
+      this.setState({ bookState: 0, showLoader: false, iLoader: false});
     }
   }
 
@@ -75,6 +80,7 @@ class BookCall extends Component {
   }
 
   monthListActive = (act) => {
+
     act = act < 0 ? 0 : (act > 11 ? 11 : act);
 
     this.setState({month: act});
@@ -83,7 +89,7 @@ class BookCall extends Component {
     }, 100);
 
     let last = this.state.activeM;
-    let ledge = this.state.lestEdge;
+    let ledge = this.state.lastEdge;
     let edge = act > 8 ? 8 : act;
     let range = true;
 
@@ -101,9 +107,7 @@ class BookCall extends Component {
       }
     }
 
-
-    this.setState({activeM: act, lestEdge: edge});
-    console.log(this.state.activeM);
+    this.setState({activeM: act, lastEdge: edge});
 
     if(!range || last === null) {
       $("#monthList li").attr("class", "hide");
@@ -230,7 +234,7 @@ class BookCall extends Component {
       <Container>
         <Spinner showSpinner={this.state.showLoader} />
         { this.state.bookState == 0 ? (
-          <div className="col-12" id="book-container">
+          <div className={"col-12"+(this.state.iLoader ? ' hide' : '')} id="book-container">
             <img src={book_call} />
             <h2 className="bcw">Book a call with a broker</h2>
             <div className="calendar-container">

@@ -7,17 +7,18 @@ import OutterLeftNav from '../../components/outterLeft/index';
 import { toggleSideNav, toggleOutterNav, toggleTransactionNav } from '../../redux/actions/index';
 import { saveUserProfile } from '../../redux/actions/index';
 import server from '../../services/server';
+import app from '../../services/app';
 
 class Container extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedAccount: '',
+      selectedAccount: app.accountDetail(),
     };
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
-    this.id = localStorage.getItem('id');
+    this.profile = app.profile();
+    this.id = app.id();
     // this.isAdmin = !!(localStorage.getItem("avad") || 1);
     this.isAdmin = false;
   }
@@ -48,30 +49,12 @@ class Container extends Component {
   }
 
   render() {
-    const userId = localStorage.getItem('id');
-
+    const userId = app.id();
     if (!userId) return <Redirect to="/Login" />
-  
     const { first_name, last_name, profile_image } = this.props.userProfile;
-
-    const selectedAccount = localStorage.getItem('accountType');
-
-    const { demo, live } = this.profile;
-
-    let balance;
-    let id;
-
-    if (selectedAccount.toLowerCase().match('demo')) {
-      if (demo) {
-        balance = demo.demo_balance;
-        id = demo.demo_account_id;
-      }
-    } else if (selectedAccount.toLowerCase().match('live')) {
-      if (live) {
-        balance = live.live_balance;
-        id = live.live_account_id;
-      }
-    }
+    const selectedAccount = app.accountDetail();
+    let balance = selectedAccount.balance;
+    let id = selectedAccount.account_id;
 
     let isAdmin = this.isAdmin;
 
@@ -87,7 +70,7 @@ class Container extends Component {
           <OutterTopNav
             isAdmin={isAdmin}
             profileImage={profile_image}
-            email={localStorage.getItem('email')}
+            email={app.email()}
             firstName={first_name}
             lastName={last_name}
             balance={balance}

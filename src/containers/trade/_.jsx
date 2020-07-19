@@ -13,7 +13,6 @@ import AddToFav from '../../components/addToFav/index';
 import MobileBalance from '../../components/balanceMobile/index';
 import Spinner from '../../components/spinner/index';
 import Chart from '../../components/chart/index';
-import app from '../../services/app';
 import { saveUserProfile } from '../../redux/actions/index';
 // import {
 //   theaderDataClosed,
@@ -42,13 +41,20 @@ class TradeDashboard extends Component {
   }
 
   async componentDidMount() {
-    if (!app.id()) {
-      this.props.history.push('/Login');
-      return;
+    const userId = localStorage.getItem('id');
+
+    if (!userId) this.props.history.push('/Login');
+
+    const accountType = localStorage.getItem('accountType');
+
+    if (accountType) {
+      this.setState({ selectedAccount: accountType });
     }
-    this.setState({ selectedAccount: app.accountDetail() });
-    const myAccounts = app.accounts();
-    this.setState({ accounts: app.accounts() });
+
+    const myAccounts = localStorage.getItem('accounts');
+
+    this.setState({ accounts: JSON.parse(myAccounts) });
+
     window.addEventListener('resize', this.updateDimensions);
   }
 
@@ -79,12 +85,8 @@ class TradeDashboard extends Component {
   };
 
   handleAccountChange = (e) => {
-    let val = e.target.value;
-  //   setTimeout(() => {
-  //     app.account(val);
-  //     console.log(val);
-  //     this.setState({ selectedAccount: app.accountDetail() });
-  // }, 5000)
+    const myAccounts = localStorage.setItem('accountType', e.target.value);
+    this.setState({ selectedAccount: e.target.value });
   };
 
   render() {
@@ -97,36 +99,64 @@ class TradeDashboard extends Component {
       {
         className: 'credit',
         heading: 'Credit',
-        figure: `$${this.state.selectedAccount.credit}`,
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.credit
+            : this.profile.live.credit
+        }`,
       },
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: `$${this.state.selectedAccount.open_p_l}`,
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.open_p_l
+            : this.profile.live.open_p_l
+        }`,
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: `$${this.state.selectedAccount.equity}`,
+        figure: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.equity
+            : this.profile.live.equity
+        }`,
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: `$${this.state.selectedAccount.margin}`,
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.margin
+            : this.profile.live.margin
+        }`,
       },
       {
         margin: 'Free Margin',
-        price: `$${this.state.selectedAccount.free_margin}`,
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.free_margin
+            : this.profile.live.free_margin
+        }`,
       },
       {
         margin: 'M. Level',
-        price: `$${this.state.selectedAccount.margin_level}`,
+        price: `$${
+          this.state.selectedAccount.toLowerCase().match('demo')
+            ? this.profile.demo.margin_level
+            : this.profile.live.margin_level
+        }`,
       },
     ];
 
-    const favouriteItems = this.state.selectedAccount.favorites;
+    const favouriteItems = this.state.selectedAccount
+      .toLowerCase()
+      .match('demo')
+      ? this.profile.demo.favorites
+      : this.profile.live.favorites;
     return (
       <Container>
         <Spinner showSpinner={showSpinner} />
@@ -148,7 +178,11 @@ class TradeDashboard extends Component {
                 <div className='balance-margin'>
                   <div className='balance-demo'>
                     <Balance
-                      balance={`$${this.state.selectedAccount.balance}`}
+                      balance={`$${
+                        this.state.selectedAccount.toLowerCase().match('demo')
+                          ? this.profile.demo.demo_balance
+                          : this.profile.live.live_balance
+                      }`}
                       balanceItemData={balanceItems}
                     />
                     {currentTab !== 'Balance' ? (
@@ -194,7 +228,11 @@ class TradeDashboard extends Component {
               ) : (
                 <MobileBalance
                   demoOptions={this.state.accounts}
-                  balance={`$${this.state.selectedAccount.balance}`}
+                  balance={`$${
+                    this.state.selectedAccount.toLowerCase().match('demo')
+                      ? this.profile.demo.demo_balance
+                      : this.profile.live.live_balance
+                  }`}
                   balanceItemData={balanceItems}
                   marginItems={marginItems}
                   handleDemoChange={this.handleAccountChange}
