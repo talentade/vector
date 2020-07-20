@@ -20,7 +20,16 @@ class BuyandsellModal extends Component {
     }
 
     this.state = {
-      information : info
+      information : info,
+      pip_str: "",
+      lots: 0,
+      counter: 0,
+      changedLot: 0.01,
+      changed_lot: 0.01,
+      lot_str: "",
+      mode: "buy",
+      lot_val: 0.01,
+      required_margin_str: ""
     };
 
   }
@@ -30,39 +39,56 @@ class BuyandsellModal extends Component {
   }
 
   vlvChange = (u) => {
-    let vl = document.getElementById("vlv").value;
-        vl = vl > 0 ? parseFloat(vl) : 0;
-
+    let cnt = this.state.counter;
+    let sum = this.state.changedLot;
     if(u == "up") {
-      document.getElementById("vlv").value = vl + 1;
+      if(cnt > -1) cnt +=1;
+      this.setState({counter: cnt, lot_val: sum + (cnt * 0.01)});
+      setTimeout(() => {
+        this.tradeAnalysis();
+      }, 10);
     } else {
-      document.getElementById("vlv").value = vl - 1;
+      if(cnt > 0) cnt -=1;
+      this.setState({counter: cnt, lot_val: sum + (cnt * 0.01)})
+      setTimeout(() => {
+        this.tradeAnalysis();
+      }, 10);
     }
   }
 
-  btnBsell = (i, r) => {
+  btnBsell = async (i, r) => {
     document.getElementById(i).classList.add("_active");
     document.getElementById(r).classList.remove("_active");
     document.getElementById(i+"-order").classList.add("_active");
     document.getElementById(r+"-order").classList.remove("_active");
     document.getElementById(i+"-price").classList.add("_active");
     document.getElementById(r+"-price").classList.remove("_active");
-    this.placeOrderBuy();
+    this.setState({mode: i == "btnSell" ? "sell" : "buy"})
+    this.tradeAnalysis();
   }
 
-  placeOrderBuy = async () => {
-    const {
-          data: {
-            data: {}, code, order
-          },
-      } = await server.placeOrderBuy(
-      localStorage.getItem('id'),
-      localStorage.getItem('email'),
-      localStorage.getItem('accountType'),
-      this.props.pair
-    );
+  tradeAnalysis = async () => {
+    try {
+      let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
+      analysis = analysis.data.data;
+      this.setState({pip_val: analysis.pip_value, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
+      console.log(analysis);
+    } catch (error) {
+      setTimeout(() => {
+        this.tradeAnalysis();
+      }, 2000)
+      return error;
+    }
+  }
 
-    console.log(order);
+  changeLot = async (e) => {
+    // this.setState({lot_val: e.target.value, changedLot: e.target.value, counter: 0});
+    // this.tradeAnalysis();
+  }
+
+  placeOrder = async () => {
+    const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin);
+    console.log(place_order);
   }
 
   componentDidMount() {
@@ -135,14 +161,14 @@ class BuyandsellModal extends Component {
               </ul>
               <p>Volume (lots)</p>
               <p className="mt1 nolot" style={{position: "relative"}}>
-                <input type="number" id="vlv" placeholder="0.01" />
+                <input type="number" id="vlv" placeholder="0.01" value={this.state.lot_val} onKeyUp={this.changeLot}/>
                 <img src={upVlv} className="uvlv" onClick={(e) => this.vlvChange("up")} />
                 <img src={downVlv} className="dvlv" onClick={(e) => this.vlvChange("down")} />
               </p>
               <ul className="info-list">
-                <li className=""><span className="text-success">Pip Value:</span><span className="text-success">0.10 $</span></li>
-                <li className=""><span className="text-success">0.01 lots:</span><span className="text-success">1000.00 BTC</span></li>
-                <li className=""><span className="text-success">Required Margin:</span><span className="text-success">3.25 USD</span></li>
+                <li className=""><span className="text-success">Pip Value:</span><span className="text-success">{this.state.pip_str}</span></li>
+                <li className=""><span className="text-success">{this.state.changed_lot} lots:</span><span className="text-success">{this.state.lot_str}</span></li>
+                <li className=""><span className="text-success">Required Margin:</span><span className="text-success">{this.state.required_margin_str}</span></li>
               </ul>
               <div className="phr">
                 <span>
@@ -173,8 +199,8 @@ class BuyandsellModal extends Component {
                 </span>
               </div>
               <p align="center">
-                <button className="btn place_order _active" id="btnSell-order"  onClick={confirmClick}>Place Sell Order</button>
-                <button className="btn place_order" id="btnBuy-order" onClick={confirmClick}>Place Buy Order</button>
+                <button className="btn place_order _active" id="btnSell-order"  onClick={this.placeOrder}>Place Sell Order</button>
+                <button className="btn place_order" id="btnBuy-order" onClick={this.placeOrder}>Place Buy Order</button>
               </p>
             </div> : null }
           </div>

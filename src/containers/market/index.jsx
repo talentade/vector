@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import server from '../../services/server';
+import app from '../../services/app';
 import Balance from '../../components/balance/index';
 import Demo from '../../components/demo/index';
 import BuyandsellModal from '../../components/buyandsellModal/index';
@@ -37,7 +38,7 @@ class Market extends Component {
       buyandsellConfirmed: false
     };
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.profile = app.profile();
     this.fireFavRef = new CustomEvent('refreshFav', {
       detail: {
         code: 200
@@ -46,7 +47,7 @@ class Market extends Component {
   }
 
   fetchStock = async () => {
-    const userId = localStorage.getItem('id');
+    const userId = app.id();
     try {
       const {
         data: {
@@ -65,19 +66,19 @@ class Market extends Component {
 
   async componentDidMount() {
     this.setState({ showLoader: true });
-    const accountType = localStorage.getItem('accountType');
+    const accountType = app.account();
 
-    const userId = localStorage.getItem('id');
+    const userId = app.id();
     this.fetchStock();
     setInterval(async () => this.fetchStock(), 30000);
 
     if (accountType) {
-      this.setState({ selectedAccount: accountType });
+      this.setState({ selectedAccount: app.accountDetail() });
     }
 
-    const myAccounts = localStorage.getItem('accounts');
+    const myAccounts = app.accounts();
 
-    this.setState({ accounts: JSON.parse(myAccounts) });
+    this.setState({ accounts: myAccounts });
   }
 
   toggleSideBar = () => {
@@ -111,10 +112,18 @@ class Market extends Component {
 
   addToFav = async (e) => {
     this.setState({showSpinner: true});
-    const { data : { data: {}, code, message } } = await server.addToFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), e.target.getAttribute("pair"));
-    if(code == 200) {
-      document.getElementById("favContainers").dispatchEvent(this.fireFavRef);
-      this.fetchStock();
+    try {
+      const { data : { data: {}, code, message } } = await server.addToFav(app.id(), app.account(), e.target.getAttribute("pair"));
+      if(code == 200) {
+        // document.getElementById("favContainers").dispatchEvent(this.fireFavRef);
+        if(document.getElementById("favContainers-refresher").length) {
+          document.getElementById("favContainers-refresher").click();
+        }
+        this.fetchStock();
+      }
+    } catch(error) {
+      this.setState({showSpinner: false});
+      return error;
     }
     this.setState({showSpinner: false});
   }
@@ -122,7 +131,7 @@ class Market extends Component {
   remFav = async (e) => {
     this.setState({showSpinner: true});
     let pair = e.target.getAttribute("pair");
-    const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
+    const { status, message } = await server.removeFav(app.id(), app.account(), pair);
     if(status == 200) {
       document.getElementById("fav-pair-"+pair).remove();
       this.fetchStock();
@@ -131,7 +140,7 @@ class Market extends Component {
   }
 
   render() {
-    const userId = localStorage.getItem('id');
+    const userId = app.id();
 
     if (!userId) return <Redirect to='/Login' />;
 
@@ -147,64 +156,36 @@ class Market extends Component {
       {
         className: 'credit',
         heading: 'Credit',
-        figure: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.credit
-            : this.profile.live.credit
-        }`,
+        figure: `$${this.state.selectedAccount.credit}`,
       },
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.open_p_l
-            : this.profile.live.open_p_l
-        }`,
+        figure: `$${this.state.selectedAccount.open_p_l}`,
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.equity
-            : this.profile.live.equity
-        }`,
+        figure: `$${this.state.selectedAccount.equity}`,
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.margin
-            : this.profile.live.margin
-        }`,
+        price: `$${this.state.selectedAccount.margin}`,
       },
       {
         margin: 'Free Margin',
-        price: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.free_margin
-            : this.profile.live.free_margin
-        }`,
+        price: `$${this.state.selectedAccount.free_margin}`,
       },
       {
         margin: 'M. Level',
-        price: `$${
-          this.state.selectedAccount.toLowerCase().match('demo')
-            ? this.profile.demo.margin_level
-            : this.profile.live.margin_level
-        }`,
+        price: `$${this.state.selectedAccount.margin_level}`,
       },
     ];
 
-    const favouriteItems = this.state.selectedAccount
-      .toLowerCase()
-      .match('demo')
-      ? this.profile.demo.favorites
-      : this.profile.live.favorites;
+    const favouriteItems = this.state.selectedAccount.favorites;
 
     return (
       <Container>
@@ -248,11 +229,7 @@ class Market extends Component {
                 <div className='balance-margin'>
                   <div className='balance-demo'>
                     <Balance
-                      balance={`$${
-                        this.state.selectedAccount.toLowerCase().match('demo')
-                          ? this.profile.demo.demo_balance
-                          : this.profile.live.live_balance
-                      }`}
+                      balance={`$${this.state.selectedAccount.balance}`}
                       balanceItemData={balanceItems}
                     />
                     <Demo

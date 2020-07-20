@@ -20,6 +20,7 @@ class Favourites extends Component {
     this.fetchFavs();
     if(document.getElementById("favContainers")) {
        document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
+        alert(" refresher oo");
         that.fetchFavs();
       });
     }
@@ -47,6 +48,7 @@ class Favourites extends Component {
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
         <h2>Favourites</h2>
+        <button style={{display: "none"}} id="favContainers-refresher" onClick={this.fetchFavs()}>R</button>
         {favouritePairs ? (
           <div className='favourite-flex'>
             <div className='favourite-section-containers' id="favContainers">

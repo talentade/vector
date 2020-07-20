@@ -129,11 +129,6 @@ class Chart extends Component {
     });
 
     this.setGraphType("candle", 0);
-    this.plotGraphData();
-  }
-
-  plotGraphData = async (p = "") => {
-
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       this.chart.current.applyOptions({ width, height });
@@ -141,14 +136,18 @@ class Chart extends Component {
         this.chart.current.timeScale().fitContent();
       }, 0);
     });
+    this.plotGraphData();
+    return () => this.resizeObserver.current.disconnect();
+  }
+
+  plotGraphDataInit = async () => {
 
     try {
-      if (!this.allPairs) {
+      if (!this.allPairs || true) {
         const {
           data: { data },
         } = await server.getAllPairs(app.id());
-
-        localStorage.setItem('allPairs', JSON.stringify(data));
+        app.allPairs(JSON.stringify(data));
 
         const instruments = Object.keys(data);
         this.pair = data.forex[0];
@@ -167,49 +166,45 @@ class Chart extends Component {
           selectedPair: this.state.selectedPair.length ? this.state.selectedPair : allPairsParsed.forex[0],
           instruments,
         });
+        alert(allPairsParsed.forex[0]);
 
         this.pair = allPairsParsed.forex[0];
       }
     } catch (error) {
       return error.message;
     }
+  }
 
-    let { data: { data } } = await server.getSeries(this.pair, 30);
+  treatPair = (pair) => {
+    return pair.split(" ")[0].trim();
+    // return encodeURI(pair);
+    // return (pair.split(" ").length > 1 ? pair.split(" ")[0].replace("(", "").replace(")", "") : pair);
+  }
+
+  plotGraphData = async (p = "") => {
+    if(!p.trim().length) {
+      await this.plotGraphDataInit();
+    }
+
+    this.setState({showLoader: true});
+    let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
     data = data.slice(Math.max(data.length - 100, 0));
     for (let x = 0; x < data.length; x++) {
       this.plotGraph(this.graphData(data[x]));
     }
-
-    setInterval(async () => {
-      data = await this.handleDataChange(this.pair);
+    if(window.realtTimeFetcher) {
+      clearInterval(window.realtTimeFetcher);
+    }
+    window.realtTimeFetcher = async () => {
+      data = await this.handleDataChange(this.treatPair(this.pair));
       this.plotGraph(data);
-    }, 10 * 1000);
+    }
+    this.setState({showLoader: false});
+    setInterval(window.realtTimeFetcher, 10 * 1000);
+
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
-
-    return () => this.resizeObserver.current.disconnect();
   }
-
-  handleOptionsChange = (e) => {
-    this.pair = this.state.allPairs[e.target.value.toLowerCase()][0];
-    this.setState({
-      selectedOption: e.target.value,
-      showLoader: true,
-      currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
-      selectedPair: this.state.allPairs[e.target.value.toLowerCase()][0],
-    });
-
-    this.chart.current.removeSeries(this.chartSeries);
-    this.chartSeries = this.chart.current.addCandlestickSeries({
-      upColor: '#03CF9E',
-      downColor: '#FF1E1E',
-      borderDownColor: '#FF1E1E',
-      borderUpColor: '#03CF9E',
-      wickDownColor: '#c4c4c4',
-      wickUpColor: '#c4c4c4',
-    });
-
-  };
 
   plotGraph = (data) => {
     if (typeof data === 'object' && data.pair === this.pair) {
@@ -268,12 +263,35 @@ class Chart extends Component {
     };
   }
 
+  handleOptionsChange = (e) => {
+    this.pair = this.state.allPairs[e.target.value.toLowerCase()][0];
+    this.setState({
+      selectedOption: e.target.value,
+      currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
+      selectedPair: this.state.allPairs[e.target.value.toLowerCase()][0],
+    });
+
+    // this.chart.current.removeSeries(this.chartSeries);
+    // this.chartSeries = this.chart.current.addCandlestickSeries({
+    //   upColor: '#03CF9E',
+    //   downColor: '#FF1E1E',
+    //   borderDownColor: '#FF1E1E',
+    //   borderUpColor: '#03CF9E',
+    //   wickDownColor: '#c4c4c4',
+    //   wickUpColor: '#c4c4c4',
+    // });
+
+    this.setGraphType(this.currentGrpahType, 1);
+    this.plotGraphData(this.state.selectedPair);
+
+  };
+
   setNewPairData = (e) => {
     this.pair = e.target.value;
-    this.setState({ selectedPair: e.target.value, showLoader: true });
+    this.setState({ selectedPair: e.target.value });
     // this.chart.current.removeSeries(this.chartSeries);
     this.setGraphType(this.currentGrpahType, 1);
-    this.plotGraphData();
+    this.plotGraphData(this.state.selectedPair);
   };
 
   cancelBsellModal = (e) => {
@@ -295,7 +313,7 @@ class Chart extends Component {
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               text={``}
-              pair={this.pair}
+              pair={this.state.selectedPair}
               buy={this.state.buy}
               sell={this.state.sell}
               act={this.state.buyandsellAct}

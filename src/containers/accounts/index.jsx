@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import Container from '../container/index';
 import Spinner from '../../components/spinner/index';
 import server from '../../services/server';
+import app from '../../services/app';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
 import ai_n from '../../themes/images/ai-normal.png';
@@ -37,36 +38,22 @@ class Accounts extends Component {
 
   accountList = async () => {
     this.setState({showSpinner: true});
-    const { data: { data: { profile } } } = await server.getProfile(localStorage.getItem("id"), localStorage.getItem("email"));
-    localStorage.setItem('email', localStorage.getItem("email"));
+    const { data: { data: { profile } } } = await server.getProfile(app.id(), app.email());
+    localStorage.setItem('email', app.email());
     localStorage.setItem('id', profile.user_id);
     localStorage.setItem('profile', JSON.stringify(profile));
 
     let accs = [];
-    // let profile = JSON.parse(localStorage.getItem("profile"));
     const { data: { data: { accounts } } } = await server.getAccounts(localStorage.getItem("id"));
     Object.entries(accounts).forEach(([key, val]) => {
       let append;
-      if(val.toLowerCase() == "demo" || val.toLowerCase() == "live") {
-        append = profile[val];
-        let name = append[(val.toLowerCase() == "demo" ? "demo" : "live")+"_account_id"].split("-");
-        append["account_id"] = name[1];
-        append["account_type"] = name[0].toLowerCase();
-        append["account_id_val"] = val;
-        append["account_balance"] = append[append["account_type"]+"_balance"];
-        accs.push(append);
-      } else {
-        console.log(profile[val]);
-        append = val.split("-")[0].toLowerCase() == "demo" ? profile[val]["demo"] : profile[val]["live"];
-        append["account_id"] = val.split("-")[1];
-        append["account_type"] = val.split("-")[0].toLowerCase();
-        append["account_id_val"] = val;
-        append["account_balance"] = append[append["account_type"]+"_balance"];
-        accs.push(append);
-      }
+      append = app.accountDetail(val);
+      append["account_id"] = val.split("-")[1];
+      append["account_type"] = val.split("-")[0].toLowerCase();
+      append["account_id_val"] = val;
+      append["account_balance"] = append["balance"];
+      accs.push(append);
     });
-
-    console.log(accs);
 
     this.setState({accounts: accs, showSpinner: false});
   }

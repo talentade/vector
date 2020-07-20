@@ -11,10 +11,11 @@ export default {
   account: (a = "") => {
     return a.length ? localStorage.setItem("accountType", a) : localStorage.getItem("accountType");
   },
-  accountDetail: () => {
+  accountDetail: (acc = null) => {
     let profile = JSON.parse(localStorage.getItem("profile"));
-    let account = profile[localStorage.getItem("accountType")];
-        account = account.live ? account.live : account.demo;
+    let selectd = acc ? acc : localStorage.getItem("accountType");
+    let account = profile[selectd];
+        account = account["demo"] ? account["demo"] : account["live"];
     let ret = [];
     Object.keys(account).forEach(key => {
       if(key.toLowerCase().match(/(demo|live)/g)) {
@@ -24,6 +25,9 @@ export default {
       }
     });
     return ret;
+  },
+  allPairs: (a = "") => {
+    return a.length ? localStorage.setItem('allPairs', JSON.stringify(a)) : localStorage.getItem('allPairs');
   },
   accounts: () => {
     let profile = JSON.parse(localStorage.getItem("profile"));

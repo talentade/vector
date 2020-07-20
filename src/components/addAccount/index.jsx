@@ -42,11 +42,6 @@ class AddAccount extends Component {
 
     try {
       let resp = await server.addAccount(localStorage.getItem("id"), sel, pas);
-      // const { data: { data: { profile } } } = await server.getProfile(localStorage.getItem("id"), localStorage.getItem("email"));
-      // localStorage.setItem('email', localStorage.getItem("email"));
-      // localStorage.setItem('id', profile.user_id);
-      // this.props.saveUserProfile(profile);
-      // localStorage.setItem('profile', JSON.stringify(profile));
       document.getElementById("account-container").dispatchEvent(this.fireAccList);
       this.props.cancelClick();
     } catch (error) {

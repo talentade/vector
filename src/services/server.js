@@ -92,7 +92,7 @@ export default {
   getMarketAndNewsData(Authorization) {
     return axios.request({
       method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/trading/market?&account=`+app.account(),
+      url:  `https://avariz-core.herokuapp.com/trading/market?account=`+app.account(),
       headers: {'Authorization': app.auth()}
     })
   },
@@ -180,15 +180,23 @@ export default {
     });
   },
 
-  placeOrderBuy(user_id, email, account, currency) {
-    let Authorization = user_id;
+  placeOrder(mode, pair, pip, lots, margin) {
     return axios.request({
       method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/wallet/buy/order?email='+email+'&account='+app.account()+'&currency='+currency,
+      url: 'https://avariz-core.herokuapp.com/wallet/'+mode+'/order?email='+app.email()+'&account='+app.account()+'&currency='+pair.split(" ")[0].trim(),
       headers: {
         'Authorization': app.auth()
       },
-      data: {email: email, currency: currency, account: app.account()}
+      body: {
+        order: {
+          "pip_value" : pip,
+          "volume_lots": lots,
+          "required_margin" : margin,
+          "stop_loss" : null, // {"configs" : null},
+          "take_profit" : null, // {"configs" : null},
+          "sell_when" : null, // {"configs" : null}
+        }
+      }
     });
   },
 
@@ -207,7 +215,7 @@ export default {
     let Authorization = user_id;
     return axios.request({
       method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/trading/favorites/add?account='+app.account()+'&pair="'+pair+'"',
+      url: 'https://avariz-core.herokuapp.com/trading/favorites/add?account='+app.account()+'&pair='+pair.split(" ")[0].trim(),
       headers: {
         'Authorization': app.auth()
       },
@@ -219,7 +227,7 @@ export default {
     let Authorization = user_id;
     return axios.request({
       method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/trading/favorites/remove?account='+app.account()+'&pair="'+pair+'"',
+      url: 'https://avariz-core.herokuapp.com/trading/favorites/remove?account='+app.account()+'&pair='+pair.split(" ")[0].trim(),
       headers: {
         'Authorization': app.auth()
       },
@@ -247,7 +255,7 @@ export default {
         'Authorization': app.auth(),
         'auth': user_id,
         'password': sha256(pwd),
-        'account_type': app.account()
+        'account_type': account
       },
       // data: {account: app.account(), password: pwd}
     });
@@ -262,11 +270,10 @@ export default {
     })
   },
 
-  tradeAnalysis(user_id, pair, mode) {
-    let Authorization = user_id;
+  tradeAnalysis(pair, mode, lots) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/trading/analysis?pair="'+pair+'"&mode='+mode+'&leverage=200&lots=0.01',
+      url: 'https://avariz-core.herokuapp.com/trading/analysis?pair='+pair.split(" ")[0].trim()+'&mode='+mode+'&leverage=200&lots='+lots,
       headers: {'Authorization': app.auth()}
     })
   },
