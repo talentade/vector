@@ -33,6 +33,7 @@ class Market extends Component {
       showLoader: false,
       showAddFav: false,
       showSpinner: false,
+      buyandsellAct: 'buy',
       buyandsellModal: false,
       buyandsellModalInfo: false,
       buyandsellConfirmed: false
@@ -83,15 +84,6 @@ class Market extends Component {
 
   toggleSideBar = () => {
     this.setState({ clicked: !this.state.clicked });
-  };
-
-
-  cancelBsellModal = (e) => {
-    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: false });
-  }
-
-  showBsellModal = (e) => {
-    this.setState({ buyandsellModal: true, buyandsellModalInfo: false, showLoader: false });
   }
 
   addFavPop = (e) => {
@@ -100,14 +92,6 @@ class Market extends Component {
 
   cancelFavPop = (e) => {
     this.setState({showAddFav: false});
-  }
-
-  showBsellModal2 = (e) => {
-    this.setState({ buyandsellModal: true, buyandsellModalInfo: true, showLoader: false });
-  }
-
-  confirmBsellModal = (e) => {
-    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
   }
 
   addToFav = async (e) => {
@@ -133,7 +117,7 @@ class Market extends Component {
     let pair = e.target.getAttribute("pair");
     const { status, message } = await server.removeFav(app.id(), app.account(), pair);
     if(status == 200) {
-      document.getElementById("fav-pair-"+pair).remove();
+      document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_"))).remove();
       this.fetchStock();
     }
     this.setState({showSpinner: false});
@@ -141,6 +125,24 @@ class Market extends Component {
 
   showMainLoader = () => {
     this.setState({showSpinner: !this.state.showSpinner});
+  }
+
+
+  // BSELL
+  cancelBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: false });
+  }
+
+  showBsellModal = (e, s = "buy") => {
+    this.setState({ buyandsellModal: true, buyandsellModalInfo: false, showLoader: false, buyandsellAct: s });
+  }
+
+  showBsellModal2 = (e, s = "buy") => {
+    this.setState({ buyandsellModal: true, buyandsellModalInfo: true, showLoader: false, buyandsellAct: s });
+  }
+
+  confirmBsellModal = (e) => {
+    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
   }
 
   render() {
@@ -196,9 +198,14 @@ class Market extends Component {
         <Spinner showSpinner={this.state.showSpinner} />
         <div className='trade-section market-section'>
           { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
+          
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               text={``}
+              pair={window.buyAndSellData.pair}
+              buy={window.buyAndSellData.buy}
+              sell={window.buyAndSellData.sell}
+              act={window.buyAndSellData.act}
               cancelClick={this.cancelBsellModal}
               confirmClick={this.confirmBsellModal}
               information={this.state.buyandsellModalInfo}

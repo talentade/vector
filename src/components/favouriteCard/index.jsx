@@ -10,8 +10,7 @@ const removeFav = async (pair, showSpinner) => {
     const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
     showSpinner();
     let pair_id = "fav-pair-"+(pair.replace(/[^\w]/g, "_"));
-    alert(document.getElementById(pair_id).length);
-    if(document.getElementById(pair_id).length) {
+    if(document.getElementById(pair_id)) {
       document.getElementById(pair_id).remove();
     }
   } catch (error) {

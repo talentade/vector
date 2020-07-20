@@ -20,7 +20,6 @@ class Favourites extends Component {
     this.fetchFavs();
     if(document.getElementById("favContainers")) {
        document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
-        alert(" refresher oo");
         that.fetchFavs();
       });
     }

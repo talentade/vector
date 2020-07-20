@@ -75,13 +75,13 @@ const MarketSideBar = ({
                 { pair.isFav
                   ? <img src={starIcon2} alt='' onClick={(e) => { remFav(e); pairs[index].isFav = false; }} pair={pair.stock} />
                   : <img src={starIcon} alt='' onClick={(e) => { addToFav(e); pairs[index].isFav = true; }} pair={pair.stock} /> }
-                  <img src={CommentIcon} alt='' onClick={showBsellModal2} />
+                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal2(e)}} />
                 </span>
               </div>
               <div className='market-big-flex'>
                 <p className='pair-percentage'>{pair.change}</p>
                 <div className='market-cta-section'>
-                  <div className='market-sell' onClick={showBsellModal}>
+                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "sell"}; showBsellModal(e)}}>
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
@@ -97,7 +97,7 @@ const MarketSideBar = ({
                     </div>
                     <p>{pair.spread}</p>
                   </div>
-                  <div className='market-buy' onClick={showBsellModal}>
+                  <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal(e)}}>
                     <div className='market-buy-data'>
                       <img src={DirectionIcon} alt='' />
                       <div className='market-buy-info'>

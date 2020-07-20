@@ -29,6 +29,7 @@ class BuyandsellModal extends Component {
       lot_str: "",
       mode: "buy",
       lot_val: 0.01,
+      analysis: false,
       required_margin_str: ""
     };
 
@@ -57,21 +58,25 @@ class BuyandsellModal extends Component {
   }
 
   btnBsell = async (i, r) => {
-    document.getElementById(i).classList.add("_active");
-    document.getElementById(r).classList.remove("_active");
-    document.getElementById(i+"-order").classList.add("_active");
-    document.getElementById(r+"-order").classList.remove("_active");
-    document.getElementById(i+"-price").classList.add("_active");
-    document.getElementById(r+"-price").classList.remove("_active");
-    this.setState({mode: i == "btnSell" ? "sell" : "buy"})
-    this.tradeAnalysis();
+    if(document.getElementById(i)) {
+      document.getElementById(i).classList.add("_active");
+      document.getElementById(r).classList.remove("_active");
+      document.getElementById(i+"-order").classList.add("_active");
+      document.getElementById(r+"-order").classList.remove("_active");
+      document.getElementById(i+"-price").classList.add("_active");
+      document.getElementById(r+"-price").classList.remove("_active");
+      this.setState({mode: i == "btnSell" ? "sell" : "buy"})
+      this.tradeAnalysis();
+    }
   }
 
   tradeAnalysis = async () => {
     try {
+      this.setState({analysis: false});
       let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
       analysis = analysis.data.data;
       this.setState({pip_val: analysis.pip_value, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
+      this.setState({analysis: true});
       console.log(analysis);
     } catch (error) {
       setTimeout(() => {
@@ -93,7 +98,11 @@ class BuyandsellModal extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    this.initLoader();
+  }
+
+  initLoader = async () => {
     if(this.props.act == "buy") {
       this.btnBsell("btnBuy", "btnSell");
     } else {
@@ -121,7 +130,7 @@ class BuyandsellModal extends Component {
 
   render () {
     const { text, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
-    const { information } = this.state;
+    const { information, analysis } = this.state;
     return (
       <div className='overlay bs'>
         <div className='deposit-modal-section'>
@@ -129,7 +138,7 @@ class BuyandsellModal extends Component {
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancelClick} />
             <ul className="imarket">
               <li className={information ? '_active' : ''} onClick={() => this.handleClick(true)}><span>Information</span></li>
-              <li className={information ? '' : '_active'} onClick={() => this.handleClick(false)}><span>Markets</span></li>
+              <li className={information ? '' : '_active'} onClick={() => { this.handleClick(false); setTimeout(() => { this.initLoader(); }, 10) }}><span>Markets</span></li>
             </ul>
             { information ? <div className='bsell-modal-content'>
               <h6>{pair}</h6>
@@ -201,8 +210,8 @@ class BuyandsellModal extends Component {
                 </span>
               </div>
               <p align="center">
-                <button className="btn place_order _active" id="btnSell-order"  onClick={this.placeOrder}>Place Sell Order</button>
-                <button className="btn place_order" id="btnBuy-order" onClick={this.placeOrder}>Place Buy Order</button>
+                <button className="btn place_order _active" id="btnSell-order"  disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.4}} onClick={this.placeOrder}>Place Sell Order</button>
+                <button className="btn place_order" id="btnBuy-order" disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.4}} onClick={this.placeOrder}>Place Buy Order</button>
               </p>
             </div> : null }
           </div>
