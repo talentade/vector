@@ -187,7 +187,7 @@ export default {
       headers: {
         'Authorization': app.auth()
       },
-      body: {
+      data: {
         order: {
           "pip_value" : pip,
           "volume_lots": lots,
@@ -261,11 +261,10 @@ export default {
     });
   },
 
-  tradeHistory(user_id, email, account, type) {
-    let Authorization = user_id;
+  tradeHistory(type) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/wallet/history?email='+email+'&account='+app.account()+'&tracker_code=trades.'+type,
+      url: 'https://avariz-core.herokuapp.com/wallet/history?email='+app.email()+'&account='+app.account()+'&tracker_code=trades.'+type,
       headers: {'Authorization': app.auth()}
     })
   },

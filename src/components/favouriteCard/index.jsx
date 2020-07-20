@@ -4,17 +4,26 @@ import Comment from '../../themes/images/tradeDashboard/comment.svg';
 import './index.scss';
 import server from '../../services/server';
 
-const removeFav = async (pair) => {
-  const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
-  if(status == 200) {
-    document.getElementById("fav-pair-"+pair).remove();
+const removeFav = async (pair, showSpinner) => {
+  showSpinner();
+  try {
+    const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
+    showSpinner();
+    let pair_id = "fav-pair-"+(pair.replace(/[^\w]/g, "_"));
+    alert(document.getElementById(pair_id).length);
+    if(document.getElementById(pair_id).length) {
+      document.getElementById(pair_id).remove();
+    }
+  } catch (error) {
+    return error;
+    showSpinner();
   }
 }
 
-const FavouriteCard = ({ direction, color, pair, price }) => (
-  <div className="favourite-card" id={"fav-pair-"+pair}>
+const FavouriteCard = ({ direction, color, pair, price, showSpinner}) => (
+  <div className="favourite-card" id={"fav-pair-"+pair.replace(/[^\w]/g, "_")}>
     <div className="star-section">
-      <img src={Star} alt="" onClick={() => removeFav(pair)} />
+      <img src={Star} alt="" onClick={() => removeFav(pair, showSpinner)} />
       <p>{pair.split("(")[0].trim()}</p>
     </div>
     <div className="smaller-items">

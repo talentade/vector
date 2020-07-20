@@ -58,7 +58,7 @@ class Chart extends Component {
     };
   }
 
-  setGraphType = (type, no = 1) => {
+  setGraphType = async (type, no = 1) => {
     this.seriesIterator = 0;
     var option = {
         upColor: '#26a69a',
@@ -86,6 +86,9 @@ class Chart extends Component {
       this.chartSeries = this.chart.current.addBarSeries(option);
     } else if(type == "hist") {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
+    }
+    if(this.pair.length) {
+      this.getSeries();
     }
   }
 
@@ -121,6 +124,7 @@ class Chart extends Component {
       priceScale: {
         borderColor: '#A09F9F',
       },
+      autoScale: true,
       timeScale: {
         borderColor: '#A09F9F',
         timeVisible: true,
@@ -181,22 +185,26 @@ class Chart extends Component {
     // return (pair.split(" ").length > 1 ? pair.split(" ")[0].replace("(", "").replace(")", "") : pair);
   }
 
+  getSeries = async () => {
+    let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
+    data = data.slice(Math.max(data.length - 100, 0));
+    for (let x = 0; x < data.length; x++) {
+      this.plotGraph(this.graphData(data[x]));
+    }
+  }
+
   plotGraphData = async (p = "") => {
     if(!p.trim().length) {
       await this.plotGraphDataInit();
     }
 
     this.setState({showLoader: true});
-    let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
-    data = data.slice(Math.max(data.length - 100, 0));
-    for (let x = 0; x < data.length; x++) {
-      this.plotGraph(this.graphData(data[x]));
-    }
+    await this.getSeries();
     if(window.realtTimeFetcher) {
       clearInterval(window.realtTimeFetcher);
     }
     window.realtTimeFetcher = async () => {
-      data = await this.handleDataChange(this.treatPair(this.pair));
+      let data = await this.handleDataChange(this.treatPair(this.pair));
       this.plotGraph(data);
     }
     this.setState({showLoader: false});
@@ -270,16 +278,6 @@ class Chart extends Component {
       currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
       selectedPair: this.state.allPairs[e.target.value.toLowerCase()][0],
     });
-
-    // this.chart.current.removeSeries(this.chartSeries);
-    // this.chartSeries = this.chart.current.addCandlestickSeries({
-    //   upColor: '#03CF9E',
-    //   downColor: '#FF1E1E',
-    //   borderDownColor: '#FF1E1E',
-    //   borderUpColor: '#03CF9E',
-    //   wickDownColor: '#c4c4c4',
-    //   wickUpColor: '#c4c4c4',
-    // });
 
     this.setGraphType(this.currentGrpahType, 1);
     this.plotGraphData(this.state.selectedPair);

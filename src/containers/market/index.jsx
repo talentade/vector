@@ -139,6 +139,10 @@ class Market extends Component {
     this.setState({showSpinner: false});
   }
 
+  showMainLoader = () => {
+    this.setState({showSpinner: !this.state.showSpinner});
+  }
+
   render() {
     const userId = app.id();
 
@@ -244,7 +248,7 @@ class Market extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites showClick={this.addFavPop} favouritePairs={favouriteItems} />
+                <Favourites showClick={this.addFavPop} favouritePairs={favouriteItems} showSpinner={this.showMainLoader}/>
               </div>
               <Chart />
             </div>

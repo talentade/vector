@@ -88,7 +88,9 @@ class BuyandsellModal extends Component {
 
   placeOrder = async () => {
     const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin);
-    console.log(place_order);
+    if(place_order.status == 200) {
+      this.props.confirmClick();
+    }
   }
 
   componentDidMount() {

@@ -44,7 +44,7 @@ class Favourites extends Component {
   }
 
   render () {
-    const { showClick, favouritePairs, secondClassName } = this.props;
+    const { showClick, favouritePairs, secondClassName, showSpinner } = this.props;
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
         <h2>Favourites</h2>
@@ -54,7 +54,7 @@ class Favourites extends Component {
             <div className='favourite-section-containers' id="favContainers">
               {this.state.cards && this.state.cards.length ?
                 this.state.cards.map((card) => (
-                  (card) ? (<FavouriteCard direction="up" color="" pair={card.pair} price={card.open} />) : (null)
+                  (card) ? (<FavouriteCard showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} />) : (null)
                 )) : (null)
               }
             </div>

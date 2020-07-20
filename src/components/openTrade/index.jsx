@@ -7,6 +7,8 @@ import Pagination from '../Pagination/index';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
 import ai_n from '../../themes/images/ai-normal.png';
+import server from '../../services/server';
+import app from '../../services/app';
 import ai_b from '../../themes/images/ai-bookmark.png';
 import './index.scss';
 
@@ -20,6 +22,11 @@ class OpenTrade extends Component {
       el.classList.remove("_active");
     });
     document.getElementById(i).classList.add("_active");
+  }
+
+  async componentDidMount () {
+    const request = await server.tradeHistory("pending");
+    console.log(request);
   }
 
   render () {

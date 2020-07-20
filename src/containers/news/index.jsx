@@ -47,7 +47,7 @@ class News extends Component {
         },
       } = await server.getMarketAndNewsData(userId);
       // console.log(news);
-      this.setState({ news: news, showLoader: false });
+      this.setState({ news: news.length > 7 ? news.slice(0, 7) : news, showLoader: false });
       this.readNews(0);
     } catch (error) {
       this.setState({ showLoader: false });
@@ -83,7 +83,7 @@ class News extends Component {
       let fulltext = await server.loadCore(userId, link);
       if(fulltext.status == 200) {
         let news = this.state.activeNews;
-        news["readMore"] = fulltext.data.replace('href="http', 'target="_blank" href="http');
+        news["readMore"] = fulltext.data.replace(/(href="http)/g, 'style="color: #1FCF65 !important;" target="_blank" href="http');
         this.setState({ activeNews : news });
       }
       this.setState({ showLoader: false });
