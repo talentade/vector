@@ -43,14 +43,14 @@ class Transactions extends Component {
       transactionsObject: {},
     };
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.profile = app.profile();
     this.id = this.profile.user_id;
   }
 
   async componentDidMount() {
     this.setState({
-      email: this.profile.email,
-      balance: this.profile.demo.demo_balance,
+      email: app.email(),
+      balance: app.accountDetail()["balance"],
     });
 
     if(localStorage.getItem("TSelected")) {
@@ -104,9 +104,7 @@ class Transactions extends Component {
   fetchTransactions = async () => {
     try {
       this.setState({ showSpinner: true });
-      const account = this.state.account.toLowerCase().match('demo')
-        ? 'demo'
-        : 'live';
+      const account = app.accountDetail();
       let _deposits = [];
       const {
         data: {
@@ -114,13 +112,7 @@ class Transactions extends Component {
             results: { deposits },
           },
         },
-      } = _deposits = await server.getTransactionHistory(
-        this.profile.email,
-        this.id,
-        this.state.page_size,
-        this.state.page_no,
-        account,
-      );
+      } = _deposits = await server.getTransactionHistory(app.email(), this.id, this.state.page_size, this.state.page_no, account);
       let arr = [];
 
       for (let key in deposits) {
@@ -230,9 +222,7 @@ class Transactions extends Component {
 
     this.setState({
       account: value,
-      balance: value.toLowerCase().match('demo')
-        ? this.profile.demo.demo_balance
-        : this.profile.live.live_balance,
+      balance: app.accountDetail()["balance"],
     });
   };
 
@@ -271,7 +261,7 @@ class Transactions extends Component {
       to,
     } = this.state;
 
-    const transAccount = account.toLowerCase().match('demo') ? 'demo' : 'live';
+    const transAccount = app.accountDetail();
 
     this.setState({ errorMessage: null });
 
@@ -283,13 +273,7 @@ class Transactions extends Component {
       } else {
         this.setState({ showSpinner: true });
         if (selectedTab.toLowerCase().match('deposit')) {
-          await server.fundAccount(
-            email,
-            parseFloat(deposit),
-            selectedCurrency,
-            this.id,
-            transAccount,
-          );
+          await server.fundAccount(parseFloat(deposit), selectedCurrency, document.getElementById("dep-acc-sel").value);
         } else if (selectedTab.toLowerCase().match('transfer')) {
           await server.transferFunds(
             email,
@@ -307,7 +291,7 @@ class Transactions extends Component {
           data: {
             data: { profile },
           },
-        } = await server.getProfile(this.id, myEmail);
+        } = await server.getProfile();
 
         const newProfile = JSON.stringify(profile);
         localStorage.setItem('profile', newProfile);
@@ -342,8 +326,8 @@ class Transactions extends Component {
       deposit: parseFloat(0.0).toFixed(2),
       errorMessage: null,
       to: '',
-      balance: this.profile.demo.demo_balance,
-      account: JSON.parse(localStorage.getItem('accounts'))[0],
+      balance: app.accountDetail()["balance"],
+      account: app.account(),
       selectedTab: tab
     });
   }
@@ -373,11 +357,7 @@ class Transactions extends Component {
 
     const myProfile = JSON.parse(localStorage.getItem('profile'));
 
-    const balance = account.toLowerCase().match('demo')
-      ? myProfile.demo.demo_balance
-      : account.toLowerCase().match('live')
-      ? myProfile.live.live_balance
-      : '';
+    const balance = app.accountDetail()["balance"];
     return (
       <Container>
         <div className='transactions-section'>

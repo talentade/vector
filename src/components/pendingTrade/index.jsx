@@ -25,7 +25,7 @@ class OpenTrade extends Component {
     setInterval(async () => {
       if(this.realTimeListener) {
         try {
-          const { data : { data: { results } } } = await server.tradeHistory("open", 10, 1);
+          const { data : { data: { results } } } = await server.tradeHistory("pending", 10, 1);
           if(results) {
             if(results.length) {
               this.setState({history: results});
@@ -41,7 +41,7 @@ class OpenTrade extends Component {
   render () {
     const { type, filterOptions } = this.props;
     return (
-      <TradeHistory type="open" filterOptions={filterOptions} history={this.state.history}/>
+      <TradeHistory type="pending" filterOptions={filterOptions} history={this.state.history}/>
     );
 };
 }

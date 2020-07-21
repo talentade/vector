@@ -1,6 +1,6 @@
 export default {
   id: () => {
-    return localStorage.getItem("id").toLowerCase();
+    return (localStorage.getItem("id") ? localStorage.getItem("id").toLowerCase() : false);
   },
   userid: () => {
     return localStorage.getItem("id").toLowerCase();
@@ -44,5 +44,5 @@ export default {
   },
   profile: () => {
     return JSON.parse(localStorage.getItem("profile"));
-  },
+  }
 };

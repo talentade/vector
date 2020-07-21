@@ -17,42 +17,41 @@ class Favourites extends Component {
 
   async componentDidMount () {
     let that = this;
-    this.fetchFavs();
     if(document.getElementById("favContainers")) {
        document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
-        that.fetchFavs();
+        that.props.refresh();
       });
     }
   }
 
-  fetchFavs = async () => {
-    try {
-      const { data: { data, code } } = await server.fetchFav();
-      if(code == 200) {
-        if(data.length) {
-          this.setState({cards: data});
-        }
-      }
-    } catch (error) {
-      setTimeout(() => {
-        this.fetchFavs();
-      }, 2000);
-      console.log("Fav is err");
-      return error.message;
-    }
-  }
+  // fetchFavs = async () => {
+  //   try {
+  //     const { data: { data, code } } = await server.fetchFav();
+  //     if(code == 200) {
+  //       if(data.length) {
+  //         this.setState({cards: data});
+  //       }
+  //     }
+  //   } catch (error) {
+  //     setTimeout(() => {
+  //       this.fetchFavs();
+  //     }, 30 * 1000);
+  //     console.log("Fav is err");
+  //     return error.message;
+  //   }
+  // }
 
   render () {
-    const { showClick, favouritePairs, secondClassName, showSpinner } = this.props;
+    const { favouritePairs, secondClassName, showSpinner, refresh } = this.props;
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
         <h2>Favourites</h2>
-        <button style={{display: "none"}} id="favContainers-refresher" onClick={this.fetchFavs()}>R</button>
+        <button style={{display: "none"}} id="favContainers-refresher" onClick={refresh}>R</button>
         {favouritePairs ? (
           <div className='favourite-flex'>
             <div className='favourite-section-containers' id="favContainers">
-              {this.state.cards && this.state.cards.length ?
-                this.state.cards.map((card) => (
+              {favouritePairs.length ?
+                favouritePairs.map((card) => (
                   (card) ? (<FavouriteCard showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} />) : (null)
                 )) : (null)
               }

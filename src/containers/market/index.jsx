@@ -30,6 +30,7 @@ class Market extends Component {
       accounts: [],
       selectedAccount: '',
       hotStocks: [],
+      favourites: [],
       showLoader: false,
       showAddFav: false,
       showSpinner: false,
@@ -38,6 +39,7 @@ class Market extends Component {
       buyandsellModalInfo: false,
       buyandsellConfirmed: false
     };
+    this.realTimeListener = true;
 
     this.profile = app.profile();
     this.fireFavRef = new CustomEvent('refreshFav', {
@@ -65,13 +67,29 @@ class Market extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.realTimeListener = false;
+  }
+
   async componentDidMount() {
+    this.realTimeListener = true;
     this.setState({ showLoader: true });
     const accountType = app.account();
 
     const userId = app.id();
-    this.fetchStock();
-    setInterval(async () => this.fetchStock(), 30000);
+    
+    try {
+      await this.fetchStock();
+      await this.fetchFavs();
+    } catch (e) {
+      return e;
+    }
+
+    setInterval(async () => {
+      if(this.realTimeListener) {
+        this.fetchStock()
+      }
+    }, 10000);
 
     if (accountType) {
       this.setState({ selectedAccount: app.accountDetail() });
@@ -80,6 +98,23 @@ class Market extends Component {
     const myAccounts = app.accounts();
 
     this.setState({ accounts: myAccounts });
+  }
+
+  fetchFavs = async () => {
+    try {
+      const { data: { data, code } } = await server.fetchFav();
+      if(code == 200) {
+        if(data.length) {
+          this.setState({favourites: data});
+        }
+      }
+    } catch (error) {
+      setTimeout(() => {
+        this.fetchFavs();
+      }, 30 * 1000);
+      console.log("-- Fetch fav err");
+      return error.message;
+    }
   }
 
   toggleSideBar = () => {
@@ -99,11 +134,8 @@ class Market extends Component {
     try {
       const { data : { data: {}, code, message } } = await server.addToFav(app.id(), app.account(), e.target.getAttribute("pair"));
       if(code == 200) {
-        // document.getElementById("favContainers").dispatchEvent(this.fireFavRef);
-        if(document.getElementById("favContainers-refresher").length) {
-          document.getElementById("favContainers-refresher").click();
-        }
-        this.fetchStock();
+        await this.fetchFavs();
+        await this.fetchStock();
       }
     } catch(error) {
       this.setState({showSpinner: false});
@@ -117,7 +149,9 @@ class Market extends Component {
     let pair = e.target.getAttribute("pair");
     const { status, message } = await server.removeFav(app.id(), app.account(), pair);
     if(status == 200) {
-      document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_"))).remove();
+      if(document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_")))) {
+        document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_"))).remove();
+      }
       this.fetchStock();
     }
     this.setState({showSpinner: false});
@@ -191,7 +225,8 @@ class Market extends Component {
       },
     ];
 
-    const favouriteItems = this.state.selectedAccount.favorites;
+    // const favouriteItems = this.state.selectedAccount.favorites;
+    const favouriteItems = this.state.favourites;
 
     return (
       <Container>
@@ -255,7 +290,7 @@ class Market extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites showClick={this.addFavPop} favouritePairs={favouriteItems} showSpinner={this.showMainLoader}/>
+                <Favourites favouritePairs={favouriteItems} refresh={this.fetchFavs} showSpinner={this.showMainLoader}/>
               </div>
               <Chart />
             </div>

@@ -23,11 +23,10 @@ export default {
     credentials.password = sha256(credentials.password);
     return Api().post('/login/user', credentials);
   },
-  getProfile(id, email) {
-    let Authorization = id;
+  getProfile() {
     return axios.request({
       method: 'GET',
-      url: `https://avariz-core.herokuapp.com/profile/fetch/${email}/${id}`,
+      url: `https://avariz-core.herokuapp.com/profile/fetch/${app.email()}/${app.id()}`,
       headers: { 'Authorization': app.auth() }
     });
   },
@@ -96,12 +95,12 @@ export default {
       headers: {'Authorization': app.auth()}
     })
   },
-  fundAccount(email, amount, currency, id, account) {
+  fundAccount(amount, currency, account) {
     return axios.request({
       method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/wallet/fund?email=${email}&account=${app.account()}&currency=${currency}&amount=${amount}&tx_type=CREDIT&tx_code=FA`,
+      url:  `https://avariz-core.herokuapp.com/wallet/fund?email=${app.email()}&account=${account}&currency=${currency}&amount=${amount}&tx_type=CREDIT&tx_code=FA`,
       headers: {
-        'Authorization': id,
+        'Authorization': app.auth(),
       }
     })
   },
@@ -117,7 +116,7 @@ export default {
   getTransactionHistory(email, id, page_size, page_no, account) {
     return axios.request({
       method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/wallet/history?email=${email}&account=${app.account()}&tracker_code=deposits.all&pageSize=${page_size}&thisPage=${page_no}`,
+      url:  `https://avariz-core.herokuapp.com/wallet/history?email=${email}&account=${app.account()}&tracker_code=transactions&pageSize=${page_size}&thisPage=${page_no}`,
       headers: {
         'Authorization': id,
       }
@@ -261,10 +260,10 @@ export default {
     });
   },
 
-  tradeHistory(type) {
+  tradeHistory(type, page_size = 10, page = 1) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/wallet/history?email='+app.email()+'&account='+app.account()+'&tracker_code=trades.'+type,
+      url: 'https://avariz-core.herokuapp.com/wallet/history?email='+app.email()+'&account='+app.account()+'&tracker_code='+type+'_trades&pageSize='+page_size+'&thisPage='+page,
       headers: {'Authorization': app.auth()}
     })
   },

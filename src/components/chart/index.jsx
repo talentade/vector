@@ -38,6 +38,7 @@ class Chart extends Component {
     this.lineDataSeries = [];
     this.seriesIterator = 0;
     this.lastPlotable = {};
+    this.realTimeListener = true;
 
     this.state = {
       selectedOption: 'forex',
@@ -102,6 +103,8 @@ class Chart extends Component {
   }
 
   async componentDidMount() {
+    this.realTimeListener = true;
+
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
       width: this.chartContainerRef.current.clientWidth,
@@ -141,7 +144,14 @@ class Chart extends Component {
       }, 0);
     });
     this.plotGraphData();
-    return () => this.resizeObserver.current.disconnect();
+    // return () => this.resizeObserver.current.disconnect();
+  }
+
+  componentWillUnmount() {
+    this.realTimeListener = false;
+    if (this.resizeObserver) {
+      return () => this.resizeObserver.current.disconnect();
+    }
   }
 
   plotGraphDataInit = async () => {
@@ -181,8 +191,6 @@ class Chart extends Component {
 
   treatPair = (pair) => {
     return pair.split(" ")[0].trim();
-    // return encodeURI(pair);
-    // return (pair.split(" ").length > 1 ? pair.split(" ")[0].replace("(", "").replace(")", "") : pair);
   }
 
   getSeries = async () => {
@@ -200,18 +208,14 @@ class Chart extends Component {
 
     this.setState({showLoader: true});
     await this.getSeries();
-    if(window.realtTimeFetcher) {
-      clearInterval(window.realtTimeFetcher);
-    }
     window.realtTimeFetcher = async () => {
-      let data = await this.handleDataChange(this.treatPair(this.pair));
-      this.plotGraph(data);
+      if(this.realTimeListener) {
+        let data = await this.handleDataChange(this.treatPair(this.pair));
+        this.plotGraph(data);
+      }
     }
     this.setState({showLoader: false});
     setInterval(window.realtTimeFetcher, 10 * 1000);
-
-
-    this.resizeObserver.current.observe(this.chartContainerRef.current);
   }
 
   plotGraph = (data) => {
@@ -222,7 +226,7 @@ class Chart extends Component {
       } else if(this.currentGrpahType == "line") {
         plot_data = {time: data.time, value: data.open};
       } else if(this.currentGrpahType == "area") {
-        plot_data = {time: data.time, value: data.open}
+        plot_data = {time: data.time, value: data.open};
       } else if(this.currentGrpahType == "bar") {
         // default
       } else if(this.currentGrpahType == "hist") {
