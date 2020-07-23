@@ -46,6 +46,8 @@ class Chart extends Component {
   }
 
   async componentDidMount() {
+    
+    alert(this.allPairs);
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
       width: this.chartContainerRef.current.clientWidth,
@@ -92,7 +94,9 @@ class Chart extends Component {
       }, 0);
     });
 
+
     try {
+        console.log(">>>>>", this.allPairs);
       if (!this.allPairs) {
         const user_id = localStorage.getItem('id');
 
@@ -105,6 +109,7 @@ class Chart extends Component {
         const instruments = Object.keys(data);
 
         this.pair = data.forex[0];
+        console.log(">>>>>", data);
 
         this.setState({
           allPairs: data,
@@ -258,16 +263,18 @@ class Chart extends Component {
               <button>Add Comparison</button>
             </div>
             <div className='chart-section-top-right'>
-              <select
-                className='green-select'
-                onChange={this.handleOptionsChange}
-                value={this.state.selectedOption}
-              >
+              <select className='green-select' onChange={this.handleOptionsChange} value={this.state.selectedOption}>
                 {this.state.instruments.map((instr) => (
                   <option key={Math.random() + Math.random()}>{instr}</option>
                 ))}
               </select>
-              <select class="green-select"><option>commodities</option><option>indices</option><option>forex</option><option>crypto</option><option>stock</option></select>
+              <select class="green-select">
+                <option>commodities</option>
+                <option>indices</option>
+                <option>forex</option>
+                <option>crypto</option>
+                <option>stock</option>
+              </select>
               <ul className='forex-icons'>
                 <li>
                   <img src={StopWatch} alt='' className='icon' />

@@ -271,6 +271,10 @@ p.sell-left, p.buy-right, p.map-center {
   background: #19d6a8;
 }
 
+.gr-dropdown span._active {
+    background: #0db98f;
+}
+
 .gr-dropdown span img {
   float: left;
   width: 20px;

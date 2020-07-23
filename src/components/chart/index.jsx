@@ -42,7 +42,7 @@ class Chart extends Component {
     this.realTimeListener = true;
 
     this.state = {
-      selectedOption: 'forex',
+      selectedOption: 'crypto',
       currentPairs: [],
       allPairs: {},
       pair: '',
@@ -73,8 +73,6 @@ class Chart extends Component {
         wickUpColor: '#c4c4c4',
       };
     if(no) {
-      // this.chartSeries = this.chart.current.removeSeries(option);
-      // this.chartSeries.setData([this.lastPlotable[type]]);
       this.chart.current.removeSeries(this.chartSeries);
     }
     this.currentGrpahType = type;
@@ -203,11 +201,11 @@ class Chart extends Component {
         app.allPairs(JSON.stringify(data));
 
         const instruments = Object.keys(data);
-        this.pair = data.forex[0];
+        this.pair = data.crypto[0];
         this.setState({
           allPairs: data,
-          currentPairs: data.forex,
-          selectedPair: data.forex[0],
+          currentPairs: data.crypto,
+          selectedPair: data.crypto[0],
           instruments,
         });
       } else {
@@ -234,8 +232,8 @@ class Chart extends Component {
 
   getSeries = async () => {
     let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
-    // console.log(data.length, "nnn");
-    data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
+    // console.log(data.length, "length");
+    // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
     for (let x = 0; x < data.length; x++) {
       this.plotGraph(this.graphData(data[x]));
     }
@@ -259,7 +257,8 @@ class Chart extends Component {
   }
 
   plotGraph = (data) => {
-    if (typeof data === 'object' && data.pair === this.pair) {
+    // console.log("}}}", data.pair, this.pair);
+    if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
       if(this.currentGrpahType == "candle") {
         // default
@@ -274,9 +273,11 @@ class Chart extends Component {
       }
       if(this.seriesIterator > 0) {
         this.chartSeries.update(plot_data);
+        // console.log("--update", plot_data);
       } else {
         this.seriesIterator += 1;
         this.chartSeries.setData([plot_data]);
+        // console.log("--setting", plot_data);
       }
 
       this.setState({
@@ -299,7 +300,7 @@ class Chart extends Component {
     } catch (error) {
       return error.message;
     }
-  };
+  }
   
   graphData = (data) => {
     return {
@@ -320,7 +321,7 @@ class Chart extends Component {
     this.setState({
       selectedOption: e.target.value,
       currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
-      selectedPair: this.state.allPairs[e.target.value.toLowerCase()][0],
+      selectedPair: this.pair,
     });
 
     this.setGraphType(this.currentGrpahType, 1);
@@ -407,11 +408,11 @@ class Chart extends Component {
                 <li id="switch-graph-type" onClick={(e) => this.switchGraphType(e, 'switch-graph-type')}>
                   <img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />
                   <div className="gr-dropdown">
-                    <span onClick={(e) => this.setGraphType("candle")}><img src={candleGrf} /> Candle</span>
-                    <span onClick={(e) => this.setGraphType("line")}><img src={lineGrf} /> Line</span>
-                    <span onClick={(e) => this.setGraphType("area")}><img src={areaGrf} /> Area</span>
-                    <span onClick={(e) => this.setGraphType("bar")}><img src={barGrf} /> Bar</span>
-                    <span onClick={(e) => this.setGraphType("hist")}><img src={histGrf} /> Histogram</span>
+                    <span onClick={(e) => this.setGraphType("candle")} className={"cgt"+(this.currentGrpahType == "candle" ? " _active" : "")}><img src={candleGrf} /> Candle</span>
+                    <span onClick={(e) => this.setGraphType("line")} className={"cgt"+(this.currentGrpahType == "line" ? " _active" : "")}><img src={lineGrf} /> Line</span>
+                    <span onClick={(e) => this.setGraphType("area")} className={"cgt"+(this.currentGrpahType == "area" ? " _active" : "")}><img src={areaGrf} /> Area</span>
+                    <span onClick={(e) => this.setGraphType("bar")} className={"cgt"+(this.currentGrpahType == "bar" ? " _active" : "")}><img src={barGrf} /> Bar</span>
+                    <span onClick={(e) => this.setGraphType("hist")} className={"cgt"+(this.currentGrpahType == "hist" ? " _active" : "")}><img src={histGrf} /> Histogram</span>
                   </div>
                 </li>
                 <li>

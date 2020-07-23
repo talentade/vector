@@ -26,8 +26,8 @@ class Transactions extends Component {
       currencies: [],
       selectedCurrency: 'USD',
       cards: ['VISA- 5322 2489 2479 4823'],
-      email: null,
-      balance: '',
+      email: app.email(),
+      balance: app.accountDetail()["balance"],
       balance2: '',
       max_rows: 0,
       page_no: 1,
@@ -50,23 +50,24 @@ class Transactions extends Component {
   }
 
   async componentDidMount() {
-    this.setState({
-      email: app.email(),
-      balance: app.accountDetail()["balance"],
-    });
-
     if(localStorage.getItem("TSelected")) {
       this.setState({
         selectedTab: localStorage.getItem("TSelected")
       });
+      this.setAccount({target: { value : this.state.account}});
       localStorage.removeItem("TSelected");
       if(localStorage.getItem("TSelectedAcc")) {
         this.setState({
           account: localStorage.getItem("TSelectedAcc"),
           balance: app.accountDetail(localStorage.getItem("TSelectedAcc"))["balance"]
         });
+        this.setAccount({target: { value : localStorage.getItem("TSelectedAcc")}});
         localStorage.removeItem("TSelectedAcc");
+      } else {
+        this.setAccount({target: { value : this.state.account}});
       }
+    } else {
+      this.setAccount({target: { value : this.state.account}});
     }
 
     var dis = this;
@@ -79,8 +80,6 @@ class Transactions extends Component {
         localStorage.removeItem("TSelected");
       }
     }));
-
-    this.setAccount({target: { value : this.state.account}});
 
     try {
       const { data } = await axios.get(
@@ -166,7 +165,7 @@ class Transactions extends Component {
   };
 
   handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    // console.log(e.target.name, e.target.value);
 
     const {
       target: { name, value },
@@ -207,10 +206,6 @@ class Transactions extends Component {
     });
   };
 
-  handleDepositModalClick = () => {
-    this.setState({ showDepositModal: false, showTransferModal: false });
-  };
-
   handleHistoryPage = (p) => {
     // console.log(p);
     this.setState({ page_no: p });
@@ -245,8 +240,8 @@ class Transactions extends Component {
     const {
       target: { value },
     } = e;
-
     this.setState({
+      to: value,
       balance2: app.accountDetail(value)["balance"],
     });
   };
@@ -286,7 +281,7 @@ class Transactions extends Component {
       to,
     } = this.state;
 
-    const transAccount = app.accountDetail();
+    const transAccount = app.account();
 
     this.setState({ errorMessage: null });
 
@@ -298,16 +293,10 @@ class Transactions extends Component {
       } else {
         this.setState({ showSpinner: true });
         if (selectedTab.toLowerCase().match('deposit')) {
-          await server.fundAccount(parseFloat(deposit), selectedCurrency, document.getElementById("dep-acc-sel").value);
+          await server.fundAccount(parseFloat(deposit), selectedCurrency, account);
         } else if (selectedTab.toLowerCase().match('transfer')) {
-          await server.transferFunds(
-            email,
-            transAccount,
-            selectedCurrency,
-            deposit,
-            to,
-            this.id,
-          );
+          // console.log(account, to, parseFloat(deposit), selectedCurrency);
+          await server.transferFunds(account, to, parseFloat(deposit), selectedCurrency);
         }
 
         const myEmail = this.profile.email;
@@ -323,8 +312,11 @@ class Transactions extends Component {
 
         if (selectedTab.toLowerCase().match('deposit')) {
           this.setState({ showDepositModal: true });
+          this.setAccount({target: { value : account}});
         } else if (selectedTab.toLowerCase().match('transfer')) {
           this.setState({ showTransferModal: true });
+          this.setAccount({target: { value : account}});
+          this.setAccount2({target: { value : to}});
         }
         this.setState({ showSpinner: false });
         await this.fetchTransactions();
@@ -341,6 +333,12 @@ class Transactions extends Component {
     }
   };
 
+  handleDepositModalClick = () => {
+    this.setState({ showDepositModal: false, showTransferModal: false, showSpinner: false });
+    // localStorage.setItem("TSelected", this.state.selectedTab);
+    // window.location.href = "";
+  };
+
   toggleTabs = (e) => {
     this._toggleTabs(e.currentTarget.querySelector('div').innerHTML.toLowerCase());
   };
@@ -350,7 +348,6 @@ class Transactions extends Component {
       selectedCurrency: 'USD',
       deposit: parseFloat(0.0).toFixed(2),
       errorMessage: null,
-      to: '',
       balance: app.accountDetail()["balance"],
       account: app.account(),
       selectedTab: tab

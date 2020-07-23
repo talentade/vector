@@ -29,6 +29,7 @@ class Market extends Component {
       showNav: true,
       accounts: [],
       selectedAccount: app.accountDetail(),
+      selectedAccountVal: app.account(),
       hotStocks: [],
       favourites: [],
       showLoader: false,
@@ -187,6 +188,13 @@ class Market extends Component {
     this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
   }
 
+  handleAccountChange = (e) => {
+    let val = e.target.value;
+    app.account(e.target.value);
+    this.setState({ selectedAccountVal: e.target.value });
+    window.location.href = "";
+  };
+
   render() {
     const userId = app.id();
 
@@ -288,7 +296,7 @@ class Market extends Component {
                     />
                     <Demo
                       demoOptions={this.state.accounts}
-                      selectValue={this.state.selectedAccount}
+                      selectValue={this.state.selectedAccountVal}
                       handleDemoChange={this.handleAccountChange}
                     />
                   </div>

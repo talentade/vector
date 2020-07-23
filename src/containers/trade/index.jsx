@@ -32,7 +32,8 @@ class TradeDashboard extends Component {
       accounts: [],
       favourites: [],
       showAddFav: false,
-      selectedAccount: '',
+      selectedAccount: app.accountDetail(),
+      selectedAccountVal: app.account()
     };
 
     this.profile = JSON.parse(localStorage.getItem('profile'));
@@ -43,7 +44,7 @@ class TradeDashboard extends Component {
       this.props.history.push('/Login');
       return;
     }
-    this.setState({ selectedAccount: app.accountDetail() });
+    // this.setState({ selectedAccount: app.accountDetail() });
     const myAccounts = app.accounts();
     this.setState({ accounts: app.accounts() });
     window.addEventListener('resize', this.updateDimensions);
@@ -99,11 +100,9 @@ class TradeDashboard extends Component {
 
   handleAccountChange = (e) => {
     let val = e.target.value;
-  //   setTimeout(() => {
-  //     app.account(val);
-  //     console.log(val);
-  //     this.setState({ selectedAccount: app.accountDetail() });
-  // }, 5000)
+    app.account(e.target.value);
+    this.setState({ selectedAccountVal: e.target.value });
+    window.location.href = "";
   };
 
   render() {
@@ -174,7 +173,7 @@ class TradeDashboard extends Component {
                     {currentTab !== 'Balance' ? (
                       <Demo
                         demoOptions={this.state.accounts}
-                        selectValue={this.state.selectedAccount}
+                        selectValue={this.state.selectedAccountVal}
                         handleDemoChange={this.handleAccountChange}
                       />
                     ) : null}

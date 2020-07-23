@@ -8,6 +8,7 @@ import { saveUserProfile, toggleAddCardModal } from '../../redux/actions/index';
 import { verificationData, debitCardInfo } from '../../utils/dummyData';
 import PasswordButton from './passwordButton/index';
 import PasswordBox from './passwordBox/index';
+import AccountDetails from './accountDetails/index';
 import FinancialDetails from './financialDetails/index';
 import AccountInfo from './accountInfo/index';
 import DebitCard from './debitCard/index';
@@ -38,6 +39,7 @@ class Profile extends Component {
       verified: true,
       imageUrl: '',
       image: '',
+      banking_details: app.profile()["banking_details"],
       showSmallSPinner: false,
       showAddCardModal: false,
     };
@@ -384,6 +386,7 @@ class Profile extends Component {
             />
             <VerificationGroup items={verificationData} />
           </div>
+
           <div className='financial-details-section profile-bg'>
             <FinancialDetails
               balance={`$${balance}`}
@@ -400,7 +403,22 @@ class Profile extends Component {
                   ))
                 : null}
             </div>
+            <AccountDetails
+              balance={`$${balance}`}
+              details={this.state.banking_details}
+              handleClick={this.toggleModalButtonClick}
+            />
           </div>
+
+          {/*<div className='account-details-section profile-bg'>
+            <AccountDetails
+              balance={`$${balance}`}
+              handleClick={this.toggleModalButtonClick}
+            />
+            <div className='my-cards'>
+
+            </div>
+          </div>*/}
         </div>
       </div>
     );

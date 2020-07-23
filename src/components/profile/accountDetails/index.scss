@@ -1,0 +1,44 @@
+.wallet-section {
+  display: flex;
+
+  h4 {
+    margin-left: 10px;
+    font-weight: 300;
+    font-size: 20px;
+    color: #ffffff;
+  }
+}
+
+.account-info {
+  width: 100%;
+}
+
+.account-details {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  button {
+    margin: 5px;
+    background: #00a880;
+    border-radius: 1px;
+    color: #ffffff;
+    border: none;
+    padding: 7px 12px;
+    font-family: Poppins, sans-serif;
+    cursor: pointer;
+  }
+}
+
+.account-balance {
+  margin-top: 3px;
+  p {
+    font-size: 12px;
+    color: #8D8A8A;
+  }
+  h3 {
+    font-size: 18px;
+    color: #FFFFFF;
+    font-weight: 300;
+  }
+}

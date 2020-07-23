@@ -53,7 +53,7 @@ const Transfer = ({
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>To</label>
-            <select onChange={selectHandler2}>
+            <select value={toValue} onChange={selectHandler2}>
               {accounts2.map((acc) => (
                 <option key={`${Math.random()}-${Math.random()}`}>
                   {acc}

@@ -104,12 +104,12 @@ export default {
       }
     })
   },
-  transferFunds(from, account, currency, amount, to, id) {
+  transferFunds(from, to, amount, currency) {
     return axios.request({
       method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/wallet/transfer?payer_email=${from}&account=${app.account()}&currency=${currency}&amount=${amount}&payee_email=${to}&=`,
+      url:  'https://avariz-core.herokuapp.com/wallet/transfer?email='+app.email()+'&payer_account='+from+'&currency='+currency+'&amount='+amount+'&payee_account='+to,
       headers: {
-        'Authorization': id,
+        'Authorization': app.auth(),
       }
     })
   },
@@ -118,7 +118,7 @@ export default {
       method: 'GET',
       url:  `https://avariz-core.herokuapp.com/wallet/history?email=${email}&account=${app.account()}&tracker_code=transactions&pageSize=${page_size}&thisPage=${page_no}`,
       headers: {
-        'Authorization': id,
+        'Authorization': app.auth(),
       }
     })
   },
