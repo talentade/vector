@@ -21,12 +21,14 @@ class Transactions extends Component {
 
     this.state = {
       accounts: app.accounts(),
+      accounts2: [],
       account: app.account(),
       currencies: [],
       selectedCurrency: 'USD',
       cards: ['VISA- 5322 2489 2479 4823'],
       email: null,
       balance: '',
+      balance2: '',
       max_rows: 0,
       page_no: 1,
       page_size: 8,
@@ -58,10 +60,10 @@ class Transactions extends Component {
         selectedTab: localStorage.getItem("TSelected")
       });
       localStorage.removeItem("TSelected");
-
       if(localStorage.getItem("TSelectedAcc")) {
         this.setState({
-          account: localStorage.getItem("TSelectedAcc")
+          account: localStorage.getItem("TSelectedAcc"),
+          balance: app.accountDetail(localStorage.getItem("TSelectedAcc"))["balance"]
         });
         localStorage.removeItem("TSelectedAcc");
       }
@@ -77,6 +79,8 @@ class Transactions extends Component {
         localStorage.removeItem("TSelected");
       }
     }));
+
+    this.setAccount({target: { value : this.state.account}});
 
     try {
       const { data } = await axios.get(
@@ -95,9 +99,9 @@ class Transactions extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     const { account } = this.state;
-    console.log(account, prevState.account);
+    // console.log(account, prevState.account);
     if (prevState.account !== account) {
-      await this.fetchTransactions();
+      // await this.fetchTransactions();
     }
   }
 
@@ -119,7 +123,7 @@ class Transactions extends Component {
         arr.push(deposits[`${key}`]);
       }
 
-      console.log(_deposits);
+      // console.log(_deposits);
 
       arr = arr.flat();
 
@@ -222,7 +226,28 @@ class Transactions extends Component {
 
     this.setState({
       account: value,
-      balance: app.accountDetail()["balance"],
+      balance: app.accountDetail(value)["balance"],
+    });
+    let pre = value.split("-")[0].toLowerCase();
+    let accounts2 = [];
+    this.state.accounts.forEach(function(acc) {
+      if(acc.split("-")[0].toLowerCase() == pre && acc.toLowerCase() != value.toLowerCase()) {
+        accounts2.push(acc);
+      }
+    });
+    this.setState({accounts2: accounts2});
+    if(accounts2.length) {
+      this.setAccount2({target: { value : accounts2[0]}})
+    }
+  };
+
+  setAccount2 = (e) => {
+    const {
+      target: { value },
+    } = e;
+
+    this.setState({
+      balance2: app.accountDetail(value)["balance"],
     });
   };
 
@@ -335,6 +360,7 @@ class Transactions extends Component {
   render() {
     const {
       accounts,
+      accounts2,
       currencies,
       selectedCurrency,
       cards,
@@ -347,6 +373,8 @@ class Transactions extends Component {
       errorMessage,
       selectedTab,
       to,
+      balance,
+      balance2,
       showTransferModal,
       minimizeSideBar,
       transactions,
@@ -357,7 +385,7 @@ class Transactions extends Component {
 
     const myProfile = JSON.parse(localStorage.getItem('profile'));
 
-    const balance = app.accountDetail()["balance"];
+    // const balance = balance > 0 ? app.accountDetail()["balance"];
     return (
       <Container>
         <div className='transactions-section'>
@@ -418,9 +446,12 @@ class Transactions extends Component {
                 currencies={currencies}
                 selectedCurrency={selectedCurrency}
                 account={account}
+                accounts2={accounts2}
                 handleCurrencySelect={this.handleCurrencySelect}
                 balance={balance}
+                balance2={balance2}
                 selectHandler={this.setAccount}
+                selectHandler2={this.setAccount2}
                 handleInputChange={this.handleInputChange}
                 depositValue={deposit}
                 toggleBlue={this.toggleBlue}

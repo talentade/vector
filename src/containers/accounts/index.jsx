@@ -99,7 +99,7 @@ class Accounts extends Component {
                 <li>
                   <span className="th">ACTIONS</span>
                   <span className="td">
-                    <NavLink className="deposit navtotransaction" to="/Transactions" onClick={() => { localStorage.setItem("TSelected", "deposit"); localStorage.setItem("TSelectedAcc", acc.account_id) }}>Deposit</NavLink>
+                    <NavLink className="deposit navtotransaction" to="/Transactions" onClick={() => { localStorage.setItem("TSelected", "deposit"); localStorage.setItem("TSelectedAcc", acc.account_type.charAt(0).toUpperCase()+acc.account_type.slice(1)+"-"+acc.account_id); }}>Deposit</NavLink>
                     <svg className="acc-gra" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M0.25 5.5H4V17.75H0.25V5.5ZM7.25 0.25H10.75V17.75H7.25V0.25ZM14.25 10.25H17.75V17.75H14.25V10.25Z" fill="#1FCF65"/>
                     </svg>

@@ -14,6 +14,7 @@ import DebitCard from './debitCard/index';
 import VerificationGroup from './verificationGroup/index';
 import Spinner from '../spinner/index';
 import server from '../../services/server';
+import app from '../../services/app';
 import AccountModal from './addAccountModal/index';
 import './index.scss';
 
@@ -41,9 +42,9 @@ class Profile extends Component {
       showAddCardModal: false,
     };
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
-    this.selectedAccount = localStorage.getItem('accountType');
-    this.id = localStorage.getItem('id');
+    this.profile         = app.profile();
+    this.selectedAccount = app.accountDetail();
+    this.id              = app.id();
     this.unverifiedItems = [];
   }
 
@@ -62,9 +63,9 @@ class Profile extends Component {
 
     if (
       !address_verified ||
-      cards.length < 0 ||
+       cards.length < 0 ||
       !deposit_verified ||
-      !email_verified ||
+      !email_verified   ||
       !identity_verified
     ) {
       this.setState({ verified: false });
@@ -86,7 +87,7 @@ class Profile extends Component {
 
     this.setState({ showSmallSPinner: true });
     try {
-      const user_id = localStorage.getItem('id');
+      const user_id = app.id();
       const email = this.profile.email;
 
       await server.uploadImage(user_id, fd);
@@ -143,9 +144,8 @@ class Profile extends Component {
       try {
         this.setState({ showSpinner: true });
 
-        const user_id = localStorage.getItem('id');
-
-        const email = this.profile.email;
+        const user_id = app.id();
+        const email   = this.profile.email;
 
         await server.changePassword(
           {
@@ -180,8 +180,8 @@ class Profile extends Component {
   deleteCard = async (cardPAN) => {
     try {
       this.setState({ showSpinner: true });
-      const user_id = localStorage.getItem('id');
-      const email = this.profile.email;
+      const user_id = app.id();
+      const email   = this.profile.email;
 
       await server.deleteCard(user_id, cardPAN);
 
@@ -202,7 +202,7 @@ class Profile extends Component {
   };
 
   render() {
-    const userId = localStorage.getItem('id');
+    const userId = app.id();
 
     if (!userId) return <Redirect to='/Login' />;
 
@@ -224,28 +224,9 @@ class Profile extends Component {
       deposit_verified,
     } = this.props.userProfile;
 
-    let balance;
-    let id;
-    if (this.selectedAccount.toLowerCase().match('demo')) {
-      if (demo) {
-        balance = demo.demo_balance;
-        id = demo.demo_account_id;
-      }
-    } else if (this.selectedAccount.toLowerCase().match('live')) {
-      if (live) {
-        balance = live.live_balance;
-        id = live.live_account_id;
-      }
-    }
-
-    let accountId;
-
-    if (id) {
-      accountId = id.split('').slice(4);
-      accountId.unshift('T');
-
-      accountId = accountId.join('');
-    }
+    let balance   = this.selectedAccount.balance;
+    let id        = app.id();
+    let accountId = app.accountDetail().account_id;
 
     const userData = [
       {

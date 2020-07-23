@@ -77,7 +77,7 @@ class BuyandsellModal extends Component {
       analysis = analysis.data.data;
       this.setState({pip_val: analysis.pip_value, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
       this.setState({analysis: true});
-      console.log(analysis);
+      // console.log(analysis);
     } catch (error) {
       setTimeout(() => {
         this.tradeAnalysis();

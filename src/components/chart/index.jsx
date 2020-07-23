@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 // import axios from 'axios';
 import { createChart, CrosshairMode } from 'lightweight-charts';
+// import { CIQ } from 'chartiq';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
@@ -91,6 +92,37 @@ class Chart extends Component {
     if(this.pair.length) {
       this.getSeries();
     }
+
+     this.chart.current.applyOptions({
+        watermark: {
+            color: 'rgba(67, 95, 118, 0.4)',
+            visible: true,
+            text: '',
+            fontSize: 24,
+            horzAlign: 'left',
+            vertAlign: 'bottom',
+        },
+        // priceFormat: {
+        //     type: 'custom',
+        //     minMove: '0.00000001',
+        //     formatter: (price) => {
+        //         if (price < 0.001) return parseFloat(price).toFixed(8)
+        //         else if (price >= 0.001 && price < 1) return parseFloat(price).toFixed(6)
+        //         else return parseFloat(price)
+        //     }
+        // },
+        priceScale: {
+            autoScale: true
+        },
+        localization: {
+            locale: 'en-US',
+            priceFormatter: (price) => {
+                if (price < 0.001) return parseFloat(price).toFixed(7)
+                else if (price >= 0.001 && price < 1) return parseFloat(price).toFixed(5)
+                else return parseFloat(price)
+            }
+        },
+    });
   }
 
   switchGraphType = (e, id) => {
@@ -107,7 +139,7 @@ class Chart extends Component {
 
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
-      width: this.chartContainerRef.current.clientWidth,
+      width:  this.chartContainerRef.current.clientWidth,
       height: this.chartContainerRef.current.clientHeight,
       layout: {
         backgroundColor: '#006066',
@@ -121,13 +153,21 @@ class Chart extends Component {
           color: '#A09F9F',
         },
       },
+      rightPriceScale: {
+        visible: true,
+      },
       crosshair: {
         mode: CrosshairMode.Normal,
       },
       priceScale: {
         borderColor: '#A09F9F',
       },
-      autoScale: true,
+      priceFormat: {
+          type: 'custom',
+          formatter: function(price) {
+              return '$' + price.toFixed(5);
+          }
+      },
       timeScale: {
         borderColor: '#A09F9F',
         timeVisible: true,
@@ -155,7 +195,6 @@ class Chart extends Component {
   }
 
   plotGraphDataInit = async () => {
-
     try {
       if (!this.allPairs || true) {
         const {
@@ -195,7 +234,8 @@ class Chart extends Component {
 
   getSeries = async () => {
     let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
-    data = data.slice(Math.max(data.length - 100, 0));
+    // console.log(data.length, "nnn");
+    data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
     for (let x = 0; x < data.length; x++) {
       this.plotGraph(this.graphData(data[x]));
     }

@@ -26,7 +26,7 @@ const Deposit = ({
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>Select Trading Account</label>
-            <select value={account} id="dep-acc-sel" onChange={selectHandler}>
+            <select id="dep-acc-sel" value={account} onChange={selectHandler}>
               {accounts.map((acc) => (
                 <option value={acc} key={`${Math.random()}-${Math.random()}`}>{acc}</option>
               ))}

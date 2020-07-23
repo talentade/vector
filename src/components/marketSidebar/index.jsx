@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import $ from 'jquery';
 import './index.scss';
 import FilterIcon from '../../themes/images/tradeDashboard/filter.svg';
 import starIcon from '../../themes/images/fstar.svg';
@@ -9,6 +10,17 @@ import DirectionIcon from '../../themes/images/direction.svg';
 import CompassIcon from '../../themes/images/compass.svg';
 import SearchIcon from '../../themes/images/micro.svg';
 import { filterInstrument } from '../../redux/actions/index';
+
+const findDiv = (pair) => {
+  let id = "fav-pair-"+pair.stock.replace(/[^\w]/g, "_");
+  let elem = document.getElementById(id);
+  if($("#"+id).length) {
+    let price = parseFloat($("#"+id).find(".p-price").text());
+    $("#"+id).find(".p-price").text(pair.buy);
+    $("#"+id).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
+    $("#"+id).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
+  }
+}
 
 const MarketSideBar = ({
   sideNav,
@@ -71,6 +83,7 @@ const MarketSideBar = ({
             >
               <div className='market-pair-flex'>
                 <h5>{pair.stock}</h5>
+                {findDiv(pair)}
                 <span>
                 { pair.isFav
                   ? <img src={starIcon2} alt='' onClick={(e) => { remFav(e); pairs[index].isFav = false; }} pair={pair.stock} />

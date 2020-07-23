@@ -28,7 +28,7 @@ class Market extends Component {
       currentTab: 'Trade',
       showNav: true,
       accounts: [],
-      selectedAccount: '',
+      selectedAccount: app.accountDetail(),
       hotStocks: [],
       favourites: [],
       showLoader: false,
@@ -89,7 +89,7 @@ class Market extends Component {
       if(this.realTimeListener) {
         this.fetchStock()
       }
-    }, 10000);
+    }, 5000);
 
     if (accountType) {
       this.setState({ selectedAccount: app.accountDetail() });
@@ -146,13 +146,22 @@ class Market extends Component {
 
   remFav = async (e) => {
     this.setState({showSpinner: true});
-    let pair = e.target.getAttribute("pair");
-    const { status, message } = await server.removeFav(app.id(), app.account(), pair);
-    if(status == 200) {
-      if(document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_")))) {
-        document.getElementById("fav-pair-"+(pair.replace(/[^\w]/g, "_"))).remove();
+    try {
+      let pair = e.target.getAttribute("pair");
+      const { status, message } = await server.removeFav(app.id(), app.account(), pair);
+      await this.fetchStock();
+      if(status == 200) {
+        let npair = [];
+        this.state.favourites.forEach((fav) => {
+          if(fav.pair != pair) {
+            npair.push(fav);
+          }
+        })
+        this.setState({favourites: npair});
       }
-      this.fetchStock();
+    } catch(error) {
+      this.setState({showSpinner: false});
+      return error;
     }
     this.setState({showSpinner: false});
   }
@@ -160,7 +169,6 @@ class Market extends Component {
   showMainLoader = () => {
     this.setState({showSpinner: !this.state.showSpinner});
   }
-
 
   // BSELL
   cancelBsellModal = (e) => {
@@ -290,7 +298,7 @@ class Market extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites favouritePairs={favouriteItems} refresh={this.fetchFavs} showSpinner={this.showMainLoader}/>
+                <Favourites favouritePairs={favouriteItems} refresh={this.fetchFavs} showSpinner={this.showMainLoader} showBsellModal2={this.showBsellModal2}/>
               </div>
               <Chart />
             </div>

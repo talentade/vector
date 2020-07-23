@@ -2,11 +2,14 @@ import React from 'react';
 
 const Transfer = ({
   accounts,
+  accounts2,
   account,
   selectHandler,
+  selectHandler2,
   depositValue,
   handleInputChange,
   balance,
+  balance2,
   selectedCurrency,
   currencies,
   toggleBlue,
@@ -26,9 +29,9 @@ const Transfer = ({
           <div className='deposit-flex-item-1'>
             <label>From</label>
             <select value={account} onChange={selectHandler}>
-              {accounts.map((account) => (
+              {accounts.map((acc) => (
                 <option key={`${Math.random()}-${Math.random()}`}>
-                  {account}
+                  {acc}
                 </option>
               ))}
             </select>
@@ -50,36 +53,27 @@ const Transfer = ({
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>To</label>
-            <select value={account} onChange={selectHandler}>
-              {accounts.map((account) => (
+            <select onChange={selectHandler2}>
+              {accounts2.map((acc) => (
                 <option key={`${Math.random()}-${Math.random()}`}>
-                  {account}
+                  {acc}
                 </option>
               ))}
             </select>
-            {/* <select value={account} onChange={selectHandler}>
-              {accounts.map((account) => (
-                <option key={`${Math.random()}-${Math.random()}`}>
-                  {account}
-                </option>
-              ))}
-            </select> */}
-            {/*<input
-              type='email'
-              name='to'
-              placeholder='Receiver Email'
-              onChange={handleInputChange}
-              value={toValue}
-              required
-            />*/}
           </div>
-          {/* <div className='deposit-flex-item-2'>
+          <div className='deposit-flex-item-2'>
             <label>Balance</label>
             <div className='bal-sym'>
-              <input type='number' name='balance' value={balance} placeholder="0.00"/>
+              <input
+                type='text'
+                name='balance2'
+                value={balance2}
+                placeholder='0.00'
+                disabled
+              />
               <p>USD</p>
             </div>
-          </div> */}
+          </div>
         </div>
         <div className='deposit-amount'>
           <label>Enter Amount</label>
