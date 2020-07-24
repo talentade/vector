@@ -42,7 +42,8 @@ export default {
   email: () => {
     return localStorage.getItem("email").trim();
   },
+  retryLimit: 10,
   profile: () => {
     return JSON.parse(localStorage.getItem("profile"));
-  }
+  },
 };

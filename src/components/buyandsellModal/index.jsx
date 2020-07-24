@@ -4,6 +4,7 @@ import CancelIcon from '../../themes/images/cancel.svg';
 import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
 import server from '../../services/server';
+import app from '../../services/app';
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
 import downVlv from '../../themes/images/down.png';
@@ -43,6 +44,8 @@ class BuyandsellModal extends Component {
       required_margin_str: ""
     };
 
+    this.realTimeListener = true;
+    this.retryCounter = 0;
   }
 
   handleClick = (p) => {
@@ -107,6 +110,7 @@ class BuyandsellModal extends Component {
 
   tradeAnalysis = async () => {
     try {
+      this.retryCounter = 0;
       this.setState({analysis: false});
       let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
       analysis = analysis.data.data;
@@ -115,9 +119,12 @@ class BuyandsellModal extends Component {
       this.estimate();
       // console.log(analysis);
     } catch (error) {
-      setTimeout(() => {
-        this.tradeAnalysis();
-      }, 2000)
+      if(this.retryCounter < app.retryLimit) {
+        this.retryCounter += 1;
+          setTimeout(() => {
+            this.tradeAnalysis();
+          }, 2000);
+      }
       return error;
     }
   }

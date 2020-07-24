@@ -36,10 +36,18 @@ class TradeDashboard extends Component {
       selectedAccountVal: app.account()
     };
 
+    this.realTimeListener = true;
+    this.retryCounter = 0;
+
     this.profile = JSON.parse(localStorage.getItem('profile'));
   }
 
+  componentWillUnmount() {
+    this.realTimeListener = false;
+  }
+
   async componentDidMount() {
+    this.realTimeListener = true;
     if (!app.id()) {
       this.props.history.push('/Login');
       return;
@@ -70,19 +78,24 @@ class TradeDashboard extends Component {
   }
 
   fetchFavs = async () => {
-    try {
-      const { data: { data, code } } = await server.fetchFav();
-      if(code == 200) {
-        if(data.length) {
-          this.setState({favourites: data});
+    if(this.realTimeListener) {
+      try {
+        this.retryCounter = 0;
+        const { data: { data, code } } = await server.fetchFav();
+        if(code == 200) {
+          if(data.length) {
+            this.setState({favourites: data});
+          }
         }
+      } catch (error) {
+        if(this.retryCounter < app.retryLimit) {
+          this.retryCounter += 1;
+          setTimeout(() => {
+            this.fetchFavs();
+          }, 30 * 1000);
+        }
+        return error.message;
       }
-    } catch (error) {
-      setTimeout(() => {
-        this.fetchFavs();
-      }, 30 * 1000);
-      console.log("-- Fetch fav err");
-      return error.message;
     }
   }
 

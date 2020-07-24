@@ -41,6 +41,7 @@ class Market extends Component {
       buyandsellConfirmed: false
     };
     this.realTimeListener = true;
+    this.retryCounter = 0;
 
     this.profile = app.profile();
     this.fireFavRef = new CustomEvent('refreshFav', {
@@ -102,19 +103,24 @@ class Market extends Component {
   }
 
   fetchFavs = async () => {
-    try {
-      const { data: { data, code } } = await server.fetchFav();
-      if(code == 200) {
-        if(data.length) {
-          this.setState({favourites: data});
+    if(this.realTimeListener) {
+      try {
+        this.retryCounter = 0;
+        const { data: { data, code } } = await server.fetchFav();
+        if(code == 200) {
+          if(data.length) {
+            this.setState({favourites: data});
+          }
         }
-      }
-    } catch (error) {
-      setTimeout(() => {
-        this.fetchFavs();
-      }, 30 * 1000);
-      console.log("-- Fetch fav err");
-      return error.message;
+      } catch (error) {
+        if(this.retryCounter < app.retryLimit) {
+          this.retryCounter += 1;
+          setTimeout(() => {
+            this.fetchFavs();
+          }, 30 * 1000);
+        }
+        return error.message;
+      } 
     }
   }
 
