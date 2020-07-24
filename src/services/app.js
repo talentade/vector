@@ -26,8 +26,8 @@ export default {
     });
     return ret;
   },
-  allPairs: (a = "") => {
-    return a.length ? localStorage.setItem('allPairs', JSON.stringify(a)) : localStorage.getItem('allPairs');
+  allPairs: (a = null) => {
+    return a ? localStorage.setItem('allPairs', JSON.stringify(a)) : JSON.parse(localStorage.getItem('allPairs'));
   },
   accounts: () => {
     let profile = JSON.parse(localStorage.getItem("profile"));

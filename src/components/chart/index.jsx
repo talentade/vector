@@ -31,8 +31,8 @@ class Chart extends Component {
     this.chartContainerRef = createRef();
     this.chart = createRef();
     this.resizeObserver = createRef();
-    this.profile = JSON.parse(localStorage.getItem('profile'));
-    this.allPairs = localStorage.getItem('allPairs');
+    this.profile = app.profile();
+    this.allPairs = app.allPairs();
     this.pair = '';
     this.data = [];
     this.currentGrpahType = "candle";
@@ -177,7 +177,7 @@ class Chart extends Component {
 
     // let { data: { data } } = await server.historicalData(this.treatPair(this.pair));
     // console.log(data.length, data);
-    
+
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       this.chart.current.applyOptions({ width, height });
@@ -198,33 +198,23 @@ class Chart extends Component {
 
   plotGraphDataInit = async () => {
     try {
-      if (!this.allPairs || true) {
+      let allPairs = this.allPairs;
+      if(!this.allPairs) {
         const {
           data: { data },
         } = await server.getAllPairs(app.id());
-        app.allPairs(JSON.stringify(data));
-
-        const instruments = Object.keys(data);
-        this.pair = data.crypto[0];
-        this.setState({
-          allPairs: data,
-          currentPairs: data.crypto,
-          selectedPair: data.crypto[0],
-          instruments,
-        });
-      } else {
-        const allPairsParsed = JSON.parse(this.allPairs);
-        const instruments = Object.keys(allPairsParsed);
-        this.setState({
-          allPairs: allPairsParsed,
-          currentPairs: allPairsParsed.forex,
-          selectedPair: this.state.selectedPair.length ? this.state.selectedPair : allPairsParsed.forex[0],
-          instruments,
-        });
-        alert(allPairsParsed.forex[0]);
-
-        this.pair = allPairsParsed.forex[0];
+        app.allPairs(data);
+        allPairs = data;
       }
+
+      const instruments = Object.keys(allPairs);
+      this.pair = allPairs.crypto[0];
+      this.setState({
+        allPairs: allPairs,
+        currentPairs: allPairs.crypto,
+        selectedPair: allPairs.crypto[0],
+        instruments,
+      });
     } catch (error) {
       return error.message;
     }

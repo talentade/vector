@@ -43,7 +43,7 @@ export default {
   getId(email) {
     return Api().get(`/utils/inspect/${email}/user_id`);
   },
-  getAllPairs(Authorization) {
+  getAllPairs() {
     return axios.request({
       method: 'GET',
       url: 'https://avariz-core.herokuapp.com/trading/pairs/fetch?category=all&account='+app.account(),
