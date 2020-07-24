@@ -41,7 +41,7 @@ class TransactionHistory extends Component {
               onClick={(e) => this.handleClick(e, 'transaction-history-record-'+idx)}>
               <div className="tab-sn"><div>{idx + (page_size * (page_no - 1)) + 1}</div></div>
               <li className="small-trans">{idx + (page_size * (page_no - 1)) + 1}</li>
-              <li className={`${transaction.type} trans-type`}><span className="th">Transaction type</span><span className="td"><button className="brn ttype">{transaction.type}</button></span></li>
+              <li className={`${transaction.type} trans-type`}><span className="th">Transaction type</span><span className="td"><button className={"brn ttype"+(transaction.type.toLowerCase() != "deposit" ? " "+transaction.type.toLowerCase() : " ")}>{transaction.type}</button></span></li>
               <li className="trans-date"><span className="th">Date</span><span className="td">{transaction.date}</span></li>
               <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
               <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>

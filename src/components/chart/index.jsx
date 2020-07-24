@@ -174,6 +174,10 @@ class Chart extends Component {
     });
 
     this.setGraphType("candle", 0);
+
+    // let { data: { data } } = await server.historicalData(this.treatPair(this.pair));
+    // console.log(data.length, data);
+    
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       this.chart.current.applyOptions({ width, height });

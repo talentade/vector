@@ -7,6 +7,7 @@ import server from '../../services/server';
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
 import downVlv from '../../themes/images/down.png';
+import Spinner from '../../components/spinner/index';
 
 class BuyandsellModal extends Component {
   constructor(props) {
@@ -24,12 +25,21 @@ class BuyandsellModal extends Component {
       pip_str: "",
       lots: 0,
       counter: 0,
+      counter2: 1,
+      counter3: 3,
       changedLot: 0.01,
       changed_lot: 0.01,
       lot_str: "",
+      showLoader: false,
       mode: "buy",
+      live: 0,
+      estimated_price1: 0,
+      estimated_price2: 0,
       lot_val: 0.01,
+      stop_loss: 0.01,
+      take_profit: 0.03,
       analysis: false,
+      errorMessage: "",
       required_margin_str: ""
     };
 
@@ -57,6 +67,31 @@ class BuyandsellModal extends Component {
     }
   }
 
+  estimate = () => {
+    this.setState({
+      estimated_price1: parseFloat(this.state.live - (this.state.pip_val * this.state.stop_loss)).toFixed(5),
+      estimated_price2: parseFloat(this.state.live - (this.state.pip_val * this.state.take_profit)).toFixed(5)
+    });
+  }
+
+  vlvChange2 = (u) => {
+    let cnt = this.state.counter2;
+    let sum = this.state.stop_loss;
+    if(u == "up") {
+      if(cnt > -1) cnt +=1;
+      this.setState({counter2: cnt, stop_loss: sum + (cnt * 0.01)});
+      setTimeout(() => {
+        this.tradeAnalysis();
+      }, 10);
+    } else {
+      if(cnt > 0) cnt -=1;
+      this.setState({counter2: cnt, stop_loss: sum + (cnt * 0.01)});
+      setTimeout(() => {
+        this.tradeAnalysis();
+      }, 10);
+    }
+  }
+
   btnBsell = async (i, r) => {
     if(document.getElementById(i)) {
       document.getElementById(i).classList.add("_active");
@@ -75,8 +110,9 @@ class BuyandsellModal extends Component {
       this.setState({analysis: false});
       let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
       analysis = analysis.data.data;
-      this.setState({pip_val: analysis.pip_value, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
+      this.setState({pip_val: analysis.pip_value, live: analysis.rate, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
       this.setState({analysis: true});
+      this.estimate();
       // console.log(analysis);
     } catch (error) {
       setTimeout(() => {
@@ -92,9 +128,25 @@ class BuyandsellModal extends Component {
   }
 
   placeOrder = async () => {
-    const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin);
-    if(place_order.status == 200) {
-      this.props.confirmClick();
+    this.setState({showSpinner: true});
+    try {
+      const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, {
+        "pip_value"       : this.state.pip_val,
+        "volume_lots"     : this.state.lot_val,
+        "required_margin" : this.state.margin,
+        "stop_loss"       : this.state.stop_loss,
+        "take_profit"     : this.state.take_profit
+      });
+      if(place_order.status == 200) {
+        this.props.confirmClick();
+      } else {
+        console.log(place_order);
+      }
+      this.setState({showSpinner: false});
+    } catch (e) {
+      console.log(e);
+      this.setState({showSpinner: false});
+      return e;
     }
   }
 
@@ -133,6 +185,7 @@ class BuyandsellModal extends Component {
     const { information, analysis } = this.state;
     return (
       <div className='overlay bs'>
+        <Spinner showSpinner={this.state.showLoader} />
         <div className='deposit-modal-section'>
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancelClick} />
@@ -142,7 +195,7 @@ class BuyandsellModal extends Component {
             </ul>
             { information ? <div className='bsell-modal-content'>
               <h6>{pair}</h6>
-              <p>Bitcoin vs US Dollar</p>
+              {/*<p>Bitcoin vs US Dollar</p>*/}
               <ul className="info-list">
                 <li className="mt1"><span className="text-success">Quote Asset</span><span className="text-success">USD</span></li>
                 <li><span>PIp Size:</span><span>0.01 (2digits)</span></li>
@@ -163,6 +216,7 @@ class BuyandsellModal extends Component {
 
             { !this.state.information ? <div className='bsell-modal-content'>
               <h6>{pair}</h6>
+              <p>{this.state.errorMessage}</p>
               <ul className="info-list">
                 <li style={{height: "50px", marginBottom: "2em"}}>
                 <span className="text-success">
@@ -187,25 +241,33 @@ class BuyandsellModal extends Component {
                   <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Pips</small>
-                    <input type="number" placeholder="3.23" />
+                    <p className="stop_loss">
+                      <input type="number" placeholder="0.01" value={this.state.stop_loss} />
+                      <img src={upVlv} className="uvlv" onClick={(e) => { this.setState({stop_loss: 0.01 * this.state.counter2, counter2: this.state.counter2 + 1}); setTimeout(() => { this.estimate(); }, 10); }} />
+                      <img src={downVlv} className="dvlv" onClick={(e) => { this.setState({stop_loss: 0.01 * this.state.counter2, counter2: this.state.counter2 - 1}); setTimeout(() => { this.estimate(); }, 10); }} />
+                    </p>
                     <small>Estimated Price</small>
-                    <input type="number" placeholder="1.09432" />
+                    <input type="number" placeholder="" value={this.state.estimated_price1} />
                   </span>
                 </span>
                 <span>
                   Only buy/sell when <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Rate</small>
-                    <input type="number" placeholder="3.23" />
+                    <input type="number" placeholder="3.23" value={this.state.live} />
                   </span>
                 </span>
                 <span>
                   Set take profit <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Pips</small>
-                    <input type="number" placeholder="3.23" />
+                    <p className="take_profit">
+                      <input type="number" placeholder="0.01" value={this.state.take_profit} />
+                      <img src={upVlv} className="uvlv" onClick={(e) => { this.setState({take_profit: 0.01 * this.state.counter3, counter3: this.state.counter3 + 1}); setTimeout(() => { this.estimate(); }, 10);  }} />
+                      <img src={downVlv} className="dvlv" onClick={(e) => { this.setState({take_profit: 0.01 * this.state.counter3, counter3: this.state.counter3 - 1}); setTimeout(() => { this.estimate(); }, 10);  }} />
+                    </p>
                     <small>Estimated Price</small>
-                    <input type="number" placeholder="1.09432" />
+                    <input type="number" placeholder="" value={this.state.estimated_price2} />
                   </span>
                 </span>
               </div>

@@ -46,8 +46,7 @@ class Chart extends Component {
   }
 
   async componentDidMount() {
-    
-    alert(this.allPairs);
+    // alert(this.allPairs);
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
       width: this.chartContainerRef.current.clientWidth,
@@ -148,7 +147,7 @@ class Chart extends Component {
           spread: data.spread,
         });
       }
-    }, 1000); // 1000
+    }, 10 * 1000); // 1000
 
     this.resizeObserver.current.observe(this.chartContainerRef.current);
 

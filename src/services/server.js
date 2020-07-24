@@ -179,7 +179,8 @@ export default {
     });
   },
 
-  placeOrder(mode, pair, pip, lots, margin) {
+  placeOrder(mode, pair, pip, lots, margin, order) {
+    console.log(order);
     return axios.request({
       method: 'PUT',
       url: 'https://avariz-core.herokuapp.com/wallet/'+mode+'/order?email='+app.email()+'&account='+app.account()+'&currency='+pair.split(" ")[0].trim(),
@@ -187,14 +188,15 @@ export default {
         'Authorization': app.auth()
       },
       data: {
-        order: {
-          "pip_value" : pip,
-          "volume_lots": lots,
-          "required_margin" : margin,
-          "stop_loss" : null, // {"configs" : null},
-          "take_profit" : null, // {"configs" : null},
-          "sell_when" : null, // {"configs" : null}
-        }
+        order: order
+        // {
+        //   "pip_value" : pip,
+        //   "volume_lots": lots,
+        //   "required_margin" : margin,
+        //   "stop_loss" : null, // {"configs" : null},
+        //   "take_profit" : null, // {"configs" : null},
+        //   "sell_when" : null, // {"configs" : null}
+        // }
       }
     });
   },
@@ -282,7 +284,25 @@ export default {
       url: 'https://avariz-core.herokuapp.com/utils/chart/series?pair='+pair+'&interval='+interval,
       headers: {'Authorization': app.auth()}
     })
-  }
+  },
+
+  historicalData (pair, time = "10D") {
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/trading/data/historical?pair='+pair+'&timecode='+time+'&email='+app.email(),
+      headers: {'Authorization': app.auth()}
+    });
+  },
+
+
+
+  // openTrade () {
+  //   return axios.request({
+  //     method: 'GET',
+  //     url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=pendingv``&mode2=open&username='+email,
+  //     headers: {'Authorization': app.auth()}
+  //   })
+  // }
 
 
 
