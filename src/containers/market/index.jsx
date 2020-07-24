@@ -105,13 +105,13 @@ class Market extends Component {
   fetchFavs = async () => {
     if(this.realTimeListener) {
       try {
-        this.retryCounter = 0;
         const { data: { data, code } } = await server.fetchFav();
         if(code == 200) {
           if(data.length) {
             this.setState({favourites: data});
           }
         }
+        this.retryCounter = 0;
       } catch (error) {
         if(this.retryCounter < app.retryLimit) {
           this.retryCounter += 1;

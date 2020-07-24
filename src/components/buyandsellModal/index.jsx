@@ -110,13 +110,13 @@ class BuyandsellModal extends Component {
 
   tradeAnalysis = async () => {
     try {
-      this.retryCounter = 0;
       this.setState({analysis: false});
       let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
       analysis = analysis.data.data;
       this.setState({pip_val: analysis.pip_value, live: analysis.rate, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
       this.setState({analysis: true});
       this.estimate();
+      this.retryCounter = 0;
       // console.log(analysis);
     } catch (error) {
       if(this.retryCounter < app.retryLimit) {
