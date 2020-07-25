@@ -101,6 +101,9 @@ class TradeHistory extends Component {
                   ) : null}
                 </ul>
               )) }
+              { !history.length ? (
+                <center><h1>Empty</h1></center>
+              ) : (null) }
             <Pagination length="4" max_rows="4" page_no="1" paginationChange={() => {}}/>
           </div>
       </div>

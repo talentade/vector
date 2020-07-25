@@ -30,6 +30,9 @@ class TradeDashboard extends Component {
       showSpinner: false,
       showNav: true,
       accounts: [],
+      open_trades: [],
+      closed_trades: [],
+      pending_trades: [],
       favourites: [],
       showAddFav: false,
       selectedAccount: app.accountDetail(),
@@ -52,7 +55,11 @@ class TradeDashboard extends Component {
       this.props.history.push('/Login');
       return;
     }
-    // this.setState({ selectedAccount: app.accountDetail() });
+    
+    this.getHistory("open");
+    this.getHistory("closed");
+    this.getHistory("pending");
+
     const myAccounts = app.accounts();
     this.setState({ accounts: app.accounts() });
     window.addEventListener('resize', this.updateDimensions);
@@ -61,6 +68,30 @@ class TradeDashboard extends Component {
     } catch (e) {
       return e;
     }
+  }
+
+  getHistory = async (type) => {
+    setInterval(async () => {
+      if(this.realTimeListener) {
+        try {
+          const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
+          if(results) {
+            if(type == "open") {
+              console.log("OPEN>>>>", results);
+              this.setState({open_trades: results});
+            } else if (type == "closed") {
+              console.log("CLOSED>>>>", results);
+              this.setState({closed_trades: results});
+            } else if (type == "pending") {
+              console.log("PENDING>>>>", results);
+              this.setState({pending_trades: results});
+            }
+          }
+        } catch (error) {
+          return error;
+        }
+      }
+    }, 3000);
   }
 
   addFavPop = (e) => {
@@ -202,11 +233,11 @@ class TradeDashboard extends Component {
               {currentTab === 'Trade' ? (
                 <Chart />
               ) : currentTab === 'Open Trades' ? (
-                <OpenTrade filterOptions={['All Types']} />
+                <OpenTrade filterOptions={['All Types']} history={this.state.open_trades} />
               ) : currentTab === 'Closed Trades' ? (
-                <ClosedTrade filterOptions={['All Types']} />
+                <ClosedTrade filterOptions={['All Types']} history={this.state.closed_trades} />
               ) : currentTab === 'Pending Trades' ? (
-                <PendingTrade filterOptions={['All Types']} />
+                <PendingTrade filterOptions={['All Types']} history={this.state.pending_trades} />
               ) : (
                 <MobileBalance
                   demoOptions={this.state.accounts}
