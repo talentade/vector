@@ -18,9 +18,9 @@ import Transactions from '../containers/transactions/index';
 
 export default props => (
   <Switch>
-    <Route exact path='/' component={Register} />
-    <Route exact path='/Register' component={Register} />
+    <Route exact path='/' component={Login} />
     <Route exact path='/Login' component={Login} />
+    <Route exact path='/Register' component={Register} />
     <Route exact path='/VerifyEmail' component={VerifyEmail} />
     <Route exact path='/VerifyPhone' component={VerifyPhone} />
     <Route path='/Book' exact component={BookCall} />

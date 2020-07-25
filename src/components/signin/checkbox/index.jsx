@@ -1,9 +1,9 @@
 import React from "react";
 import "./index.scss";
 
-const CheckBox = ({ handleClick }) => (
+const CheckBox = (props) => (
   <div className="login-checkbox">
-    <input type="checkbox" onClick={handleClick} id="check" />
+    <input type="checkbox" {...props}/>
     <label htmlFor="check">Keep me logged in</label>
   </div>
 );

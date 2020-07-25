@@ -27,7 +27,7 @@ class SignIn extends Component {
     };
   }
 
-  handleClick = () => {
+  handleClick = (e) => {
     this.setState({
       checked: !this.state.checked,
     });
@@ -47,7 +47,7 @@ class SignIn extends Component {
     try {
       this.setState({ showSpinner: true });
 
-      const { data: { data: { profile } } } = await server.login({username: email, password: password});    
+      const { data: { data: { profile } } } = await server.login({username: email, password: password});
 
       localStorage.setItem('email', email);
 
@@ -97,6 +97,10 @@ class SignIn extends Component {
     });
   };
 
+  componentDidMount () {
+    document.getElementById('check').checked = true;
+  }
+
   render() {
     const { showSpinner, signinError } = this.state;
     return (
@@ -123,12 +127,19 @@ class SignIn extends Component {
             />
             <p className='error'>{signinError}</p>
             <p className='forget-password'><NavLink to="/ForgotPassword">Forgot Password?</NavLink></p>
-            <CheckBox handleClick={this.handleClick} />
+            <CheckBox onClick={this.handleClick} id="check" />
             <input
               type='submit'
               value='Sign In'
               className='signin-submit-btn'
+              style={{marginTop: "1em"}}
             />
+            <p className='alt-action'>
+              Don't have an account?{' '}
+              <NavLink to='/Register' className='login-link'>
+                Register
+              </NavLink>
+            </p>
           </form>
         </div>
       </div>
