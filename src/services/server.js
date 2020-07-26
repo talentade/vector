@@ -171,8 +171,8 @@ export default {
         'Authorization': app.auth()
       },
       data: {
-            "meeting_title" :         "Scheduled call with broker", 
-            "meeting_description":    "We're meeting for 30 minutes, to talk about the basics of trading on Avariz platform", 
+            "meeting_title" :         "Scheduled call with broker",
+            "meeting_description":    "We're meeting for 30 minutes, to talk about the basics of trading on Avariz platform",
             "meeting_host" :          "dean@avarizgroup.com",
             "meeting_participants" :  [email]
           }
@@ -294,6 +294,16 @@ export default {
     });
   },
 
+  addBankingDetails (details) {
+    return axios.request({
+      method: 'POST',
+      url: 'https://avariz-core.herokuapp.com/utils/data/banking/add/'+app.email()+'/'+app.auth(),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: details
+    });
+  },
 
 
   // openTrade () {

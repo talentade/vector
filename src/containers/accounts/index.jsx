@@ -38,9 +38,7 @@ class Accounts extends Component {
 
   accountList = async () => {
     this.setState({showSpinner: true});
-    const { data: { data: { profile } } } = await server.getProfile(app.id(), app.email());
-    localStorage.setItem('email', app.email());
-    localStorage.setItem('id', profile.user_id);
+    const { data: { data: { profile } } } = await server.getProfile();
     localStorage.setItem('profile', JSON.stringify(profile));
 
     let accs = [];
@@ -77,7 +75,7 @@ class Accounts extends Component {
               <button className="add_account" onClick={(e) => this.setState({addAcc: true})}><img src={sp} /> Add account</button>
             </div>
           </h1>
-          
+
           <ul className='t-history-header'>
             <li className="acc-name">TRADING ACCOUNT</li>
             <li>BALANCE</li>
@@ -146,7 +144,7 @@ class Accounts extends Component {
               </table>
             </li>
             <div id="account-graph">
-              
+
             </div>
             <li className="acc-stat-row-2">
               <table>

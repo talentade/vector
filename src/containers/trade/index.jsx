@@ -30,6 +30,7 @@ class TradeDashboard extends Component {
       showSpinner: false,
       showNav: true,
       accounts: [],
+      all_trades: [],
       open_trades: [],
       closed_trades: [],
       pending_trades: [],
@@ -55,10 +56,10 @@ class TradeDashboard extends Component {
       this.props.history.push('/Login');
       return;
     }
-    
-    this.getHistory("open");
-    this.getHistory("closed");
-    this.getHistory("pending");
+    this.getHistory("all");
+    // this.getHistory("open");
+    // this.getHistory("closed");
+    // this.getHistory("pending");
 
     const myAccounts = app.accounts();
     this.setState({ accounts: app.accounts() });
@@ -76,22 +77,32 @@ class TradeDashboard extends Component {
         try {
           const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
           if(results) {
-            if(type == "open") {
-              console.log("OPEN>>>>", results);
-              this.setState({open_trades: results});
-            } else if (type == "closed") {
-              console.log("CLOSED>>>>", results);
-              this.setState({closed_trades: results});
-            } else if (type == "pending") {
-              console.log("PENDING>>>>", results);
-              this.setState({pending_trades: results});
-            }
+            this.setState({all_trades: results});
+            this.populateTrades();
           }
         } catch (error) {
           return error;
         }
       }
     }, 3000);
+  }
+
+  populateTrades = () => {
+    let open_trades = [];
+    let closed_trades = [];
+    let pending_trades = [];
+    this.state.all_trades.forEach((trade, i) => {
+      if(trade.status == "open") {
+        open_trades.push(trade);
+      }
+      if(trade.status == "closed") {
+        closed_trades.push(trade);
+      }
+      if(trade.status == "pending") {
+        pending_trades.push(trade);
+      }
+    });
+    this.setState({open_trades: open_trades, pending_trades: pending_trades, closed_trades: closed_trades});
   }
 
   addFavPop = (e) => {

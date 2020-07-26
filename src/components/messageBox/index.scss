@@ -2,7 +2,7 @@
   position: absolute;
   cursor: pointer;
   display: none;
-  right: -5px;
+  right: 300px;
   top: 40px;
   font-family: Poppins, sans-serif;
   background: #006066;
@@ -14,6 +14,10 @@
   height: auto;
   background: #006066;
   border-radius: 3px;
+
+  &.user {
+    right: -5px;
+  }
 
   .section1 {
     width: 280px;
@@ -202,8 +206,12 @@
   height: 15px;
   position: absolute;
   top: -5px;
-  right: 100px;
+  right: 140px;
   z-index: -1;
   display: block;
   transform: rotate(45deg);
+}
+
+.message-dropdown.admin::before {
+  right: 100px;
 }

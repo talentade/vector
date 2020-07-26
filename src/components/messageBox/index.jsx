@@ -3,11 +3,12 @@ import { NavLink } from 'react-router-dom';
 import userDp from '../../themes/images/dummydp.png';
 import dbn from '../../themes/images/double-next.png';
 import ppl from '../../themes/images/paper-plane.png';
+import app from '../../services/app';
 import "./index.scss";
 
 const MessageBox = ({ name, email, balance }) => {
   return (
-    <div className="message-dropdown">
+    <div className={"message-dropdown"+(app.isAdmin() ? ' admin' : '')}>
       <div className="section1">
         <img src={userDp} className="udp" />
         <img src={userDp} className="udp" />

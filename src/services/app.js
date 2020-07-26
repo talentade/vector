@@ -46,4 +46,7 @@ export default {
   profile: () => {
     return JSON.parse(localStorage.getItem("profile"));
   },
+  isAdmin: () => {
+    return false;
+  }
 };

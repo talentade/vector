@@ -9,6 +9,11 @@
     margin-bottom: 20px;
   }
 
+  h4.empty {
+    color: #fff;
+    margin-top: 1em;
+    font-weight: 100;
+  }
 
   .ins_up, .ins_down {
     display: none;
@@ -131,7 +136,7 @@
       padding: 6px 13px;
       border-radius: 4px;
     }
-    
+
     li {
       width: calc(100% / 11);
       display: flex;
@@ -376,7 +381,7 @@
     margin-top: 20px;
   }
 
-  
+
   .open-trades-container-top {
     flex-direction: column;
 

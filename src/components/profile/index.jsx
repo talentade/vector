@@ -53,6 +53,13 @@ class Profile extends Component {
   async componentDidMount() {
     if (!this.id) this.props.history.push('/Login');
 
+    const { data: { data: { profile } } } = await server.getProfile();
+    localStorage.setItem('profile', JSON.stringify(profile));
+
+    this.setState({banking_details: app.profile()["banking_details"]});
+    this.profile         = app.profile();
+    this.selectedAccount = app.accountDetail();
+
     this.props.saveUserProfile(this.profile);
 
     const {
@@ -409,16 +416,6 @@ class Profile extends Component {
               handleClick={this.toggleModalButtonClick}
             />
           </div>
-
-          {/*<div className='account-details-section profile-bg'>
-            <AccountDetails
-              balance={`$${balance}`}
-              handleClick={this.toggleModalButtonClick}
-            />
-            <div className='my-cards'>
-
-            </div>
-          </div>*/}
         </div>
       </div>
     );
