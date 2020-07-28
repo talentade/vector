@@ -50,7 +50,7 @@ class Container extends Component {
 
   render() {
     const userId = app.id();
-    if (!userId) return <Redirect to="/Login" />
+    if (!userId.length) return <Redirect to="/Login" />
     const { first_name, last_name, profile_image } = this.props.userProfile;
     const selectedAccount = app.accountDetail();
     let balance = selectedAccount.balance;
