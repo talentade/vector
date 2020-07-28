@@ -103,7 +103,7 @@ class Register extends Component {
          }
       });
       $(".iti__selected-flag").css({opacity: "1"});
-    }, 250);
+    }, 500);
   }
 
   submitForm = async (e) => {
