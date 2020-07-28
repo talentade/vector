@@ -6,6 +6,7 @@ import scheduled from '../../themes/images/scheduled.png';
 import check_mark from '../../themes/images/check-mark.png';
 import server from '../../services/server';
 import Spinner from '../../components/spinner/index';
+import { Booked } from '../../components/popups/index';
 import calendar_icon from '../../themes/images/calendar-icon.png';
 import './index.scss';
 
@@ -20,6 +21,7 @@ class BookCall extends Component {
       iLoader: true,
       lastEdge: 0,
       currentHour: 1,
+      currentHour2: 1,
       daysEdge: null,
       bookState: 0,
       weekDay: 7,
@@ -27,6 +29,8 @@ class BookCall extends Component {
       today: 1,
       month: 0,
       days: [],
+      am_pm: 'AM',
+      showBooked: false,
       email: localStorage.getItem("email"),
       meeting_date: null,
       meeting_time: null,
@@ -39,6 +43,9 @@ class BookCall extends Component {
     let m = d.getMonth();
     this.setState({thisYear: d.getFullYear()});
     this.monthList(m);
+    setTimeout(() => {
+      this.sevenRight(d.getDate());
+    }, 100);
 
     try {
       let meetings = await server.getMeeting(localStorage.getItem("id"));
@@ -156,9 +163,14 @@ class BookCall extends Component {
     }
   }
 
-  sevenRight = () => {
+  sevenRight = (d = 0) => {
     let wd = this.state.weekDay;
     let td = this.state.today + 1;
+    if(d > 0) {
+      wd = d > this.state.weekDay ? d : this.state.weekDay;
+      td = d;
+      // console.log(this.state.weekDay > d ? d : d - this.state.weekDay);
+    }
     if(td > wd) {
       wd += 1;
     }
@@ -187,14 +199,16 @@ class BookCall extends Component {
   twentyFour = () => {
     let tme = [];
     for (var i = 1; i <= 24; i++) {
-      tme[i] = {"hour": i, "time": (i < 10 ? "0" : "")+i+":00"};
+      let j = i > 12 ? i % 12 : i;
+          j = j == 0 ? 12 : j;
+      tme[i] = {"ihour": i, "hour": j, "time": (j < 10 ? "0" : "")+j+":00 "+(i > 12 ? "PM" : "AM"), am_pm: i > 12 ? "PM" : "AM"};
     }
     return tme;
   }
 
-  setCurHour = (h) => {
+  setCurHour = (i, h, a) => {
     $("#timeList .d-time._active").removeClass("_active");
-    this.setState({currentHour: h});
+    this.setState({currentHour2: i, currentHour: h, am_pm: a});
   }
 
   scheduleCall = async () => {
@@ -203,8 +217,8 @@ class BookCall extends Component {
     // m = m > 9 ? m : "0"+m;
     let t = this.state.today;
     // t = t > 9 ? t : "0"+t;
-    let ampm = this.state.currentHou >= 12 ? "PM" : "AM";
-    let ch = this.state.currentHour%12;
+    let ampm = this.state.am_pm;
+    let ch = this.state.currentHour;
     // ch = ch > 9 ? ch : "0"+ch;
     try {
       const req = await server.bookMeeting(localStorage.getItem('id'), localStorage.getItem('email'), this.state.thisYear, this.state.activeM+1, t, ch, 0, ampm);
@@ -212,7 +226,7 @@ class BookCall extends Component {
         localStorage.setItem("scheduled", "1");
         let md = this.state.thisYear+"-"+m+"-"+t;
         this.setState({ meeting_date: md, meeting_time: ch+":00 "+ampm+" on "+md, meeting_id: req.data.data.meeting_id});
-        this.setState({ bookState: 1, showLoader: false });
+        this.setState({ bookState: 1, showLoader: false, showBooked: true });
       } else {
         // alert(req.data.message);
         this.setState({ showLoader: false });
@@ -233,6 +247,7 @@ class BookCall extends Component {
     return (
       <Container>
         <Spinner showSpinner={this.state.showLoader} />
+        <Booked show={this.state.showBooked} cancel={(e) => this.setState({showBooked: false})} />
         { this.state.bookState == 0 ? (
           <div className={"col-12"+(this.state.iLoader ? ' hide' : '')} id="book-container">
             <img src={book_call} />
@@ -304,8 +319,8 @@ class BookCall extends Component {
               <div className="time-list-parent">
                 <ul className="time-list" id="timeList">
                 {
-                  this.twentyFour().map(({hour, time}) => (
-                    <li><button className={"d-time"+(this.state.currentHour == hour ? " _active" : "")} onClick={(e) => this.setCurHour(hour)}>{time}</button></li>
+                  this.twentyFour().map(({ihour, hour, time, am_pm}) => (
+                    <li><button className={"d-time"+(this.state.currentHour2 == ihour ? " _active" : "")} onClick={(e) => this.setCurHour(ihour, hour, am_pm)}>{time}</button></li>
                   ))
                 }
                 </ul>

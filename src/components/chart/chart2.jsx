@@ -35,7 +35,6 @@ class Chart extends Component {
     this.allPairs = app.allPairs();
     this.pair = '';
     this.data = [];
-    this.loadSeries = true;
     this.currentGrpahType = "candle";
     this.lineDataSeries = [];
     this.seriesIterator = 0;
@@ -53,7 +52,6 @@ class Chart extends Component {
       spread: 0,
       high: 0,
       low: 0,
-      historyLevel: "1D",
       buyandsellModal: false,
       buyandsellAct: 'buy',
       buyandsellConfirmed: false,
@@ -90,10 +88,10 @@ class Chart extends Component {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
     }
     if(this.pair.length) {
-      // this.getSeries();
+      this.getSeries();
     }
 
-    this.chart.current.applyOptions({
+     this.chart.current.applyOptions({
         watermark: {
             color: 'rgba(67, 95, 118, 0.4)',
             visible: true,
@@ -112,10 +110,7 @@ class Chart extends Component {
         //     }
         // },
         priceScale: {
-            autoScale: true,
-            alignLabels: true,
-            drawTicks: true,
-            scaleMargins:	{ bottom: 0.1, top: 0.2 }
+            autoScale: true
         },
         localization: {
             locale: 'en-US',
@@ -129,15 +124,6 @@ class Chart extends Component {
   }
 
   switchGraphType = (e, id) => {
-    let el = document.getElementById(id);
-    if(el.className == "_active") {
-      el.classList.remove("_active");
-    } else {
-      el.classList.add("_active");
-    }
-  }
-
-  setHistoryGraph = (id) => {
     let el = document.getElementById(id);
     if(el.className == "_active") {
       el.classList.remove("_active");
@@ -189,9 +175,6 @@ class Chart extends Component {
 
     this.setGraphType("candle", 0);
 
-    // let { data: { data } } = await server.historicalData(this.treatPair(this.pair));
-    // console.log(data.length, data);
-
     this.resizeObserver.current = new ResizeObserver((entries) => {
       const { width, height } = entries[0].contentRect;
       this.chart.current.applyOptions({ width, height });
@@ -239,11 +222,14 @@ class Chart extends Component {
   }
 
   getSeries = async () => {
-    let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
+    // let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
+
+    let { data: { data } } = await server.historicalData(this.treatPair(this.pair), "3M");
+    // console.log(data.length, data);
     // console.log(data.length, "length");
-    // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
+    data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
     for (let x = 0; x < data.length; x++) {
-      this.plotGraph(this.graphData(data[x]));
+      this.plotGraph(this.graphData2(data[x], this.pair));
     }
   }
 
@@ -251,20 +237,17 @@ class Chart extends Component {
     if(!p.trim().length) {
       await this.plotGraphDataInit();
     }
+
     this.setState({showLoader: true});
-    await this.loadHistorical("1M");
-    return null;
     await this.getSeries();
-    window.realtTimeFetcher = async () => {
-      if(this.realTimeListener && this.loadSeries) {
-        let data = await this.handleDataChange(this.treatPair(this.pair));
-        if(this.loadSeries) {
-          this.plotGraph(data);
-        }
-      }
-    }
-    this.setState({showLoader: false});
-    setInterval(window.realtTimeFetcher, 10 * 1000);
+    // window.realtTimeFetcher = async () => {
+    //   if(this.realTimeListener) {
+    //     let data = await this.handleDataChange(this.treatPair(this.pair));
+    //     this.plotGraph(data);
+    //   }
+    // }
+    // this.setState({showLoader: false});
+    // setInterval(window.realtTimeFetcher, 10 * 1000);
   }
 
   plotGraph = (data) => {
@@ -299,8 +282,6 @@ class Chart extends Component {
         high: data.high,
         spread: data.spread,
       });
-      
-      this.chart.current.timeScale().fitContent();
     }
   }
 
@@ -326,6 +307,20 @@ class Chart extends Component {
       spread: parseFloat(data.spread),
       bid: parseFloat(data.bid),
       pair: data.pair,
+    };
+  }
+
+  graphData2 = (data, pair) => {
+    return {
+      time: data.Date,
+      open: parseFloat(data.Open),
+      high: parseFloat(data.High),
+      low: parseFloat(data.Low),
+      close: parseFloat(data.Close),
+      ask: parseFloat(data.Open),
+      spread: parseFloat(data.Volume),
+      bid: parseFloat(data.Open),
+      pair: pair,
     };
   }
 
@@ -360,29 +355,6 @@ class Chart extends Component {
 
   confirmBsellModal = (e) => {
     this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false });
-  }
-
-  graphData2 = (data, pair) => {
-    return {
-      time: data.Date,
-      open: parseFloat(data.Open),
-      high: parseFloat(data.High),
-      low: parseFloat(data.Low),
-      close: parseFloat(data.Close),
-      ask: parseFloat(data.Open),
-      spread: parseFloat(data.Volume),
-      bid: parseFloat(data.Open),
-      pair: pair,
-    };
-  }
-
-  loadHistorical = async (h) => {
-    this.loadSeries = false;
-    this.setState({historyLevel: h});
-    let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
-    for (let x = 0; x < data.length; x++) {
-      this.plotGraph(this.graphData2(data[x], this.pair));
-    }
   }
 
   render() {
@@ -462,16 +434,6 @@ class Chart extends Component {
                 <li>
                   1H
                   <img src={Tarrow} alt='' className='t-arrow' />
-                </li>
-                <li id="switch-history" onClick={(e) => this.setHistoryGraph('switch-history')}>
-                  <img src={Tarrow} alt='' className='t-arrow' /> {this.state.historyLevel}
-                  <div className="gr-dropdown">
-                    <span onClick={(e) => this.loadHistorical("1H")} className={"cgt"+(this.state.historyLevel == "1H" ? " _active" : "")}> 1H </span>
-                    <span onClick={(e) => this.loadHistorical("1D")} className={"cgt"+(this.state.historyLevel == "1D" ? " _active" : "")}> 1D </span>
-                    <span onClick={(e) => this.loadHistorical("1W")} className={"cgt"+(this.state.historyLevel == "1W" ? " _active" : "")}> 1W </span>
-                    <span onClick={(e) => this.loadHistorical("1M")} className={"cgt"+(this.state.historyLevel == "1M" ? " _active" : "")}> 1M </span>
-                    <span onClick={(e) => this.loadHistorical("1Y")} className={"cgt"+(this.state.historyLevel == "1Y" ? " _active" : "")}> 1Y </span>
-                  </div>
                 </li>
               </ul>
             </div>

@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import $ from "jquery";
 import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import ReactPhoneInput from 'react-phone-input-2';
 import InputBox from '../../components/InputBox/index';
 import AvarizLogo from '../../themes/images/avariz_logo.png';
+import  './assets/intlTelInput.css';
+import  './assets/demo.css';
+import { appendScript } from './assets/appendScript';
 import {
   addUserInformation,
   setAccountType,
@@ -26,7 +30,9 @@ class Register extends Component {
       email: '',
       phone: '',
       gender: '',
+      country: '',
       password: '',
+      countryCode: '',
       confirmPassword: '',
       question: '',
       firstNameError: null,
@@ -41,8 +47,8 @@ class Register extends Component {
     };
   }
 
-  handlePhoneChange = (value) => {
-    this.setState({ phone: value });
+  handlePhoneChange = (e) => {
+    this.setState({ phone:  e.target.value });
   };
 
   handleGenderChange = (e) => {
@@ -74,8 +80,30 @@ class Register extends Component {
     });
   };
 
-  componentDidMount () {
-    // console.log();
+  async componentDidMount () {
+    await appendScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js");
+    await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/utils.js");
+    await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/intlTelInput.js");
+    await appendScript("https://intl-tel-input.com/js/demo.js");
+    let that = this;
+    setTimeout(() => {
+      let code = "";
+      $("li[data-country-code]").click(function () {
+        let ct = $(this).find(".iti__country-name").text();
+        let cc = $(this).find(".iti__dial-code").text();
+        that.setState({
+          country:      ct,
+          countryCode:  cc
+        });
+      });
+      $.getJSON("http://ip-api.com/json/?callback=?", function(data){
+         code = (data.countryCode || "").toLowerCase();
+         if(code != null) {
+          $(".iti__selected-flag, li[data-country-code="+code+"]").click();
+         }
+      });
+      $(".iti__selected-flag").css({opacity: "1"});
+    }, 250);
   }
 
   submitForm = async (e) => {
@@ -84,6 +112,8 @@ class Register extends Component {
       firstName,
       lastName,
       phone,
+      country,
+      countryCode,
       gender,
       email,
       password,
@@ -91,7 +121,7 @@ class Register extends Component {
       question,
     } = this.state;
     const nameRegex = /^[a-zA-Z]{3,}$/;
-    const phoneRegex = /^[\s()+-]*([0-9][\s()+-]*){6,20}$/;
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
 
     this.clearErrors();
 
@@ -99,8 +129,8 @@ class Register extends Component {
       this.setState({ firstNameError: 'Invalid first name specified' });
     if (!nameRegex.test(lastName))
       this.setState({ lastNameError: 'Invalid last name specified' });
-    if (!phoneRegex.test(phone))
-      this.setState({ phoneNumberError: 'Invalid phone number specified' });
+    if (phone.length < 6)
+      this.setState({ phoneNumberError: 'Invalid phone number' });
 
     if (password !== confirmPassword) {
       this.setState({ confirmPasswordError: 'Passwords must match' });
@@ -110,7 +140,7 @@ class Register extends Component {
       nameRegex.test(firstName) &&
       nameRegex.test(lastName) &&
       email !== '' &&
-      phoneRegex.test(phone) &&
+      phone.length &&
       ['Male', 'Female'].includes(gender) &&
       password === confirmPassword
     ) {
@@ -125,10 +155,6 @@ class Register extends Component {
       this.setState({ showSpinner: !this.state.showSpinner });
 
       try {
-        const {
-          data: { country_name },
-        } = await axios.get('https://ipapi.co/json/');
-
         const response = await server.register({
           first_name: firstName,
           last_name: lastName,
@@ -138,15 +164,18 @@ class Register extends Component {
           gender,
           source: question,
           role: 'user',
-          country: country_name,
+          country: country,
+          countryCode: countryCode,
         });
+
+        let phone_number = countryCode+phone.trim().slice(1);
 
         const user = response.data;
         userInfo.id = user.user_id;
         userInfo.otpEmail = user.email_otp;
         userInfo.otpPhone = user.phone_number_otp;
         await server.sendEmail(firstName, lastName, email, user.email_otp);
-        await server.sendSMS(phone, user.phone_number_otp);
+        await server.sendSMS(phone_number, user.phone_number_otp);
         this.props.addUserInformation(userInfo);
         localStorage.setItem('id', user.user_id);
 
@@ -211,6 +240,7 @@ class Register extends Component {
         <div className='register-big-box'>
           <form className='register-box' onSubmit={this.submitForm}>
             <h2>Sign Up</h2>
+
             <InputBox
               label='First Name'
               name='firstName'
@@ -232,19 +262,23 @@ class Register extends Component {
               handleInputChange={this.handleInputChange}
               error={emailError}
             />
+          {/*<ReactPhoneInput
+                inputExtraProps={{
+                  name: 'phone',
+                  required: true,
+                  autoFocus: true,
+                }}
+                defaultCountry={'ng'}
+                value={this.state.phone}
+                onChange={this.handlePhoneChange}
+              /> maxlength="11"*/}
             <div className='input-flex'>
               <div className='input-box phone-reg-box'>
                 <label className='phone-label'>Phone Number</label>
-                <ReactPhoneInput
-                  inputExtraProps={{
-                    name: 'phone',
-                    required: true,
-                    autoFocus: true,
-                  }}
-                  defaultCountry={'ng'}
-                  value={this.state.phone}
-                  onChange={this.handlePhoneChange}
-                />
+
+                <div className="react-tel-input">
+                  <input type="number" name="phone" id="phone" className="form-control" style={{height: "2.5rem !important"}} onChange={this.handlePhoneChange} required="true" />
+                </div>
                 <p className='error red'>
                   {phoneNumberError ? `*${phoneNumberError}` : null}
                 </p>

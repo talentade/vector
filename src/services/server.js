@@ -155,7 +155,7 @@ export default {
         // console.log(nd);
     return axios.request({
       method: 'DELETE',
-      url: 'http://avariz-core.herokuapp.com/calendar/meeting/delete/'+nd.join("-")+'/'+id,
+      url: 'https://avariz-core.herokuapp.com/calendar/meeting/delete/'+nd.join("-")+'/'+id,
       headers: {
         'Authorization': app.auth()
       }
@@ -166,7 +166,7 @@ export default {
     let Authorization = user_id;
     return axios.request({
       method: 'POST',
-      url: 'http://avariz-core.herokuapp.com/calendar/meeting/new?year='+year+'&month='+(month > 9 ? month : ""+month)+'&day='+(day > 9 ? day : ""+day)+'&h='+(h > 9 ? h : ""+h)+'&m='+(m > 9 ? m : ""+m)+'&am_pm='+am_pm+'&dur_h=1&dur_m=30',
+      url: 'https://avariz-core.herokuapp.com/calendar/meeting/new?year='+year+'&month='+(month > 9 ? month : ""+month)+'&day='+(day > 9 ? day : ""+day)+'&h='+(h > 9 ? h : ""+h)+'&m='+(m > 9 ? m : ""+m)+'&am_pm='+am_pm+'&dur_h=1&dur_m=30',
       headers: {
         'Authorization': app.auth()
       },
@@ -247,14 +247,13 @@ export default {
     });
   },
 
-  addAccount(user_id, account, pwd) {
-    let Authorization = user_id;
+  addAccount(account, pwd) {
     return axios.request({
       method: 'GET',
       url: 'https://avariz-core.herokuapp.com/signup/secondary/form',
       headers: {
         'Authorization': app.auth(),
-        'auth': user_id,
+        'auth': app.auth(),
         'password': sha256(pwd),
         'account_type': account
       },
@@ -305,14 +304,13 @@ export default {
     });
   },
 
-
-  // openTrade () {
-  //   return axios.request({
-  //     method: 'GET',
-  //     url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=pendingv``&mode2=open&username='+email,
-  //     headers: {'Authorization': app.auth()}
-  //   })
-  // }
+  closeTrade (id, instrument) {
+    return axios.request({
+      method: 'GET',
+      url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=open&mode2=closed&username='+app.email(),
+      headers: {'Authorization': '__AVARIZ_ROBOTIC_CONTROLLER__'}
+    })
+  }
 
 
 

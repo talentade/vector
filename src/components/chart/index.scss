@@ -279,11 +279,16 @@ p.sell-left, p.buy-right, p.map-center {
   float: left;
   width: 20px;
   height: auto;
-  margin-right: 1em; 
+  margin-right: 1em;
 }
 
 li#switch-graph-type._active .gr-dropdown {
   display: block;
+}
+
+li#switch-history._active .gr-dropdown {
+  display: block;
+  width: 80px;
 }
 
 .buy-info {

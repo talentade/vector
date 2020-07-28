@@ -14,6 +14,7 @@ import AddToFav from '../../components/addToFav/index';
 import Chart from '../../components/chart/index';
 import Spinner from '../../components/spinner/index';
 import Container from '../container/index';
+import { FavPopup } from '../../components/popups/index';
 import MarketSideBar from '../../components/marketSidebar/index';
 import { setHotStocks } from '../../redux/actions/index';
 
@@ -35,6 +36,8 @@ class Market extends Component {
       showLoader: false,
       showAddFav: false,
       showSpinner: false,
+      favPopup: false,
+      favPopup_pair: "",
       buyandsellAct: 'buy',
       buyandsellModal: false,
       buyandsellModalInfo: false,
@@ -138,11 +141,14 @@ class Market extends Component {
 
   addToFav = async (e) => {
     this.setState({showSpinner: true});
+    let pair = e.target.getAttribute("pair");
     try {
-      const { data : { data: {}, code, message } } = await server.addToFav(app.id(), app.account(), e.target.getAttribute("pair"));
+      const { data : { data: {}, code, message } } = await server.addToFav(app.id(), app.account(), pair);
+      this.setState({showSpinner: false});
       if(code == 200) {
         await this.fetchFavs();
         await this.fetchStock();
+        this.setState({favPopup: true, favPopup_pair: pair});
       }
     } catch(error) {
       this.setState({showSpinner: false});
@@ -253,6 +259,7 @@ class Market extends Component {
     return (
       <Container>
         <Spinner showSpinner={this.state.showSpinner} />
+        <FavPopup show={this.state.favPopup} pair={this.state.favPopup_pair} cancel={(e) => this.setState({favPopup: false})} />
         <div className='trade-section market-section'>
           { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
           

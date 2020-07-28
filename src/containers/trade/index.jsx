@@ -71,8 +71,7 @@ class TradeDashboard extends Component {
     }
   }
 
-  getHistory = async (type) => {
-    setInterval(async () => {
+  getHistory = async (type, t = 3000) => {
       if(this.realTimeListener) {
         try {
           const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
@@ -81,10 +80,12 @@ class TradeDashboard extends Component {
             this.populateTrades();
           }
         } catch (error) {
-          return error;
+          console.warn(error);
         }
       }
-    }, 3000);
+      setTimeout(async () => {
+        this.getHistory(type);
+      }, t);
   }
 
   populateTrades = () => {

@@ -5,7 +5,7 @@ const Spinner = ({ showSpinner }) => {
   return (
     <div className='my-spinner'>
       {showSpinner ? (
-        <div className='overlay'>
+        <div className='overlay spin'>
           <div className='spinner'></div>
         </div>
       ) : null}

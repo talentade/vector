@@ -16,7 +16,7 @@ class BuyandsellModal extends Component {
     super(props);
 
     let info = false;
-    
+
     if(props.information) {
       info = props.information;
     }
@@ -135,15 +135,22 @@ class BuyandsellModal extends Component {
   }
 
   placeOrder = async () => {
+    let order = {"pip_value": this.state.pip_val, "volume_lots": this.state.lot_val, "required_margin": this.state.margin};
+
+    if(document.getElementById("stop_loss").checked) {
+      order["stop_loss"] = this.state.stop_loss;
+    }
+    if(document.getElementById("take_profit").checked) {
+      order["take_profit"] = this.state.stop_loss;
+    }
+    if(document.getElementById("only_buy_when").checked) {
+      order["only_buy_sell_when"] = document.getElementById("only_buy_when_actual").value;
+    }
+
     this.setState({showSpinner: true});
+
     try {
-      const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, {
-        "pip_value"       : this.state.pip_val,
-        "volume_lots"     : this.state.lot_val,
-        "required_margin" : this.state.margin,
-        "stop_loss"       : this.state.stop_loss,
-        "take_profit"     : this.state.take_profit
-      });
+      const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, order);
       if(place_order.status == 200) {
         this.props.confirmClick();
       } else {
@@ -245,7 +252,7 @@ class BuyandsellModal extends Component {
               <div className="phr">
                 <span>
                   Set stop loss
-                  <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
+                  <label className="switch"><input type="checkbox" id="stop_loss" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Pips</small>
                     <p className="stop_loss">
@@ -258,14 +265,14 @@ class BuyandsellModal extends Component {
                   </span>
                 </span>
                 <span>
-                  Only buy/sell when <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
+                  Only buy/sell when <label className="switch"><input type="checkbox" id="only_buy_when" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Rate</small>
-                    <input type="number" placeholder="3.23" value={this.state.live} />
+                    <input type="number" placeholder="3.23" id="only_buy_when_actual" value={this.state.live*1.1} />
                   </span>
                 </span>
                 <span>
-                  Set take profit <label className="switch"><input type="checkbox" onChange={this.handleChange} /><span className="slider round"></span></label>
+                  Set take profit <label className="switch"><input type="checkbox"id="take_profit" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <small>Pips</small>
                     <p className="take_profit">

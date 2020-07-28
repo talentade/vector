@@ -13,6 +13,10 @@
   justify-content: center;
   align-items: center;
 
+  &.spin {
+    z-index: 1111111111111111111111111111111;
+  }
+
   .spinner {
     position: relative;
     pointer-events: none;
@@ -23,7 +27,7 @@
     border-top-color: #1FCF65;
     border-radius: 50%;
     animation: loadingspin 1s linear infinite;
-    z-index: 111;
+    z-index: 111111111111111111111111111111111;
   }
 }
 

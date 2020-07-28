@@ -24,6 +24,10 @@ class TradeHistory extends Component {
     document.getElementById(i).classList.add("_active");
   }
 
+  closeTrade = async (no, instrument) => {
+    let clt = await server.closeTrade(no, instrument);
+  }
+
   render () {
   const { type, filterOptions, history } = this.props;
   return (
@@ -73,8 +77,8 @@ class TradeHistory extends Component {
                   <span className="th">INSTRUMENT</span><span className="td">{order.instrument}</span></li>
                   <li><span className="th">TYPE</span><span className="td">{order.type}</span></li>
                   <li><span className="th">TIME</span><span className="td">{order.time[0]}<br /><small className="time">{order.time[1]}</small></span></li>
-                  <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">${order.order_price}</span></li>
-                  <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">{order.order_rate}</span></li>
+                  <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">${order.order_price.toFixed(2)}</span></li>
+                  <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">{order.order_rate.toFixed(5)}</span></li>
                   <li><span className="th">S/L</span><span className="td">{order.stop_loss ? order.stop_loss : '-'}</span></li>
                   <li><span className="th">T/P</span><span className="td">{order.take_profit ? order.take_profit : '-'}</span></li>
                   {type == 'open' ? (
@@ -82,7 +86,7 @@ class TradeHistory extends Component {
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
                       <li className="profit"><span className="th">PROFIT</span><span className="td">${order.profit.toFixed(4)}</span></li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
-                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade">Close</button></span></li>
+                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.order_number, order.instrument)}>Close</button></span></li>
                     </>
                   ) : null}
                   {type == 'closed' ? (

@@ -19,7 +19,7 @@ const MessageBox = ({ name, email, balance }) => {
       </div>
       <div className="section2">
         <ul>
-          <li className="y-msg">
+          {/*<li className="y-msg">
             <div className="m-text">
               Hey, what’s up...
             </div><small className="m-time">9:30am</small>
@@ -38,7 +38,7 @@ const MessageBox = ({ name, email, balance }) => {
             <small className="m-time">9:30am</small><div className="m-text">
               I’m doing great, you?
             </div>
-          </li>
+          </li>*/}
         </ul>
       </div>
       <div className="section3">

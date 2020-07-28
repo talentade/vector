@@ -10,6 +10,7 @@ import ai_n from '../../themes/images/ai-normal.png';
 import sp from '../../themes/images/circle-plus.png';
 import ai_b from '../../themes/images/ai-bookmark.png';
 import '../../components/standard/standard.scss';
+import { Created } from '../../components/popups/index';
 import AddAccount from '../../components/addAccount/index';
 import './index.scss';
 
@@ -20,8 +21,11 @@ class Accounts extends Component {
     this.state = {
       selectedNews: null,
       showSpinner: false,
+      showCreated: false,
       addAcc: false,
       accounts: [],
+      cid: "",
+      ctype: "",
       email: localStorage.getItem("email")
     }
   }
@@ -66,8 +70,16 @@ class Accounts extends Component {
   render() {
     return (
       <Container>
-      <Spinner showSpinner={this.state.showSpinner} />
-      { this.state.addAcc ? <AddAccount confirmClick={(e) => this.setState({addAcc: false})} cancelClick={(e) => this.setState({addAcc: false})} /> : null }
+      { this.state.addAcc ?
+        <AddAccount
+          sending={() => this.setState({showSpinner : true})}
+          sent={() => this.setState({showSpinner : false})}
+          showCreated={(i, t) => this.setState({showSpinner: false, showCreated: true, cid: i, ctype: t})}
+          confirmClick={(e) => this.setState({addAcc: false})}
+          cancelClick={(e) => this.setState({addAcc: false})}
+        /> : null }
+        <Created show={this.state.showCreated} type={this.state.ctype} id={this.state.cid} cancel={(e) => this.setState({showCreated: false})} />
+        <Spinner showSpinner={this.state.showSpinner} />
         <div className="col-12" id="account-container">
 
           <h1 className="page-title">Accounts

@@ -39,12 +39,15 @@ class AddAccount extends Component {
   btnSave = async () => {
     let sel = document.getElementById("tr-sel").value;
     let pas = document.getElementById("tr-pass").value;
-
+    this.props.sending();
     try {
-      let resp = await server.addAccount(localStorage.getItem("id"), sel, pas);
+      const { data : { data } } = await server.addAccount(sel, pas);
       document.getElementById("account-container").dispatchEvent(this.fireAccList);
+      this.props.sent();
       this.props.cancelClick();
+      this.props.showCreated(data.account_id.split("-")[1], data.account_id.split("-")[0]);
     } catch (error) {
+      this.props.sent();
       return error.message;
     }
 
