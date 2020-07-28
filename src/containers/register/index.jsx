@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import $ from "jquery";
+
 import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import ReactPhoneInput from 'react-phone-input-2';
@@ -18,6 +19,7 @@ import {
 import server from '../../services/server';
 import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
+import "./assets/dbip.js";
 import './index.scss';
 
 class Register extends Component {
@@ -85,6 +87,7 @@ class Register extends Component {
     await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/utils.js");
     await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/intlTelInput.js");
     await appendScript("https://intl-tel-input.com/js/demo.js");
+
     let that = this;
     setTimeout(() => {
       let code = "";
@@ -96,14 +99,22 @@ class Register extends Component {
           countryCode:  cc
         });
       });
-      $.getJSON("http://ip-api.com/json/?callback=?", function(data){
-         code = (data.countryCode || "").toLowerCase();
-         if(code != null) {
-          $(".iti__selected-flag, li[data-country-code="+code+"]").click();
-         }
+      
+      // $.getJSON("http://ip-api.com/json/?callback=?", function(data){
+      //    code = (data.countryCode || "").toLowerCase();
+      //    if(code != null) {
+      //     $(".iti__selected-flag, li[data-country-code="+code+"]").click();
+      //    }
+      // });
+
+      window.dbip.getVisitorInfo().then(info => {
+       code = (info.countryCode || "").toLowerCase();
+       if(code != null) {
+        $(".iti__selected-flag, li[data-country-code="+code+"]").click();
+       }
       });
       $(".iti__selected-flag").css({opacity: "1"});
-    }, 500);
+    }, 250);
   }
 
   submitForm = async (e) => {
