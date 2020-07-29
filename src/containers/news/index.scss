@@ -45,6 +45,8 @@
 		padding-right: 6%;
 		width: 60%;
 		float: left;
+		overflow: auto;
+
 		img.ifm {
 			width: 35%;
 			display: inline-block;
@@ -53,10 +55,29 @@
 			margin-bottom: 1em;
 		}
 	}
+
+	.news-section-left::-webkit-scrollbar {
+	  width: 8px;
+	  background: #004044;
+	  border-radius: 1em;
+	}
+
+	.news-section-left::-webkit-scrollbar-track {
+	    background: #004044 !important;
+		border-radius: 1em;
+	}
+
+	.news-section-left::-webkit-scrollbar-thumb {
+	  cursor: pointer;
+	  background: rgb(0, 32, 34) !important;
+	  border-radius: 1em;
+	}
+
 	.news-section-right {
 		padding: 0 2em;
 		width: 40%;
 		float: left;
+		// overflow: auto;
 
 
 		.fti {
@@ -127,6 +148,7 @@
 
 	p.news-content {
 		font-family: Poppins;
+		min-height: 120px;
 		font-size: 14px;
 		line-height: 21px;
 		margin-top: 1em;
@@ -167,6 +189,11 @@
 					font-size: 14px;
 					line-height: 21px;
 					color: #FFFFFF;
+				}
+
+				p.n-title {
+				    overflow: hidden;
+				    height: 80px;
 				}
 			}
 		}

@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import deposit from "../../themes/images/deposit.png";
 import transfer from "../../themes/images/transfer.png";
 import withdraw from "../../themes/images/withdraw.png";
+import profile from "../../themes/images/profile.png";
+import key from "../../themes/images/key.png";
 import transaction from "../../themes/images/history.png";
 
 import "./index.scss";
@@ -31,8 +33,8 @@ const HoverDropdown = ({ name, email, balance }) => {
       <div className="section3">
         <p>PROFILE</p>
         <ul>
-          <li><NavLink to="/Profile">View Profile</NavLink></li>
-          <li>Change Password</li>
+          <li><img src={profile} /><NavLink to="/Profile">View Profile</NavLink></li>
+          <li><img src={key} />Change Password</li>
         </ul>
       </div>
     </div>

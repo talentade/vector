@@ -4,6 +4,10 @@
   min-height: 50px;
   justify-content: flex-end;
 
+  * {
+    font-family: Poppins;
+  }
+
   .pagination-ul {
     display: block;
     float: right;
@@ -11,6 +15,9 @@
     margin-bottom: 1em;
     padding: 0;
     min-width: 272px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
     li {
       display: inline-block;
@@ -29,7 +36,7 @@
       span {
         font-size: 1em;
         color: #fff;
-        top: 8px;
+        top: 5px;
         position: relative;
       }
       &._active {

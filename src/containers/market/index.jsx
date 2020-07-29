@@ -62,8 +62,9 @@ class Market extends Component {
           data: { hot_stocks },
         },
       } = await server.getMarketAndNewsData(userId);
-
-      this.setState({ hotStocks: hot_stocks, showLoader: false });
+      if(hot_stocks.length) {
+        this.setState({ hotStocks: hot_stocks, showLoader: false });
+      }
     } catch (error) {
       this.setState({ showLoader: false });
       if (!error.response) {
@@ -120,7 +121,7 @@ class Market extends Component {
           this.retryCounter += 1;
           setTimeout(() => {
             this.fetchFavs();
-          }, 30 * 1000);
+          }, 15 * 1000);
         }
         return error.message;
       } 

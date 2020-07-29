@@ -73,9 +73,9 @@ const Withdraw = ({
         <div className='withdraw-card-select'>
           <label>Select Card:</label>
           <select>
-            {cards.map((card) => (
+            {/*cards.map((card) => (
               <option key={`${Math.random()}-${Math.random()}`}>{card}</option>
-            ))}
+            ))*/}
           </select>
         </div>
         <input

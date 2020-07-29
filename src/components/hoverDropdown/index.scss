@@ -68,6 +68,7 @@
           width: 20px;
           position: relative;
           top: 5px;
+          border-radius: 0;
           margin-right: 1em;
         }
 
@@ -81,12 +82,12 @@
 
 .profile-dropdown::before {
   content: '';
-  background: #006066;
-  width: 15px;
-  height: 15px;
-  position: absolute;
   top: -5px;
+  width: 15px;
   right: 10px;
+  height: 15px;
   display: block;
+  position: absolute;
+  background: #006066;
   transform: rotate(45deg);
 }

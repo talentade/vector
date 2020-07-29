@@ -34,7 +34,7 @@ class Pagination extends Component {
 	  	text_2 = 2;
 	  	text_3 = 3;
 	  }
-	  console.log(max_rows, length, max_rows > length);
+	  // console.log(max_rows, length, max_rows > length);
 	  return (
 		max_rows > length ? (
 			<div className="pagination-div">

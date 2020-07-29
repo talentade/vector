@@ -24,7 +24,10 @@ class News extends Component {
       showSpinner: false,
       showLoader: false,
       hotStocks: [],
+      inews: [],
       news: [],
+      max_rows: 1,
+      page_no: 1,
       similar: [],
       activeNews: null
     }
@@ -41,20 +44,45 @@ class News extends Component {
     this.setState({ showLoader: true });
     const userId = localStorage.getItem('id');
     try {
-      const {
+      let {
         data: {
           data: { news },
         },
       } = await server.getMarketAndNewsData(userId);
-      // console.log(news);
-      this.setState({ news: news.length > 7 ? news.slice(0, 7) : news, showLoader: false });
-      this.readNews(0);
+      this.setState({ showLoader: false });
+      if(news) {
+        news = (news[0]["image_mini"]) ? news : this.processNews(news);
+        if(news[0]["image_mini"]) {
+          this.setState({ inews: news, news: news.length > 5 ? news.slice(0, 5) : news, max_rows: news.length, page_no: 1 });
+          this.readNews(0);
+        }
+      }
     } catch (error) {
       this.setState({ showLoader: false });
       if (!error.response) {
         return error.message;
       }
     }
+  }
+
+  showNews = (p) => {
+    let stt = (p-1)*5;
+    let max = stt+5;
+        max = max > this.state.max_rows ? this.state.max_rows : max;
+    this.setState({news: this.state.inews.slice(stt, max > this.state.max_rows ? this.state.max_rows : max), page_no: p});
+  }
+
+  processNews = (news) => {
+    let _news = [];
+    news.forEach((val, key) => {
+      if(val["image_original"]) {
+        val["image_mini"] = val["image_original"];
+      } else if(val["image_thumbnail"]) {
+        val["image_mini"] = val["image_thumbnail"];
+      }
+      _news.push(val);
+    });
+    return _news;
   }
 
   readNews = (i, h = -1) => {
@@ -128,7 +156,7 @@ class News extends Component {
                 this.state.similar.map((news, key) => (
                   <li className="todays-li">
                     <img src={news.image_mini.url} style={{width: "auto"}} className="ss-thumbnail"/>
-                    <p>{news.title}</p>
+                    <p className="n-title">{news.title}</p>
                     <button className="read btn btn-primary" onClick={() => this.readNews(key, 0)}>Read</button>
                   </li>
                 ))
@@ -152,7 +180,7 @@ class News extends Component {
               }
               </ul>
               {/*<Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link>*/}
-              {/*<Pagination length="4" max_rows="20" page_no="1" paginationChange={() => {}}/>*/}
+              <Pagination length="5" max_rows={this.state.max_rows} page_no={this.state.page_no} paginationChange={(p) => { this.showNews(p); }}/>
             </div>
           ): null}
           </div>
