@@ -25,6 +25,7 @@ class News extends Component {
       showLoader: false,
       hotStocks: [],
       inews: [],
+      searchR: [],
       news: [],
       max_rows: 1,
       page_no: 1,
@@ -51,7 +52,7 @@ class News extends Component {
       } = await server.getMarketAndNewsData(userId);
       this.setState({ showLoader: false });
       if(news) {
-        news = (news[0]["image_mini"]) ? news : this.processNews(news);
+        news = this.processNews(news);
         if(news[0]["image_mini"]) {
           this.setState({ inews: news, news: news.length > 5 ? news.slice(0, 5) : news, max_rows: news.length, page_no: 1 });
           this.readNews(0);
@@ -72,9 +73,27 @@ class News extends Component {
     this.setState({news: this.state.inews.slice(stt, max > this.state.max_rows ? this.state.max_rows : max), page_no: p});
   }
 
+  searchNews = val => {
+    let results = [];
+    val = val.trim();
+    if(val.length) {
+      this.state.inews.forEach((news, i) => {
+        let pos = news.title.toLowerCase().search(val.trim().toLowerCase());
+        news["i"] = i;
+        if(pos > -1 && results.length < 7) results.push(news);
+      });
+    }
+    this.setState({searchR: results});
+  }
+
+  showSearchedNews = () => {
+    return this.state.searchR;
+  }
+
   processNews = (news) => {
     let _news = [];
     news.forEach((val, key) => {
+      val["i"] = key;
       if(val["image_original"]) {
         val["image_mini"] = val["image_original"];
       } else if(val["image_thumbnail"]) {
@@ -87,24 +106,32 @@ class News extends Component {
 
   readNews = (i, h = -1) => {
     $("#news-container").scrollTop(0);
+    this.setState({searchR: []});
     if(h > -1) {
-      this.setState({ activeNews: this.state.similar[i] });
+      this.setState({ activeNews: this.state.inews[i] });
       return;
-    } else if(this.state.news.length) {
-      this.setState({ activeNews: this.state.news[i] });
-      let cat = this.state.news[i].category;
+    } else if(this.state.inews.length) {
       let similar = [];
-      for(let j = 0; j < this.state.news.length; j++) {
-        if(this.state.news[j].category == cat && similar.length < 3 && j != i) {
-          similar[similar.length] = this.state.news[j];
+      this.setState({ activeNews: this.state.inews[i] });
+      if(this.state.inews[i]["category"]) {
+        let cat = this.state.inews[i].category;
+        for(let j = 0; j < this.state.inews.length; j++) {
+          if(this.state.inews[j].category == cat && similar.length < 3 && j != i) {
+            similar[similar.length] = this.state.inews[j];
+          }
         }
+      } else if(this.state.news.length > 3) {
+        // similar = [
+        //   this.state.news[0],
+        //   this.state.news[1],
+        //   this.state.news[2]
+        // ];
       }
       this.setState({similar: similar});
     }
   }
 
   readMore = async (link) => {
-    // console.log(link);
     this.setState({ showLoader: true });
     const userId = localStorage.getItem('id');
     try {
@@ -130,7 +157,13 @@ class News extends Component {
       <div className="col-12" id="news-container">
           {(this.state.activeNews) ? (
           <div className="news-section-left">
-            <TableFilters table="news" />
+            <TableFilters
+              table="news"
+              keyUp={(e) => this.searchNews(e.target.value)}
+              results={this.state.searchR}
+              showSearchedNews={this.showSearchedNews}
+              readNews={this.readNews}
+            />
             <img src={this.state.activeNews.image_mini.url} className="ifm" />
             <h1 className="news-header">{this.state.activeNews.title}</h1>
             {
@@ -146,23 +179,26 @@ class News extends Component {
             </a>
             )}
 
-            <div className="similar-stories">
-              <h1 className="news-header">
-               Similar Stories
-              </h1>
+            {this.state.similar.length ? (
+              <div className="similar-stories">
+                <h1 className="news-header">
+                 Similar Stories
+                </h1>
 
-              <ul className="stories">
-              {
-                this.state.similar.map((news, key) => (
-                  <li className="todays-li">
-                    <img src={news.image_mini.url} style={{width: "auto"}} className="ss-thumbnail"/>
-                    <p className="n-title">{news.title}</p>
-                    <button className="read btn btn-primary" onClick={() => this.readNews(key, 0)}>Read</button>
-                  </li>
-                ))
-              }
-              </ul>
-            </div>
+                <ul className="stories">
+                {
+                  this.state.similar.map((news, key) => (
+                    <li className="todays-li">
+                      <img src={news.image_mini.url} style={{width: "auto"}} className="ss-thumbnail"/>
+                      <p className="n-title">{news.title}</p>
+                      <button className="read btn btn-primary" onClick={() => this.readNews(news.i, 0)}>Read</button>
+                    </li>
+                  ))
+                }
+                </ul>
+              </div>
+            ) : (null)
+          }
           </div>) : (null)}
           {this.state.news.length ? (
             <div className="news-section-right">
@@ -173,7 +209,7 @@ class News extends Component {
                 this.state.news.map((news, key) => (
                   <li className="todays-li">
                     <img src={news.image_mini.url} style={{width: "auto"}} />
-                    <span>{news.title}<button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(key)}>Read</button>
+                    <span>{news.title}<button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(news.i)}>Read</button>
                     </span>
                   </li>
                 ))

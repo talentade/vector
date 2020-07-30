@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './index.scss';
 import fav from '../../themes/popup/fav.PNG';
 import acc from '../../themes/popup/account.PNG';
+import err from '../../themes/popup/err.PNG';
 import bc from '../../themes/popup/booked.PNG';
 import CancelIcon from '../../themes/images/cancel.svg';
 
@@ -78,4 +79,28 @@ class Created extends React.Component {
   }
 }
 
-export {FavPopup, Booked, Created}
+class Insufficient extends React.Component {
+   render() {
+    const { show, cancel, type, id } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups'>
+          <div className='deposit-modal-section'>
+            <div className='upper-modal'>
+              <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+              <img src={err} alt='' className='modal-main-img' />
+            </div>
+            <div className='lower-modal'>
+              <div className='lower-modal-content'>
+                <h6>Insufficient Balance</h6>
+                <p>Please deposit more funds to your account</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
+export {FavPopup, Booked, Created, Insufficient}

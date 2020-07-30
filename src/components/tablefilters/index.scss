@@ -58,6 +58,51 @@
       }
     }
 
+    .gr-dropdown {
+      display: none;
+      position: absolute;
+      top: 40px;
+      z-index: 1000000000000;
+      text-align: left;
+      width: 180px;
+      height: auto;
+      background: #03CF9E;
+      color: #fff;
+      border: 0;
+
+      &._active {
+        display: block;
+        position: absolute;
+        z-index: 100000000000000;
+        width: 100%;
+
+      }
+    }
+
+    .gr-dropdown span {
+      padding: 10px;
+      display: block;
+      font-weight: normal;
+      font-size: 80%;
+      cursor: pointer;
+      cursor: pointer;
+      border-bottom: 1px solid #3aae92;
+    }
+
+    .gr-dropdown span:hover {
+      background: #19d6a8;
+    }
+
+    .gr-dropdown span._active {
+        background: #0db98f;
+    }
+
+    .gr-dropdown span img {
+      float: left;
+      width: 20px;
+      height: auto;
+      margin-right: 1em;
+    }
     small {
       position: absolute;
       top: -6px;

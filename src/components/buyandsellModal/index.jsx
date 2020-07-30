@@ -9,6 +9,7 @@ import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
 import downVlv from '../../themes/images/down.png';
 import Spinner from '../../components/spinner/index';
+import { Insufficient } from '../../components/popups/index';
 
 class BuyandsellModal extends Component {
   constructor(props) {
@@ -38,6 +39,7 @@ class BuyandsellModal extends Component {
       estimated_price2: 0,
       lot_val: 0.01,
       stop_loss: 0.01,
+      showInssufficient: false,
       take_profit: 0.03,
       analysis: false,
       errorMessage: "",
@@ -152,13 +154,18 @@ class BuyandsellModal extends Component {
     try {
       const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, order);
       if(place_order.status == 200) {
-        this.props.confirmClick();
+        const { data: { data: { profile } } } = await server.getProfile();
+        localStorage.setItem('profile', JSON.stringify(profile));
+        window.location.href = "";
+        // this.props.confirmClick();
       } else {
         console.log(place_order);
       }
       this.setState({showSpinner: false});
     } catch (e) {
-      console.log(e);
+      if(e.toString().match(/(401)/g)) {
+        this.setState({showInssufficient: true});
+      }
       this.setState({showSpinner: false});
       return e;
     }
@@ -198,8 +205,8 @@ class BuyandsellModal extends Component {
     const { text, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
     const { information, analysis } = this.state;
     return (
+      <>
       <div className='overlay bs'>
-        <Spinner showSpinner={this.state.showLoader} />
         <div className='deposit-modal-section'>
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancelClick} />
@@ -292,7 +299,10 @@ class BuyandsellModal extends Component {
             </div> : null }
           </div>
         </div>
+        <Spinner showSpinner={this.state.showSpinner} />
       </div>
+      <Insufficient show={this.state.showInssufficient} cancel={(e) => this.setState({showInssufficient: false})} />
+    </>
     );
   };
 }

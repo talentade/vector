@@ -9,6 +9,8 @@
         "@testing-library/user-event": "^7.1.2",
         "axios": "^0.19.2",
         "jquery": "^3.5.1",
+        "html-react-parser": "^0.13.0",
+        "intl-tel-input": "^17.0.3",
         "lightweight-charts": "^2.0.0",
         "node-sass": "^4.13.1",
         "qs": "^6.9.4",

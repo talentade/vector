@@ -433,7 +433,7 @@ class Chart extends Component {
                 value={this.state.selectedOption}
               >
                 {this.state.instruments.map((instr) => (
-                  <option key={Math.random() + Math.random()}>{instr}</option>
+                  <option key={Math.random() + Math.random()}>{instr.toUpperCase()}</option>
                 ))}
               </select>
               <ul className='forex-icons'>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import Breadcrumbs from '../breadcrumbs/index';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
 import downloadIcon from "../../themes/images/download.png";
@@ -15,6 +16,9 @@ import './index.scss';
 class TableFilters extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      newsSearchDrop: false
+    }
   }
 
   toggleActive = (e, i) => {
@@ -22,6 +26,9 @@ class TableFilters extends Component {
       el.classList.remove("_active");
     });
     e.target.classList.add("_active");
+  }
+
+  componentDidMount () {
   }
 
   render () {
@@ -86,9 +93,24 @@ class TableFilters extends Component {
           <Breadcrumbs breads="Home, News" />
           <div className="filter-actions">
 
-            <div className="search-container" style={{width: "280px"}}>
-              <input type="text" placeholder="Search News" />
+            <div className="search-container" style={{width: "280px", overflow: "unset"}}>
+              <input
+                type="text"
+                id="newsSearchDrop"
+                spellCheck="false"
+                placeholder="Search News"
+                onKeyUp={(e) => { this.setState({newsSearchDrop: true}); this.props.keyUp(e) }}
+                onFocus={(e) => { this.setState({newsSearchDrop: true}) }}
+                onBlur={(e) => { setTimeout(() => this.setState({newsSearchDrop: false}), 500); }}
+              />
               <img src={SearchIcon} className="search-img" alt="" />
+              <div className={"gr-dropdown news"+(this.state.newsSearchDrop ? " _active" : "")}>
+              {
+                this.props.results.map((news) => (
+                  <span onClick={(e) => { this.props.readNews(news.i); this.setState({newsSearchDrop: false}); $("#newsSearchDrop").val(''); }} className="cgt" key={`${Math.random()} ${Math.random()}`}>{news.title}</span>
+                ))
+              }
+              </div>
             </div>
           </div>
         </div>

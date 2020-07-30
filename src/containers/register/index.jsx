@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import $ from "jquery";
-
 import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import ReactPhoneInput from 'react-phone-input-2';
 import InputBox from '../../components/InputBox/index';
 import AvarizLogo from '../../themes/images/avariz_logo.png';
 import  './assets/intlTelInput.css';
-import  './assets/demo.css';
 import { appendScript } from './assets/appendScript';
 import {
   addUserInformation,
@@ -21,6 +19,7 @@ import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 import "./assets/dbip.js";
 import './index.scss';
+
 
 class Register extends Component {
   constructor(props) {
@@ -83,30 +82,44 @@ class Register extends Component {
   };
 
   async componentDidMount () {
-    await appendScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js");
-    await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/utils.js");
-    await appendScript("https://intl-tel-input.com/node_modules/intl-tel-input/build/js/intlTelInput.js");
-    await appendScript("https://intl-tel-input.com/js/demo.js");
+    let intlTelInput = require("../../../node_modules/intl-tel-input/build/js/intlTelInput.js");
+    let utilsScript  = require("../../../node_modules/intl-tel-input/build/js/utils.js");
+    var input = document.querySelector("#phone");
+    intlTelInput(input, utilsScript);
+    this.ccPhone();
 
-    let that = this;
+    $(".fc-number").keyup(function () {
+    let val = $(this).val().trim();
+        val = val.replace(/[^\d+]+/gi, '');
+        $(this).val(val).focus();
+    });
+    
+    $(".fc-number").mouseout(function () {
+    let val = $(this).val().trim();
+        val = val.replace(/[^\d+]+/gi, '');
+        $(this).val(val).focus();
+    });
+    
+    $(".fc-number").change(function () {
+    let val = $(this).val().trim();
+        val = val.replace(/[^\d+]+/gi, '');
+        $(this).val(val).focus();
+    });
+
+  }
+
+  ccPhone = () => {
     setTimeout(() => {
       let code = "";
-      $("li[data-country-code]").click(function () {
+      $("li[data-country-code]").click(() => {
         let ct = $(this).find(".iti__country-name").text();
         let cc = $(this).find(".iti__dial-code").text();
-        that.setState({
+        this.setState({
           country:      ct,
           countryCode:  cc
         });
       });
       
-      // $.getJSON("http://ip-api.com/json/?callback=?", function(data){
-      //    code = (data.countryCode || "").toLowerCase();
-      //    if(code != null) {
-      //     $(".iti__selected-flag, li[data-country-code="+code+"]").click();
-      //    }
-      // });
-
       window.dbip.getVisitorInfo().then(info => {
        code = (info.countryCode || "").toLowerCase();
        if(code != null) {
@@ -114,7 +127,7 @@ class Register extends Component {
        }
       });
       $(".iti__selected-flag").css({opacity: "1"});
-    }, 250);
+    }, 0);
   }
 
   submitForm = async (e) => {
@@ -288,7 +301,7 @@ class Register extends Component {
                 <label className='phone-label'>Phone Number</label>
 
                 <div className="react-tel-input">
-                  <input type="number" name="phone" id="phone" className="form-control" style={{height: "2.5rem !important"}} onChange={this.handlePhoneChange} required="true" />
+                  <input type="" name="phone" id="phone" className="form-control fc-number" style={{height: "2.5rem !important"}} onChange={this.handlePhoneChange} required="true" />
                 </div>
                 <p className='error red'>
                   {phoneNumberError ? `*${phoneNumberError}` : null}
