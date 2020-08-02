@@ -125,6 +125,32 @@ export default {
 
   // ===============================================================
 
+
+
+  newMessageThread (message) {
+    return axios.request({
+      method: 'POST',
+      url: 'https://avariz-core.herokuapp.com/utils/messages/thread/user/new?username='+app.email()+'&account='+app.account(),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        "subject": "Message Follow-up",
+        "message": message.trim()
+      }
+    });
+  },
+
+  getMessages () {
+    return axios.request({
+      method: 'GET',
+      url: 'http://avariz-core.herokuapp.com/utils/messages/'+app.email()+'/'+app.account()+'/pull',
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
   loadCore(user_id, link) {
     let Authorization = user_id;
     return axios.request({

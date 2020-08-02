@@ -109,17 +109,31 @@ class Register extends Component {
   }
 
   ccPhone = () => {
+    let that = this;
     setTimeout(() => {
       let code = "";
-      $("li[data-country-code]").click(() => {
+      $("li[data-country-code]").click(function () {
         let ct = $(this).find(".iti__country-name").text();
         let cc = $(this).find(".iti__dial-code").text();
-        this.setState({
+        that.setState({
           country:      ct,
           countryCode:  cc
         });
       });
-      
+
+      $(document).keyup(function () {
+        if($("li.iti__country.iti__highlight").length) {
+          let ct = $("li.iti__country.iti__highlight .iti__country-name").text();
+          let cc = $("li.iti__country.iti__highlight .iti__dial-code").text();
+          if(ct.length) {
+            that.setState({
+              country:      ct,
+              countryCode:  cc
+            });
+          }
+        }
+      });
+ 
       window.dbip.getVisitorInfo().then(info => {
        code = (info.countryCode || "").toLowerCase();
        if(code != null) {
@@ -178,12 +192,16 @@ class Register extends Component {
 
       this.setState({ showSpinner: !this.state.showSpinner });
 
+      let nph = phone.trim();
+          nph = nph.charAt(0) == 0 ? nph.slice(1) : nph;
+      let phone_number = countryCode+""+nph;
+
       try {
         const response = await server.register({
           first_name: firstName,
           last_name: lastName,
           email,
-          phone_number: phone,
+          phone_number: phone_number,
           password,
           gender,
           source: question,
@@ -192,7 +210,6 @@ class Register extends Component {
           countryCode: countryCode,
         });
 
-        let phone_number = countryCode+phone.trim().slice(1);
 
         const user = response.data;
         userInfo.id = user.user_id;
