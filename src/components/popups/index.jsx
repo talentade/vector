@@ -4,6 +4,7 @@ import fav from '../../themes/popup/fav.PNG';
 import acc from '../../themes/popup/account.PNG';
 import err from '../../themes/popup/err.PNG';
 import bc from '../../themes/popup/booked.PNG';
+import logout from "../../themes/images/tradeDashboard/t_nav4.svg";
 import CancelIcon from '../../themes/images/cancel.svg';
 
 
@@ -103,4 +104,31 @@ class Insufficient extends React.Component {
   }
 }
 
-export {FavPopup, Booked, Created, Insufficient}
+class Logout extends React.Component {
+   render() {
+    const { show, cancel, confirm } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups'>
+          <div className='deposit-modal-section'>
+            <div className='upper-modal'>
+              <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+              <img src={logout} alt='' className='modal-main-img' />
+            </div>
+            <div className='lower-modal'>
+              <div className='lower-modal-content'>
+                <h6>Logout</h6>
+                <p>Are you sure</p>
+                <p style={{marginTop: "1em", justifyContent: "space-between"}}>
+                  <button class="cm-undo" onClick={cancel}>NO</button>
+                  <button class="cm-ok" onClick={confirm}>YES</button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+export {FavPopup, Booked, Created, Insufficient, Logout}

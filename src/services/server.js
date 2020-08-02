@@ -59,13 +59,33 @@ export default {
     })
   },
   uploadImage(id, credentials) {
-    return Api().post(`/utils/upload/profile_image/${id}`, credentials);
+    return axios.request({
+      method: 'POST',
+      url: 'https://avariz-core.herokuapp.com/utils/upload/profile_image/'+app.id(),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: credentials
+    });
   },
   addNewCard(credentials) {
-    return Api().post('profile/addCard', credentials);
+    return axios.request({
+      method: 'POST',
+      url: 'https://avariz-core.herokuapp.com/profile/addCard',
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: credentials
+    });
   },
   deleteCard(id, PAN) {
-    return Api().put(`/profile/removeCard/${id}/${PAN}`);
+    return axios.request({
+      method: 'PUT',
+      url: 'https://avariz-core.herokuapp.com/profile/removeCard/'+id+'/'+PAN,
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
   },
   getMyProfile(email) {
     return Api().get(`/utils/inspect/${email}/userdata`);
@@ -79,7 +99,7 @@ export default {
   resetPassword(credentials) {
     return Api().post('/utils/resetPassword', credentials);
   },
-  getRealTimeData(pair, Authorization) {
+  getRealTimeData(pair) {
     return axios.request({
       method: 'GET',
       url:  `https://avariz-core.herokuapp.com/trading/ticker/fetch?pair=${pair}`,
@@ -88,7 +108,7 @@ export default {
       }
     })
   },
-  getMarketAndNewsData(Authorization) {
+  getMarketAndNewsData() {
     return axios.request({
       method: 'GET',
       url:  `https://avariz-core.herokuapp.com/trading/market?account=`+app.account(),
@@ -298,7 +318,7 @@ export default {
   tradeAnalysis(pair, mode, lots) {
     return axios.request({
       method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/trading/analysis?pair='+pair.split(" ")[0].trim()+'&mode='+mode+'&leverage=200&lots='+lots,
+      url: 'https://avariz-core.herokuapp.com/trading/analysis?pair='+pair.split(" ")[0].trim()+'&mode='+mode+'&account='+app.account()+'&lots='+lots,
       headers: {'Authorization': app.auth()}
     })
   },

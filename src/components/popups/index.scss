@@ -56,6 +56,7 @@
       border-radius: 1em;
 
       .lower-modal-content {
+        width: 240px;
         h6 {
           color: #7b7e94;
           font-size: 17px;
@@ -64,6 +65,26 @@
         p {
           color: #7b7e94;
           font-size: 13px;
+        }
+        .cm-undo, .cm-ok {
+          outline: none !important;
+          position: relative;
+          width: 100px;
+          height: 30px;
+        }
+        .cm-undo {
+          border: 1.5px solid #03CF9E;
+          box-sizing: border-box;
+          border-radius: 50px;
+          background: #fff;
+          float: left;
+        }
+        .cm-ok {
+          border: 1.5px solid #03CF9E;
+          box-sizing: border-box;
+          background: #03CF9E;
+          border-radius: 50px;
+          float: right;
         }
       }
     }

@@ -80,11 +80,13 @@ const Withdraw = ({
             ))}
           </select>
         </div>
-        <input
-          type='submit'
-          value='MAKE REQUEST'
-          className='transaction-submit-btn'
-        />
+        {account.split("-")[0].toLowerCase() == "live" ? (
+          <input
+            type='submit'
+            value='MAKE REQUEST'
+            className='transaction-submit-btn'
+          />
+        ) : (null)}
       </form>
     </div>
   );

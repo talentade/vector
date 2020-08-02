@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import NavigationLink from '../navigationLink/index';
 import { connect } from 'react-redux';
 import Db1Nav from '../../themes/images/tradeDashboard/db1_nav.svg';
@@ -7,22 +7,25 @@ import Db3Nav from '../../themes/images/tradeDashboard/db3_nav.svg';
 import Db4Nav from '../../themes/images/tradeDashboard/db4_nav.svg';
 import Wallet from '../../themes/images/tradeDashboard/whiteWallet.svg';
 import FilterIcon from '../../themes/images/tradeDashboard/filter.svg';
+import './index.scss';
 
-const SideBar = ({
-  clickHandler,
-  hideText,
-  currentTab,
-  handleClick,
-  sideNav,
-}) => {
-  return (
-    <div
-      style={{
-        width: hideText ? '50px' : null,
-        overflow: 'hidden',
-      }}
-      className={`left ${sideNav ? 'display-l-nav' : ''}`}
-    >
+class SideBar extends Component {
+
+  componentDidMount () {
+    console.log("---------");
+  }
+
+ render () {
+  const {
+    clickHandler,
+    hideText,
+    currentTab,
+    handleClick,
+    sideNav,
+    hide
+  } = this.props;
+  return (!hide ?
+    <div style={{ width: hideText ? '50px' : null, overflow: 'hidden' }} className={`left ${sideNav ? 'display-l-nav' : ''}`}>
       <img
         src={FilterIcon}
         alt=''
@@ -68,8 +71,10 @@ const SideBar = ({
         />
       </div>
     </div>
-  );
+  : null);
 };
+
+}
 
 const mapStateToProps = ({ sideNav }) => ({
   sideNav,

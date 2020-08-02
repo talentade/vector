@@ -414,6 +414,7 @@ class Profile extends Component {
               balance={`$${balance}`}
               details={this.state.banking_details}
               handleClick={this.toggleModalButtonClick}
+              showSpinner={(e) => this.setState({showSpinner: !this.state.showSpinner})}
             />
           </div>
         </div>

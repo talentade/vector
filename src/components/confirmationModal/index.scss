@@ -38,6 +38,7 @@
       position: relative;
 
       .lower-modal-content {
+        width: 240px;
         h6 {
           color: #7b7e94;
           font-size: 17px;
@@ -58,6 +59,7 @@
         border: 1.5px solid #03CF9E;
         box-sizing: border-box;
         border-radius: 50px;
+        background: #fff;
         float: left;
       }
       .cm-ok {

@@ -29,6 +29,7 @@ class TradeDashboard extends Component {
       currentTab: 'Trade',
       showSpinner: false,
       showNav: true,
+      hideNav: false,
       accounts: [],
       all_trades: [],
       open_trades: [],
@@ -56,10 +57,8 @@ class TradeDashboard extends Component {
       this.props.history.push('/Login');
       return;
     }
+    this.setState({ showNav: true });
     this.getHistory("all");
-    // this.getHistory("open");
-    // this.getHistory("closed");
-    // this.getHistory("pending");
 
     const myAccounts = app.accounts();
     this.setState({ accounts: app.accounts() });
@@ -72,20 +71,20 @@ class TradeDashboard extends Component {
   }
 
   getHistory = async (type, t = 3000) => {
-      if(this.realTimeListener) {
-        try {
-          const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
-          if(results) {
-            this.setState({all_trades: results});
-            this.populateTrades();
-          }
-        } catch (error) {
-          console.warn(error);
+    if(this.realTimeListener) {
+      try {
+        const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
+        if(results) {
+          this.setState({all_trades: results});
+          this.populateTrades();
         }
+      } catch (error) {
+        console.warn(error);
       }
-      setTimeout(async () => {
-        this.getHistory(type);
-      }, t);
+    }
+    setTimeout(async () => {
+      this.getHistory(type);
+    }, t);
   }
 
   populateTrades = () => {
@@ -147,7 +146,9 @@ class TradeDashboard extends Component {
   }
 
   handleClick = (e) => {
-    this.setState({ currentTab: e.currentTarget.querySelector('p').innerHTML });
+    this.setState({
+      currentTab: e.currentTarget.querySelector('p').innerHTML, hideNav: !this.state.hideNav
+    });
   }
 
   handleNavClick = () => {
@@ -207,13 +208,15 @@ class TradeDashboard extends Component {
         <Spinner showSpinner={showSpinner} />
         <div className='trade-section'>
           { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
-          <SideBar
-            clickHandler={this.toggleSideBar}
-            hideText={this.state.clicked}
-            currentTab={this.state.currentTab}
-            handleClick={this.handleClick}
-            showNav={this.state.showNav}
-          />
+          { this.state.showNav ? 
+            <SideBar
+              clickHandler={this.toggleSideBar}
+              hideText={this.state.clicked}
+              currentTab={this.state.currentTab}
+              handleClick={this.handleClick}
+              showNav={this.state.showNav}
+              hideNav={this.state.hideNav}
+            /> : null }
           <div
             className='right'
             style={{ width: this.state.clicked ? 'calc(100% - 50px)' : null }}

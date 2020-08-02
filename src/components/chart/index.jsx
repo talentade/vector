@@ -198,6 +198,19 @@ class Chart extends Component {
       },
     });
 
+    $(".outter-ham, .filter-img").click(() => {
+      if(this.realTimeListener) {
+        setTimeout(() => {
+          let w = this.chartContainerRef.current.clientWidth;
+          let h = this.chartContainerRef.current.clientHeight;
+          this.chart.current.applyOptions({width: w, height: h});
+          setTimeout(() => {
+            this.chart.current.timeScale().fitContent();
+          }, 0);
+        }, 10);
+      }      
+    });
+
     $(window).resize(() => {
       if(this.realTimeListener) {
         let w = this.chartContainerRef.current.clientWidth;
@@ -247,6 +260,17 @@ class Chart extends Component {
 
   treatPair = (pair) => {
     return pair.split(" ")[0].trim();
+  }
+
+  handleDataChange = async (pair) => {
+    try {
+      const {
+        data: { data },
+      } = await server.getRealTimeData(pair, app.id());
+      return this.graphData(data);
+    } catch (error) {
+      return error.message;
+    }
   }
 
   getSeries = async () => {
@@ -342,17 +366,6 @@ class Chart extends Component {
       });
       
       this.chart.current.timeScale().fitContent();
-    }
-  }
-
-  handleDataChange = async (pair) => {
-    try {
-      const {
-        data: { data },
-      } = await server.getRealTimeData(pair, app.id());
-      return this.graphData(data);
-    } catch (error) {
-      return error.message;
     }
   }
 

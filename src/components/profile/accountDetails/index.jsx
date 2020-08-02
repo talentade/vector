@@ -30,13 +30,17 @@ export default class AccountDetails extends Component {
     this.setState({details: details});
   }
 
-  saveDetails = async (e, ind) => {
+  saveDetails = async (e, ind, aid = undefined) => {
     e.preventDefault();
+    this.props.showSpinner();
     try {
-      let result = this.state.detailID > 0 ? await server.setBankingDetails(this.state.detailID, this.state.details[ind]) : await server.addBankingDetails(this.state.details[ind]);
+      let result = this.state.detailID > 0 ? await server.setBankingDetails(aid ? aid : this.state.detailID, this.state.details[ind]) : await server.addBankingDetails(this.state.details[ind]);
       const { data: { data: { profile } } } = await server.getProfile();
       localStorage.setItem('profile', JSON.stringify(profile));
+      this.props.showSpinner();
+      window.location.href = "";
     } catch (err) {
+      this.props.showSpinner();
       return err;
     }
   }
@@ -68,7 +72,7 @@ export default class AccountDetails extends Component {
               <Information dataKey="BANK IBAN"        value={det.bank_IBAN} handleChange={this.handleChange} index={ind} field="bank_IBAN"              editable={det.id ? "true" : "false"} alt/>
             </div>
             <p align="center">
-              <button onClick={(e) => this.saveDetails(e, ind)} type="button">Save Changes</button>
+              <button onClick={(e) => this.saveDetails(e, ind, det.id)} type="button">Save{det.id ? ' Changes' : ''}</button>
             </p>
           </>
         )) : (null)}
