@@ -330,6 +330,17 @@ export default {
     });
   },
 
+  setBankingDetails (id, details) {
+    return axios.request({
+      method: 'PUT',
+      url: 'https://avariz-core.herokuapp.com/utils/data/banking/edit/'+app.email()+'/'+app.auth()+'/'+id,
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {update: details}
+    });
+  },
+
   closeTrade (id, instrument) {
     return axios.request({
       method: 'GET',

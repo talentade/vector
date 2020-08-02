@@ -9,17 +9,17 @@ export default class AccountDetails extends Component {
 
     this.state = {
       details: [],
-      addCard: false
+      detailID: 0,
+      addCard: true
     }
   }
 
   componentDidMount () {
-    // { handleClick, details}
-    // const { account_name, account_number, bank_name, bank_address, bank_SWIFT_code, bank_IBAN } = details[0];
-
     let details = this.props.details;
     if(!details.length) {
       details = [{account_name: "", account_number: "", bank_name: "", bank_address: "", bank_SWIFT_code: "", bank_IBAN: ""}];
+    } else {
+      // console.log(details);
     }
     this.setState({details: details});
   }
@@ -33,12 +33,17 @@ export default class AccountDetails extends Component {
   saveDetails = async (e, ind) => {
     e.preventDefault();
     try {
-      let result = await server.addBankingDetails(this.state.details[ind]);
+      let result = this.state.detailID > 0 ? await server.setBankingDetails(this.state.detailID, this.state.details[ind]) : await server.addBankingDetails(this.state.details[ind]);
       const { data: { data: { profile } } } = await server.getProfile();
       localStorage.setItem('profile', JSON.stringify(profile));
-      console.log(result, ind, this.state.details[ind]);
     } catch (err) {
       return err;
+    }
+  }
+
+  setId = (id) => {
+    if(this.state.detailID == 0 && id && id > 0) {
+      this.setState({detailID: id});
     }
   }
 
@@ -53,13 +58,14 @@ export default class AccountDetails extends Component {
         </div>
         {addCard ? details.map((det, ind) => (
           <>
+            {det.id ? this.setId(det.id) : null}
             <div className='user-information-section'>
-              <Information dataKey="ACCCOUNT NAME"    value={det.account_name} handleChange={this.handleChange} index={ind} field="account_name" alt/>
-              <Information dataKey="ACCOUNT NUMBER"   value={det.account_number} handleChange={this.handleChange} index={ind} field="account_number" alt/>
-              <Information dataKey="BANK NAME"        value={det.bank_name} handleChange={this.handleChange} index={ind} field="bank_name" alt/>
-              <Information dataKey="BANK ADDRESS"     value={det.bank_address} handleChange={this.handleChange} index={ind} field="bank_address" alt/>
-              <Information dataKey="BANK SWIFT CODE"  value={det.bank_SWIFT_code} handleChange={this.handleChange} index={ind} field="bank_SWIFT_code" alt/>
-              <Information dataKey="BANK IBAN"        value={det.bank_IBAN} handleChange={this.handleChange} index={ind} field="bank_IBAN" alt/>
+              <Information dataKey="ACCOUNT NAME"     value={det.account_name} handleChange={this.handleChange} index={ind} field="account_name"        editable={det.id ? "true" : "false"} alt/>
+              <Information dataKey="ACCOUNT NUMBER"   value={det.account_number} handleChange={this.handleChange} index={ind} field="account_number"    editable={det.id ? "true" : "false"} alt/>
+              <Information dataKey="BANK NAME"        value={det.bank_name} handleChange={this.handleChange} index={ind} field="bank_name"              editable={det.id ? "true" : "false"} alt/>
+              <Information dataKey="BANK ADDRESS"     value={det.bank_address} handleChange={this.handleChange} index={ind} field="bank_address"        editable={det.id ? "true" : "false"} alt/>
+              <Information dataKey="BANK SWIFT CODE"  value={det.bank_SWIFT_code} handleChange={this.handleChange} index={ind} field="bank_SWIFT_code"  editable={det.id ? "true" : "false"} alt/>
+              <Information dataKey="BANK IBAN"        value={det.bank_IBAN} handleChange={this.handleChange} index={ind} field="bank_IBAN"              editable={det.id ? "true" : "false"} alt/>
             </div>
             <p align="center">
               <button onClick={(e) => this.saveDetails(e, ind)} type="button">Save Changes</button>

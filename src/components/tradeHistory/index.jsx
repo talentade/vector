@@ -24,6 +24,14 @@ class TradeHistory extends Component {
     document.getElementById(i).classList.add("_active");
   }
 
+  Profit = (p) => {
+    let cl = p > 0 ? 'td txt-success' : 'td txt-danger';
+    let pr = p > 0 ? '$'+p.toFixed(4) : '-$'+(p * -1).toFixed(4);
+    return (
+      <span className={cl}>{pr}</span>
+    )
+  }
+
   closeTrade = async (no, instrument) => {
     let clt = await server.closeTrade(no, instrument);
   }
@@ -84,22 +92,22 @@ class TradeHistory extends Component {
                   {type == 'open' ? (
                     <>
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
-                      <li className="profit"><span className="th">PROFIT</span><span className="td">${order.profit.toFixed(4)}</span></li>
+                      <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
                       <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.order_number, order.instrument)}>Close</button></span></li>
                     </>
                   ) : null}
                   {type == 'closed' ? (
                     <>
-                      <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">{order.close_rate}</span></li>
-                      <li className="profit"><span className="th">CLOSE PRICE</span><span className="td">${order.close_price}</span></li>
+                      <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">{order.current_rate}</span></li>
+                      <li className="profit"><span className="th">CLOSE PRICE</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
                     </>
                   ) : null}
                   {type == 'pending' ? (
                     <>
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
-                      <li className="profit"><span className="th">PROFIT</span><span className="td">${order.profit.toFixed(4)}</span></li>
+                      <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
                     </>
                   ) : null}

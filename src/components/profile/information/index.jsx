@@ -6,8 +6,12 @@ export default class UserInfo extends Component {
   	constructor(props) {
 		super(props);
 
+		let editable = !!this.props.editable;
+		if(typeof this.props.editable == "string") {
+		  	editable = this.props.editable == "true";
+		}
 		this.state = {
-			editable: this.props.editable,
+			editable: editable,
 			value: this.props.value
 		}
 	}
@@ -25,7 +29,6 @@ export default class UserInfo extends Component {
 
 	render () {
 	  const { dataKey, alt } = this.props;
-
 	  let editable = !!this.state.editable;
 	  let value = this.state.value;
 

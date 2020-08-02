@@ -198,15 +198,15 @@ class Chart extends Component {
       },
     });
 
-    let that = this;
-
     $(window).resize(() => {
-      let w = that.chartContainerRef.current.clientWidth;
-      let h = that.chartContainerRef.current.clientHeight;
-      this.chart.current.applyOptions({width: w, height: h});
-      setTimeout(() => {
-        this.chart.current.timeScale().fitContent();
-      }, 0);
+      if(this.realTimeListener) {
+        let w = this.chartContainerRef.current.clientWidth;
+        let h = this.chartContainerRef.current.clientHeight;
+        this.chart.current.applyOptions({width: w, height: h});
+        setTimeout(() => {
+          this.chart.current.timeScale().fitContent();
+        }, 0);
+      }
     });
 
     this.setGraphType("candle", 0);
@@ -255,10 +255,9 @@ class Chart extends Component {
     // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
     let xdata = data[0];
     for (let x = 0; x < data.length; x++) {
-      x < 10 && console.log(data[x]);
+      // (x >= (data.length - 5)) && console.log(data[x], "--- series");
       // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
       this.plotGraph(this.graphData(data[x], this.pair));
-      xdata = data[x];
     }
   }
 
@@ -313,7 +312,6 @@ class Chart extends Component {
   }
 
   plotGraph = (data) => {
-    // console.log("}}}", data.pair, this.pair);
     if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
       if(this.currentGrpahType == "candle") {
@@ -329,11 +327,9 @@ class Chart extends Component {
       }
       if(this.seriesIterator > 0) {
         this.chartSeries.update(plot_data);
-        // console.log("--update", plot_data);
       } else {
         this.seriesIterator += 1;
         this.chartSeries.setData([plot_data]);
-        // console.log("--setting", plot_data);
       }
 
       this.setState({
@@ -398,9 +394,7 @@ class Chart extends Component {
     this.setState({historyLevel: h});
     let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
     for (let x = 0; x < data.length; x++) {
-      if(x < 3) {
-        console.log(data[x]);
-      }
+      (x < 1) && console.log(data[x], "--- history");
       this.plotGraph(this.graphData2(data[x], this.pair));
     }
   }

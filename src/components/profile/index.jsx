@@ -249,12 +249,12 @@ class Profile extends Component {
       {
         dataKey: 'Email',
         value: email,
-        editable: true,
+        // editable: true,
       },
       {
         dataKey: 'Phone',
         value: phone_number,
-        editable: true,
+        // editable: true,
       },
       {
         dataKey: 'Country',

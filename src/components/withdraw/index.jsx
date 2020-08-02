@@ -1,4 +1,5 @@
 import React from 'react';
+import app from '../../services/app';
 import WarnIcon from '../../themes/images/warn.svg';
 import './index.scss';
 
@@ -13,6 +14,7 @@ const Withdraw = ({
   currencies,
   cards,
 }) => {
+  let bdet = app.profile()["banking_details"];
   return (
     <div className='deposit'>
       <h2>Withdraw Funds</h2>
@@ -71,11 +73,11 @@ const Withdraw = ({
         </div>
 
         <div className='withdraw-card-select'>
-          <label>Select Card:</label>
+          <label>Select Account Number:</label>
           <select>
-            {/*cards.map((card) => (
-              <option key={`${Math.random()}-${Math.random()}`}>{card}</option>
-            ))*/}
+            {bdet.map((acc) => (
+              <option key={`${Math.random()}-${Math.random()}`}>{acc.account_number}</option>
+            ))}
           </select>
         </div>
         <input
