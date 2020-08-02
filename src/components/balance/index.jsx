@@ -7,7 +7,7 @@ import './index.scss';
 const Balance = ({ balance, balanceItemData }) => {
   return (
     <div className="balance">
-      <img src={calendar} className="calendar-icon" />
+      {/*<img src={calendar} className="calendar-icon" />*/}
       <p className="small-text">Balance</p>
       <h2>{balance}</h2>
 

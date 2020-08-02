@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 // import axios from 'axios';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 // import { CIQ } from 'chartiq';
+import $ from 'jquery';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
@@ -90,7 +91,7 @@ class Chart extends Component {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
     }
     if(this.pair.length) {
-      // this.getSeries();
+      this.getSeries();
     }
 
     this.chart.current.applyOptions({
@@ -102,15 +103,6 @@ class Chart extends Component {
             horzAlign: 'left',
             vertAlign: 'bottom',
         },
-        // priceFormat: {
-        //     type: 'custom',
-        //     minMove: '0.00000001',
-        //     formatter: (price) => {
-        //         if (price < 0.001) return parseFloat(price).toFixed(8)
-        //         else if (price >= 0.001 && price < 1) return parseFloat(price).toFixed(6)
-        //         else return parseFloat(price)
-        //     }
-        // },
         priceScale: {
             autoScale: true,
             alignLabels: true,
@@ -118,12 +110,28 @@ class Chart extends Component {
             scaleMargins:	{ bottom: 0.1, top: 0.2 }
         },
         localization: {
-            locale: 'en-US',
-            priceFormatter: (price) => {
-                if (price < 0.001) return parseFloat(price).toFixed(7)
-                else if (price >= 0.001 && price < 1) return parseFloat(price).toFixed(5)
-                else return parseFloat(price)
+          locale: 'en-US',
+          priceFormatter: (price) => {
+            let flot = price - parseInt(price);
+            let len = String(flot).length - 2;
+            if(flot > 0) {
+              if(len >= 4) {
+                if(parseFloat(flot.toFixed(4)) > parseFloat(flot.toFixed(3))) {
+                  return price.toFixed(4);
+                } else if(parseFloat(flot.toFixed(3)) > parseFloat(flot.toFixed(2))) {
+                  return price.toFixed(3);
+                } else if(parseFloat(flot.toFixed(2)) > parseFloat(flot.toFixed(1))) {
+                  return price.toFixed(2);
+                } else {
+                  return price.toFixed(1);
+                }
+              } else {
+                return price.toFixed(len < 0 ? 0 : Number(len));
+              }
+            } else {
+              return price;
             }
+          }
         },
     });
   }
@@ -148,6 +156,15 @@ class Chart extends Component {
 
   async componentDidMount() {
     this.realTimeListener = true;
+
+    $(document).mouseup(function (e) {
+      if($("#switch-graph-type").hasClass("_active")) {
+        $("#switch-graph-type").removeClass("_active");
+      }
+      if($("#switch-history").hasClass("_active")) {
+        $("#switch-history").removeClass("_active");
+      }
+    });
 
     this.setState({ showLoader: true });
     this.chart.current = createChart(this.chartContainerRef.current, {
@@ -174,12 +191,6 @@ class Chart extends Component {
       priceScale: {
         borderColor: '#A09F9F',
       },
-      priceFormat: {
-          type: 'custom',
-          formatter: function(price) {
-              return '$' + price.toFixed(5);
-          }
-      },
       timeScale: {
         borderColor: '#A09F9F',
         timeVisible: true,
@@ -187,27 +198,27 @@ class Chart extends Component {
       },
     });
 
+    let that = this;
+
+    $(window).resize(() => {
+      let w = that.chartContainerRef.current.clientWidth;
+      let h = that.chartContainerRef.current.clientHeight;
+      this.chart.current.applyOptions({width: w, height: h});
+      setTimeout(() => {
+        this.chart.current.timeScale().fitContent();
+      }, 0);
+    });
+
     this.setGraphType("candle", 0);
 
     // let { data: { data } } = await server.historicalData(this.treatPair(this.pair));
     // console.log(data.length, data);
 
-    this.resizeObserver.current = new ResizeObserver((entries) => {
-      const { width, height } = entries[0].contentRect;
-      this.chart.current.applyOptions({ width, height });
-      setTimeout(() => {
-        this.chart.current.timeScale().fitContent();
-      }, 0);
-    });
     this.plotGraphData();
-    // return () => this.resizeObserver.current.disconnect();
   }
 
   componentWillUnmount() {
     this.realTimeListener = false;
-    if (this.resizeObserver) {
-      return () => this.resizeObserver.current.disconnect();
-    }
   }
 
   plotGraphDataInit = async () => {
@@ -242,9 +253,42 @@ class Chart extends Component {
     let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
     // console.log(data.length, "length");
     // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
+    let xdata = data[0];
     for (let x = 0; x < data.length; x++) {
-      this.plotGraph(this.graphData(data[x]));
+      x < 10 && console.log(data[x]);
+      // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
+      this.plotGraph(this.graphData(data[x], this.pair));
+      xdata = data[x];
     }
+  }
+
+  graphData = (data) => {
+    return {
+      time: data.when / 1000,
+      open: parseFloat(data.open),
+      high: parseFloat(data.high),
+      low: parseFloat(data.low),
+      close: parseFloat(data.close),
+      ask: parseFloat(data.ask),
+      spread: parseFloat(data.spread),
+      bid: parseFloat(data.bid),
+      pair: data.pair,
+    };
+  }
+
+  graphData2 = (data, pair) => {
+    let ret = {
+      time: data.Date,
+      open: parseFloat(data.Open),
+      high: parseFloat(data.High),
+      low: parseFloat(data.Low),
+      close: parseFloat(data.Close),
+      ask: parseFloat(data.Open),
+      spread: parseFloat(data.Volume),
+      bid: parseFloat(data.Open),
+      pair: pair,
+    };
+    return ret;
   }
 
   plotGraphData = async (p = "") => {
@@ -252,12 +296,13 @@ class Chart extends Component {
       await this.plotGraphDataInit();
     }
     this.setState({showLoader: true});
-    await this.loadHistorical("1M");
-    return null;
+    // await this.loadHistorical("1M");
+    // return null;
     await this.getSeries();
     window.realtTimeFetcher = async () => {
       if(this.realTimeListener && this.loadSeries) {
         let data = await this.handleDataChange(this.treatPair(this.pair));
+        // console.log(data, "--real");
         if(this.loadSeries) {
           this.plotGraph(data);
         }
@@ -315,20 +360,6 @@ class Chart extends Component {
     }
   }
 
-  graphData = (data) => {
-    return {
-      time: data.when / 1000,
-      open: parseFloat(data.open),
-      high: parseFloat(data.high),
-      low: parseFloat(data.low),
-      close: parseFloat(data.close),
-      ask: parseFloat(data.ask),
-      spread: parseFloat(data.spread),
-      bid: parseFloat(data.bid),
-      pair: data.pair,
-    };
-  }
-
   handleOptionsChange = (e) => {
     this.pair = this.state.allPairs[e.target.value.toLowerCase()][0];
     this.setState({
@@ -362,25 +393,14 @@ class Chart extends Component {
     this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false });
   }
 
-  graphData2 = (data, pair) => {
-    return {
-      time: data.Date,
-      open: parseFloat(data.Open),
-      high: parseFloat(data.High),
-      low: parseFloat(data.Low),
-      close: parseFloat(data.Close),
-      ask: parseFloat(data.Open),
-      spread: parseFloat(data.Volume),
-      bid: parseFloat(data.Open),
-      pair: pair,
-    };
-  }
-
   loadHistorical = async (h) => {
     this.loadSeries = false;
     this.setState({historyLevel: h});
     let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
     for (let x = 0; x < data.length; x++) {
+      if(x < 3) {
+        console.log(data[x]);
+      }
       this.plotGraph(this.graphData2(data[x], this.pair));
     }
   }
@@ -437,10 +457,10 @@ class Chart extends Component {
                 ))}
               </select>
               <ul className='forex-icons'>
-                <li>
+                {/*<li>
                   <img src={StopWatch} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
-                </li>
+                </li>*/}
                 <li id="switch-graph-type" onClick={(e) => this.switchGraphType(e, 'switch-graph-type')}>
                   <img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />
                   <div className="gr-dropdown">
@@ -451,22 +471,17 @@ class Chart extends Component {
                     <span onClick={(e) => this.setGraphType("hist")} className={"cgt"+(this.currentGrpahType == "hist" ? " _active" : "")}><img src={histGrf} /> Histogram</span>
                   </div>
                 </li>
-                <li>
+                {/*<li>
                   <img src={Multi} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
                 </li>
                 <li>
                   <img src={Wave2} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
-                </li>
-                <li>
-                  1H
-                  <img src={Tarrow} alt='' className='t-arrow' />
-                </li>
+                </li>*/}
                 <li id="switch-history" onClick={(e) => this.setHistoryGraph('switch-history')}>
                   <img src={Tarrow} alt='' className='t-arrow' /> {this.state.historyLevel}
                   <div className="gr-dropdown">
-                    <span onClick={(e) => this.loadHistorical("1H")} className={"cgt"+(this.state.historyLevel == "1H" ? " _active" : "")}> 1H </span>
                     <span onClick={(e) => this.loadHistorical("1D")} className={"cgt"+(this.state.historyLevel == "1D" ? " _active" : "")}> 1D </span>
                     <span onClick={(e) => this.loadHistorical("1W")} className={"cgt"+(this.state.historyLevel == "1W" ? " _active" : "")}> 1W </span>
                     <span onClick={(e) => this.loadHistorical("1M")} className={"cgt"+(this.state.historyLevel == "1M" ? " _active" : "")}> 1M </span>

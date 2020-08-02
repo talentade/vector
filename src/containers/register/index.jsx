@@ -121,11 +121,12 @@ class Register extends Component {
         });
       });
 
-      $(document).keyup(function () {
+      $(document).keyup(function (e) {
         if($("li.iti__country.iti__highlight").length) {
           let ct = $("li.iti__country.iti__highlight .iti__country-name").text();
           let cc = $("li.iti__country.iti__highlight .iti__dial-code").text();
-          if(ct.length) {
+          // if(cc == "+1" && that.state.countryCode.length) {} else
+          if(ct.length && e.which == 13) {
             that.setState({
               country:      ct,
               countryCode:  cc
