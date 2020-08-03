@@ -84,6 +84,9 @@ class Chart extends Component {
             this.historySeries.push(plot);
             this.plotGraph(plot);
           } this.setState({showLoader: false});
+          setTimeout(() => {
+            $("#switch-history").removeClass("_active");
+          }, 10);
         } catch(e) {
           this.setState({showLoader: false});
           return e;
@@ -331,15 +334,19 @@ class Chart extends Component {
 
   getSeries = async () => {
     this.dataPlotSeries = [];
-    let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
-    // console.log(data.length, "length");
-    // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
-    let xdata = data[0];
-    for (let x = 0; x < data.length; x++) {
-      // (x >= (data.length - 5)) && console.log(data[x], "--- series");
-      // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
-      this.plotGraph(this.graphData(data[x], this.pair));
+    this.setState({showLoader: true});
+    try {
+      let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
+      let xdata = data[0];
+      for (let x = 0; x < data.length; x++) {
+        // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
+        this.plotGraph(this.graphData(data[x], this.pair));
+      }
+    } catch (e) {
+      this.setState({showLoader: false});
+      return e;
     }
+    this.setState({showLoader: false});
   }
 
   graphData = (data) => {
@@ -540,6 +547,7 @@ class Chart extends Component {
                     <span onClick={(e) => this.loadHistorical("1D")} className={"cgt"+(this.state.historyLevel == "1D" ? " _active" : "")}> 1D </span>
                     <span onClick={(e) => this.loadHistorical("1W")} className={"cgt"+(this.state.historyLevel == "1W" ? " _active" : "")}> 1W </span>
                     <span onClick={(e) => this.loadHistorical("1M")} className={"cgt"+(this.state.historyLevel == "1M" ? " _active" : "")}> 1M </span>
+                    <span onClick={(e) => this.loadHistorical("6M")} className={"cgt"+(this.state.historyLevel == "6M" ? " _active" : "")}> 6M </span>
                     <span onClick={(e) => this.loadHistorical("1Y")} className={"cgt"+(this.state.historyLevel == "1Y" ? " _active" : "")}> 1Y </span>
                   </div>
                 </li>
