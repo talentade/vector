@@ -1,9 +1,17 @@
 @media screen and (max-width: 600px) {
   .trade-section .left {
-    height: 285px !important;
+    height: 255px !important;
   }
 
   .margin-top {
     margin-top: 40px !important;
+  }
+
+  .nav-link {
+    margin-top: 0px;
+  }
+
+  ._h {
+    display: none;
   }
 }

@@ -49,7 +49,7 @@ class OutterLeftNav extends Component {
                   : null
               }
               style={{width: nClicked ? '35px' : null}}
-              className='link-icons'
+              className={'link-icons '+nav.name}
             >
               <NavLink
                 to={nav.path}

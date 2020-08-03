@@ -11,6 +11,10 @@ import './index.scss';
 
 class SideBar extends Component {
 
+  componentDidMount () {
+    console.log("---------");
+  }
+
  render () {
   const {
     clickHandler,

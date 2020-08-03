@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import axios from 'axios';
 import Container from '../container/index';
 import TransactionNav from '../../components/transactionNav/index';
@@ -340,6 +341,7 @@ class Transactions extends Component {
   };
 
   toggleTabs = (e) => {
+    $(".link-icons.transactions").click();
     this._toggleTabs(e.currentTarget.querySelector('div').innerHTML.toLowerCase());
   };
 
@@ -415,7 +417,10 @@ class Transactions extends Component {
             selectedTab={selectedTab}
             handleClick={this.toggleTabs}
             minimizeSideBar={minimizeSideBar}
-            handleSideBarClick={this.toggleSideBar}
+            handleSideBarClick={(e) => {
+              $(".link-icons.transactions").click();
+              // this.toggleSideBar(e)
+            }}
           />
           <div className='transaction-box'>
             {selectedTab.match('deposit') ? (

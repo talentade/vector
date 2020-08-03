@@ -19,10 +19,8 @@ import Multi from '../../themes/images/tradeDashboard/multi.svg';
 import Tarrow from '../../themes/images/tradeDashboard/t_arrow.svg';
 import WhiteDir from '../../themes/images/tradeDashboard/white_dir.svg';
 import MapIcon from '../../themes/images/tradeDashboard/map.svg';
-// import { priceData } from '../../utils/index';
 import server from '../../services/server';
 import app from '../../services/app';
-// import { instrumentsData } from '../../utils/dummyData';
 import './index.scss';
 
 class Chart extends Component {
@@ -41,6 +39,8 @@ class Chart extends Component {
     this.lineDataSeries = [];
     this.seriesIterator = 0;
     this.lastPlotable = {};
+    this.dataPlotSeries = [];
+    this.historySeries = [];
     this.realTimeListener = true;
 
     this.state = {
@@ -61,6 +61,34 @@ class Chart extends Component {
       showLoader: false,
       instruments: []
     };
+  }
+
+  loadHistorical = async (h) => {
+    if(h == "1D") {
+      this.loadSeries = true;
+      await this.setGraphType(this.currentGrpahType, 0);
+      this.realTimeListener = true;
+    } else {
+      if(this.setGraphType("candle", 3)) {
+        this.setState({showLoader: true});
+        this.loadSeries = false;
+        this.historySeries = [];
+        this.setState({historyLevel: h});
+        try {
+          let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
+          for (let x = 0; x < data.length; x++) {
+            // (x < 1) && console.log(data[x], "--- history");
+            let plot = this.graphData2(data[x], this.pair);
+            this.historySeries.push(plot);
+            this.plotGraph(plot);
+          } this.setState({showLoader: false});
+        } catch(e) {
+          this.setState({showLoader: false});
+          return e;
+        }
+        this.setState({showLoader: false});
+      }
+    }
   }
 
   setGraphType = async (type, no = 1) => {
@@ -90,9 +118,6 @@ class Chart extends Component {
     } else if(type == "hist") {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
     }
-    if(this.pair.length) {
-      this.getSeries();
-    }
 
     this.chart.current.applyOptions({
         watermark: {
@@ -107,7 +132,7 @@ class Chart extends Component {
             autoScale: true,
             alignLabels: true,
             drawTicks: true,
-            scaleMargins:	{ bottom: 0.1, top: 0.2 }
+            scaleMargins: { bottom: 0.1, top: 0.2 }
         },
         localization: {
           locale: 'en-US',
@@ -134,9 +159,38 @@ class Chart extends Component {
           }
         },
     });
+
+    if(!this.loadSeries && no < 3) {
+      if(this.historySeries.length) {
+        let dseries = this.historySeries;
+        for (let x = 0; x < (dseries.length); x++) {
+          this.plotGraph(dseries[x]);
+        }
+      }
+      return true;
+    }
+
+    if(no == 3) {
+      return true;
+    } else {
+      if(no == 2 && this.dataPlotSeries.length) {
+        this.realTimeListener = false;
+        let dseries = this.dataPlotSeries;
+        this.dataPlotSeries = [];
+        for (let x = 0; x < dseries.length; x++) {
+          this.plotGraph(dseries[x]);
+        }
+        this.realTimeListener = true;
+        setTimeout(() => {
+          $("#switch-graph-type").removeClass("_active");
+        }, 10);
+      } else if(this.pair.length) {
+        await this.getSeries();
+      }
+    }
   }
 
-  switchGraphType = (e, id) => {
+  switchGraphType = (id) => {
     let el = document.getElementById(id);
     if(el.className == "_active") {
       el.classList.remove("_active");
@@ -274,6 +328,7 @@ class Chart extends Component {
   }
 
   getSeries = async () => {
+    this.dataPlotSeries = [];
     let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
     // console.log(data.length, "length");
     // data = data.length > 200 ? data.slice(Math.max(data.length - 200, 0)) : data;
@@ -338,6 +393,7 @@ class Chart extends Component {
   plotGraph = (data) => {
     if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
+      this.dataPlotSeries.push(plot_data);
       if(this.currentGrpahType == "candle") {
         // default
       } else if(this.currentGrpahType == "line") {
@@ -402,16 +458,6 @@ class Chart extends Component {
     this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false });
   }
 
-  loadHistorical = async (h) => {
-    this.loadSeries = false;
-    this.setState({historyLevel: h});
-    let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
-    for (let x = 0; x < data.length; x++) {
-      (x < 1) && console.log(data[x], "--- history");
-      this.plotGraph(this.graphData2(data[x], this.pair));
-    }
-  }
-
   render() {
     return (
       <div className='trade-comp-container'>
@@ -468,14 +514,14 @@ class Chart extends Component {
                   <img src={StopWatch} alt='' className='icon' />
                   <img src={Tarrow} alt='' className='t-arrow' />
                 </li>*/}
-                <li id="switch-graph-type" onClick={(e) => this.switchGraphType(e, 'switch-graph-type')}>
+                <li id="switch-graph-type" onClick={(e) => this.switchGraphType('switch-graph-type')}>
                   <img src={Wave} alt='' className='icon' /><img src={Tarrow} alt='' className='t-arrow' />
                   <div className="gr-dropdown">
-                    <span onClick={(e) => this.setGraphType("candle")} className={"cgt"+(this.currentGrpahType == "candle" ? " _active" : "")}><img src={candleGrf} /> Candle</span>
-                    <span onClick={(e) => this.setGraphType("line")} className={"cgt"+(this.currentGrpahType == "line" ? " _active" : "")}><img src={lineGrf} /> Line</span>
-                    <span onClick={(e) => this.setGraphType("area")} className={"cgt"+(this.currentGrpahType == "area" ? " _active" : "")}><img src={areaGrf} /> Area</span>
-                    <span onClick={(e) => this.setGraphType("bar")} className={"cgt"+(this.currentGrpahType == "bar" ? " _active" : "")}><img src={barGrf} /> Bar</span>
-                    <span onClick={(e) => this.setGraphType("hist")} className={"cgt"+(this.currentGrpahType == "hist" ? " _active" : "")}><img src={histGrf} /> Histogram</span>
+                    <span onClick={(e) => this.setGraphType("candle", 2)} className={"cgt"+(this.currentGrpahType == "candle" ? " _active" : "")}><img src={candleGrf} /> Candle</span>
+                    <span onClick={(e) => this.setGraphType("line", 2)} className={"cgt"+(this.currentGrpahType == "line" ? " _active" : "")}><img src={lineGrf} /> Line</span>
+                    <span onClick={(e) => this.setGraphType("area", 2)} className={"cgt"+(this.currentGrpahType == "area" ? " _active" : "")}><img src={areaGrf} /> Area</span>
+                    <span onClick={(e) => this.setGraphType("bar", 2)} className={"cgt"+(this.currentGrpahType == "bar" ? " _active" : "")}><img src={barGrf} /> Bar</span>
+                    <span onClick={(e) => this.setGraphType("hist", 2)} className={"cgt"+(this.currentGrpahType == "hist" ? " _active" : "")}><img src={histGrf} /> Histogram</span>
                   </div>
                 </li>
                 {/*<li>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import $ from 'jquery';
 import SideBar from '../../components/sideBar2/index';
 import OpenTrade from '../../components/openTrade/index';
 import ClosedTrade from '../../components/closedTrade/index';
@@ -35,8 +36,8 @@ class TradeDashboard extends Component {
       open_trades: [],
       closed_trades: [],
       pending_trades: [],
-      favourites: [],
       showAddFav: false,
+      favourites: [],
       selectedAccount: app.accountDetail(),
       selectedAccountVal: app.account()
     };
@@ -51,7 +52,15 @@ class TradeDashboard extends Component {
     this.realTimeListener = false;
   }
 
+  componentDidUpdate () {}
+
   async componentDidMount() {
+
+    // $(".link-icons.trade").click(() => {
+    //   console.log(this.state.showNav, "----------");
+    //   this.setState({showNav: true});
+    // });
+
     this.realTimeListener = true;
     if (!app.id()) {
       this.props.history.push('/Login');
@@ -142,13 +151,14 @@ class TradeDashboard extends Component {
   }
 
   toggleSideBar = () => {
-    this.setState({ clicked: !this.state.clicked });
+    this.setState({ clicked: !this.state.clicked, hideNav: !this.state.hideNav });
   }
 
   handleClick = (e) => {
     this.setState({
       currentTab: e.currentTarget.querySelector('p').innerHTML, hideNav: !this.state.hideNav
     });
+    $(".link-icons.trade").click();
   }
 
   handleNavClick = () => {
@@ -215,7 +225,9 @@ class TradeDashboard extends Component {
               currentTab={this.state.currentTab}
               handleClick={this.handleClick}
               showNav={this.state.showNav}
-              hideNav={this.state.hideNav}
+              hideNav={(e) => {
+                window.innerWidth <= 1200 ? $(".link-icons.trade").click() : this.setState({clicked: !this.state.clicked});
+              }}
             /> : null }
           <div
             className='right'
