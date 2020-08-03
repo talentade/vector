@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import './index.scss';
 import CancelIcon from '../../themes/images/cancel.svg';
 import CancelImage from '../../themes/images/cancel.png';
@@ -153,10 +154,12 @@ class BuyandsellModal extends Component {
 
     try {
       const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, order);
+      console.log(place_order.status);
       if(place_order.status == 200) {
         const { data: { data: { profile } } } = await server.getProfile();
-        localStorage.setItem('profile', JSON.stringify(profile));
-        window.location.href = "";
+        app.profile(profile);
+        $(".balance").trigger("refresh");
+        // window.location.href = "";
         // this.props.confirmClick();
       } else {
         console.log(place_order);

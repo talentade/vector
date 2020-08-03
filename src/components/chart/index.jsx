@@ -3,6 +3,7 @@ import React, { Component, createRef } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 // import { CIQ } from 'chartiq';
 import $ from 'jquery';
+import moment from 'moment';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
@@ -41,6 +42,7 @@ class Chart extends Component {
     this.lastPlotable = {};
     this.dataPlotSeries = [];
     this.historySeries = [];
+    this.historySeriesPair = "";
     this.realTimeListener = true;
 
     this.state = {
@@ -64,6 +66,9 @@ class Chart extends Component {
   }
 
   loadHistorical = async (h) => {
+    setTimeout(() => {
+      $("#switch-history").removeClass("_active");
+    }, 10);
     if(h == "1D") {
       this.loadSeries = true;
       this.setState({historyLevel: h});
@@ -71,22 +76,61 @@ class Chart extends Component {
       await this.setGraphType(this.currentGrpahType, 0);
       this.realTimeListener = true;
     } else {
+      let upm = {"1w": [7, "days"], "1m": [1, "months"], "6m": [6, "months"], "1y": [12, "months"]}
+          upm = upm[h.toLowerCase()] // h.slice(h.length - 1).toLowerCase();
       if(this.setGraphType("candle", 3)) {
         this.setState({showLoader: true});
         this.loadSeries = false;
-        this.historySeries = [];
         this.setState({historyLevel: h});
+        this.chart.current.applyOptions({
+            timeScale: {
+                rightOffset: 12,
+                barSpacing: 3,
+                fixLeftEdge: true,
+                lockVisibleTimeRangeOnResize: true,
+                rightBarStaysOnScroll: true,
+                borderVisible: false,
+                borderColor: '#fff000',
+                visible: true,
+                timeVisible: true,
+                secondsVisible: false,
+                // tickMarkFormatter: (time, tickMarkType, locale) => {
+                //     console.log(time, tickMarkType, locale);
+                //     const year = LightweightCharts.isBusinessDay(time) ? time.year : new Date(time * 1000).getUTCFullYear();
+                //     return String(year);
+                // },
+            },
+        });
         try {
-          let { data: { data } } = await server.historicalData(this.treatPair(this.pair), h);
-          for (let x = 0; x < data.length; x++) {
-            // (x < 1) && console.log(data[x], "--- history");
-            let plot = this.graphData2(data[x], this.pair);
-            this.historySeries.push(plot);
-            this.plotGraph(plot);
-          } this.setState({showLoader: false});
-          setTimeout(() => {
-            $("#switch-history").removeClass("_active");
-          }, 10);
+
+          if(this.historySeriesPair != this.treatPair(this.pair)) {
+
+            let { data: { data } } = await server.historicalData(this.treatPair(this.pair), "5Y");
+            this.historySeries = [];
+            for (let x = 0; x < data.length; x++) {
+              let plot = this.graphData2(data[x], this.pair);
+              this.historySeries.push(plot);
+              this.historySeriesPair = this.treatPair(this.pair);
+              this.plotGraph(plot);
+            }
+
+          } else {
+
+            let hdata = this.historySeries;
+            for (let x = 0; x < (hdata.length); x++) {
+              this.plotGraph(hdata[x]);
+            }
+
+          }
+          
+          this.setState({showLoader: false});
+          this.chart.current.timeScale().setVisibleRange({
+              from: moment().subtract(upm[1], upm[0]).unix(),
+              to: moment().unix()
+          });
+          // this.chart.current.timeScale().scrollToPosition(2, true);
+          // this.chart.current.timeScale().fitContent();
+          // console.log(upm);
         } catch(e) {
           this.setState({showLoader: false});
           return e;
@@ -99,12 +143,12 @@ class Chart extends Component {
   setGraphType = async (type, no = 1) => {
     this.seriesIterator = 0;
     var option = {
-        upColor: '#26a69a',
-        downColor: '#ef5350',
+        upColor: '#00B061',
+        downColor: '#FF3031',
         scaleMargins: { bottom: 0.4, top: 0.4 },
         entireTextOnly: true,
-        borderDownColor: '#ef5350',
-        borderUpColor: '#26a69a',
+        borderDownColor: '#FF3031',
+        borderUpColor: '#00B061',
         wickDownColor: '#c4c4c4',
         wickUpColor: '#c4c4c4',
       };

@@ -43,7 +43,10 @@ export default {
     return localStorage.getItem("email").trim();
   },
   retryLimit: 10,
-  profile: () => {
+  profile: (p = null) => {
+    if(p) {
+      localStorage.setItem('profile', JSON.stringify(p));
+    }
     return JSON.parse(localStorage.getItem("profile"));
   },
   isAdmin: () => {

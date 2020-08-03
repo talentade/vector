@@ -38,6 +38,7 @@ class TradeDashboard extends Component {
       pending_trades: [],
       showAddFav: false,
       favourites: [],
+      profile: app.profile(),
       selectedAccount: app.accountDetail(),
       selectedAccountVal: app.account()
     };
@@ -45,7 +46,7 @@ class TradeDashboard extends Component {
     this.realTimeListener = true;
     this.retryCounter = 0;
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.profile = app.profile();
   }
 
   componentWillUnmount() {
@@ -60,6 +61,12 @@ class TradeDashboard extends Component {
     //   console.log(this.state.showNav, "----------");
     //   this.setState({showNav: true});
     // });
+
+    $(".balance").on("refresh", () => {
+      this.setState({profile: app.profile(), selectedAccount: app.accountDetail()});
+      console.log(app.accountDetail().balance, "--trigger");
+      this.profile = app.profile();
+    });
 
     this.realTimeListener = true;
     if (!app.id()) {
@@ -82,10 +89,15 @@ class TradeDashboard extends Component {
   getHistory = async (type, t = 3000) => {
     if(this.realTimeListener) {
       try {
-        const { data : { data: { results } } } = await server.tradeHistory(type, 10, 1);
+        const { data : { data: { results, profile } } } = await server.tradeHistory(type, 10, 1);
         if(results) {
           this.setState({all_trades: results});
           this.populateTrades();
+        }
+        if(profile) {
+          this.setState({profile: app.profile(profile), selectedAccount: app.accountDetail()});
+          console.log(app.accountDetail().balance, "--auto");
+          this.profile = profile;
         }
       } catch (error) {
         console.warn(error);
