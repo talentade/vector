@@ -66,6 +66,8 @@ class Chart extends Component {
   loadHistorical = async (h) => {
     if(h == "1D") {
       this.loadSeries = true;
+      this.setState({historyLevel: h});
+      this.chart.current.removeSeries(this.chartSeries);
       await this.setGraphType(this.currentGrpahType, 0);
       this.realTimeListener = true;
     } else {
