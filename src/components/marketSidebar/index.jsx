@@ -19,32 +19,32 @@ window.pairExBuy = [];
 window.pairExSell = [];
 
 const findDiv = (pair) => {
-  let md = "market-pair-"+pair.stock.replace(/[^\w]/g, "_");
-  setTimeout(() => {
-    let id = "fav-pair-"+pair.stock.replace(/[^\w]/g, "_");
-    let elem = document.getElementById(id);
-    let price;
-    let price2;
-    if($("#"+id).length) {
-      price = parseFloat($("#"+id).find(".p-price").text());
-      $("#"+id).find(".p-price").text(pair.buy);
-      $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-      $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
-    }
+  // let md = "market-pair-"+pair.stock.replace(/[^\w]/g, "_");
+  // setTimeout(() => {
+  //   let id = "fav-pair-"+pair.stock.replace(/[^\w]/g, "_");
+  //   let elem = document.getElementById(id);
+  //   let price;
+  //   let price2;
+  //   if($("#"+id).length) {
+  //     price = parseFloat($("#"+id).find(".p-price").text());
+  //     $("#"+id).find(".p-price").text(pair.buy);
+  //     $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
+  //     $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
+  //   }
 
-    price = window.pairExBuy[md] || 0;
-    $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-    $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
+  //   price = window.pairExBuy[md] || 0;
+  //   $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
+  //   $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
 
-    price2 = window.pairExSell[md] || 0;
-    $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-    $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
+  //   price2 = window.pairExSell[md] || 0;
+  //   $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
+  //   $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
 
-    // console.log(pair.stock+" show "+(price > pair.buy ? 'DOWN' : 'UP'));
+  //   // console.log(pair.stock+" show "+(price > pair.buy ? 'DOWN' : 'UP'));
 
-    window.pairExBuy[md] = pair.buy;
-    window.pairExSell[md] = pair.sell;
-  }, 10);
+  //   window.pairExBuy[md] = pair.buy;
+  //   window.pairExSell[md] = pair.sell;
+  // }, 10);
 }
 
 const MarketSideBar = ({
@@ -53,6 +53,7 @@ const MarketSideBar = ({
   clickHandler,
   pairs,
   filter,
+  favouritePairs,
   filterInstrument,
   showLoader,
   showBsellModal,
@@ -105,25 +106,30 @@ const MarketSideBar = ({
             <div
               className='market-pair'
               key={`${Math.random()}-${Math.random()}`}
-               id={"market-pair-"+pair.stock.replace(/[^\w]/g, "_")}
+               id={"market-pair-"+pair.pair.replace(/[^\w]/g, "_")}
             >
               <div className='market-pair-flex'>
-                <h5>{pair.stock}</h5>
+                <h5>{pair.pair}</h5>{/*<small style={{color: "#fff"}}>{pair.timestamp}</small>*/}
                 <span>
-                { pair.isFav
-                  ? <img src={starIcon2} alt='' onClick={(e) => { remFav(e); pairs[index].isFav = false; }} pair={pair.stock} />
-                  : <img src={starIcon} alt='' onClick={(e) => { addToFav(e); pairs[index].isFav = true; }} pair={pair.stock} /> }
-                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal2(e)}} />
+                { favouritePairs.length && Object.values(favouritePairs).indexOf(pair.pair) > -1
+                  ? (<button type="button" className="for-star" onClick={(e) => remFav(pair.pair)}>
+                      <img src={starIcon2} alt='' />
+                     </button>)
+                  : (<button type="button" className="for-star" onClick={(e) => addToFav(pair.pair)}>
+                      <img src={starIcon} alt='' />
+                     </button>)
+                }
+                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal2(e)}} />
                 </span>
               </div>
               <div className='market-big-flex'>
-                <p className='pair-percentage'>{pair.change}</p>
+                <p className='pair-percentage'>{pair._change}</p>
                 <div className='market-cta-section'>
-                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "sell"}; showBsellModal(e)}}>
+                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell"}; showBsellModal(e)}}>
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
-                        <p>{pair.sell}</p>
+                        <p>{pair.bid}</p>
                       </div>
                       <img className={"directionSell up"} src={Up} />
                       <img className={"directionSell down hide"} src={Down} />
@@ -134,22 +140,22 @@ const MarketSideBar = ({
                     <div className='market-spread-data'>
                       <img src={CompassIcon} alt='' />
                     </div>
-                    <p>{pair.spread}</p>
+                    <p>{pair.spread || "_"}</p>
                   </div>
-                  <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.stock, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal(e)}}>
+                  <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy"}; showBsellModal(e)}}>
                     <div className='market-buy-data'>
                       <img className={"direction up"} src={Up} />
                       <img className={"direction down hide"} src={Down} />
                       <div className='market-buy-info'>
                         <h6>BUY</h6>
-                        <p>{pair.buy}</p>
+                        <p id={"pair-buy-"+pair.pair.replace(/[^\w]/g, "_")}>{pair.ask}</p>
                       </div>
                     </div>
                     <p>{pair.high}</p>
                   </div>
                 </div>
               </div>
-            {findDiv(pair)}
+            {/*findDiv(pair)*/}
             </div>
           ))}
         </div>

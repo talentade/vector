@@ -17,10 +17,9 @@ class Container extends Component {
       selectedAccount: app.accountDetail(),
     };
 
-    this.profile = app.profile();
-    this.id = app.id();
-    // this.isAdmin = !!(localStorage.getItem("avad") || 1);
-    this.isAdmin = false;
+    this.profile   = app.profile();
+    this.id        = app.id();
+    this.isAdmin   = false;
   }
 
   componentDidMount() {
@@ -30,7 +29,6 @@ class Container extends Component {
         this.props.toggleOutterNav();
         window.__toggleOutterNav = true;
       }
-
     }
   }
 
@@ -39,10 +37,8 @@ class Container extends Component {
       const user_id = localStorage.getItem('id');
       const email = this.profile.email;
       localStorage.clear();
-
       this.props.history.push('/Login');
-
-      await server.logout(user_id, email);
+      // await server.logout(user_id, email);
     } catch (error) {
       
     }

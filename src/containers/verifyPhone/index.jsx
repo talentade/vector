@@ -55,7 +55,7 @@ class VerifyPhone extends Component {
     this.setState({ showSpinner: true });;
 
     try {
-      let result = await server.verifyPhone(app.userid(), `${name}${name_2}${name_3}${name_4}`);
+      let result = await server.verifyPhone(`${name}${name_2}${name_3}${name_4}`);
       this.setState({ showSpinner: false });
       this.props.history.push('/Book');
     } catch (error) {
@@ -102,7 +102,7 @@ class VerifyPhone extends Component {
 
         <div className="verification-text">
           <p>
-            Enter 4-digits code sent to <b>{this.props.phone}</b>
+            Enter 4-digits code sent to <b>{app.phone()}</b>
           </p>
         </div>
 

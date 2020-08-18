@@ -294,22 +294,19 @@ class Transactions extends Component {
       } else {
         this.setState({ showSpinner: true });
         if (selectedTab.toLowerCase().match('deposit')) {
+          // console.log(parseFloat(deposit), selectedCurrency, account);
           await server.fundAccount(parseFloat(deposit), selectedCurrency, account);
+          this.setState({ deposit: parseFloat(0.0).toFixed(2) });
         } else if (selectedTab.toLowerCase().match('transfer')) {
           // console.log(account, to, parseFloat(deposit), selectedCurrency);
           await server.transferFunds(account, to, parseFloat(deposit), selectedCurrency);
         }
 
-        const myEmail = this.profile.email;
 
-        const {
-          data: {
-            data: { profile },
-          },
-        } = await server.getProfile();
+        let getProfile  = await server.getProfile();
+        let profile     = getProfile.data.profile;
+        app.profile(profile);
 
-        const newProfile = JSON.stringify(profile);
-        localStorage.setItem('profile', newProfile);
 
         if (selectedTab.toLowerCase().match('deposit')) {
           this.setState({ showDepositModal: true });
@@ -320,7 +317,7 @@ class Transactions extends Component {
           this.setAccount2({target: { value : to}});
         }
         this.setState({ showSpinner: false });
-        await this.fetchTransactions();
+        // await this.fetchTransactions();
       }
     } catch (error) {
       this.setState({ showSpinner: false });

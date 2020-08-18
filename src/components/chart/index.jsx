@@ -32,7 +32,6 @@ class Chart extends Component {
     this.chart = createRef();
     this.resizeObserver = createRef();
     this.profile = app.profile();
-    this.allPairs = app.allPairs();
     this.pair = '';
     this.data = [];
     this.loadSeries = true;
@@ -44,13 +43,15 @@ class Chart extends Component {
     this.historySeries = [];
     this.historySeriesPair = "";
     this.realTimeListener = true;
+    this.currentPairData = null;
 
     this.state = {
       selectedOption: 'crypto',
       currentPairs: [],
-      allPairs: {},
+      allPairs: app.allPairs(),
       pair: '',
       selectedPair: '',
+      currentPairData: null,
       buy: 0,
       sell: 0,
       spread: 0,
@@ -105,10 +106,21 @@ class Chart extends Component {
 
           if(this.historySeriesPair != this.treatPair(this.pair)) {
 
-            let { data: { data } } = await server.historicalData(this.treatPair(this.pair), "5Y");
+            let history = await server.historicalData(this.treatPair(this.pair), "1m", {
+              from: moment().subtract(2, "hour").unix(),
+              to: moment().unix()
+            });
             this.historySeries = [];
-            for (let x = 0; x < data.length; x++) {
-              let plot = this.graphData2(data[x], this.pair);
+            let data = history.data.result;
+            for (let x = 0; x < data.timestamp.length; x++) {
+              let plot = this.graphData2({
+                Date:  data.timestamp[x],
+                Open:  data.indicators.quote[0].open[x],
+                High:  data.indicators.quote[0].high[x],
+                Low:  data.indicators.quote[0].low[x],
+                Close:  data.indicators.quote[0].close[x],
+                Volume:  data.indicators.quote[0].volume[x]
+              }, this.pair);
               this.historySeries.push(plot);
               this.historySeriesPair = this.treatPair(this.pair);
               this.plotGraph(plot);
@@ -125,9 +137,13 @@ class Chart extends Component {
           
           this.setState({showLoader: false});
           this.chart.current.timeScale().setVisibleRange({
-              from: moment().subtract(upm[1], upm[0]).unix(),
+              from: moment().subtract(1, "hour").unix(),
               to: moment().unix()
           });
+          // this.chart.current.timeScale().setVisibleRange({
+          //     from: moment().subtract(upm[1], upm[0]).unix(),
+          //     to: moment().unix()
+          // });
           // this.chart.current.timeScale().scrollToPosition(2, true);
           // this.chart.current.timeScale().fitContent();
           // console.log(upm);
@@ -167,6 +183,10 @@ class Chart extends Component {
     } else if(type == "hist") {
       this.chartSeries = this.chart.current.addHistogramSeries(option);
     }
+
+    // setInterval(() => {
+    //   console.log(this.chart.current.timeScale().options());
+    // }, 2000);
 
     this.chart.current.applyOptions({
         watermark: {
@@ -257,8 +277,35 @@ class Chart extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.realTimeListener = false;
+  }
+
+  componentWillUpdate() {
+
+    const stockToDisplay = this.props.hotStocks.filter((pair) =>
+      pair.pair.toLowerCase().match(this.pair.toLowerCase()),
+    );
+
+    if(stockToDisplay.length) {
+      if(stockToDisplay[0] != this.state.currentPairData) {
+        this.currentPairData = stockToDisplay[0];
+      }
+    }
+
+  }
+
   async componentDidMount() {
     this.realTimeListener = true;
+
+    const stockToDisplay = this.props.hotStocks.filter((pair) =>
+      pair.pair.toLowerCase().match(this.pair.toLowerCase()),
+    );
+
+    if(stockToDisplay.length) {
+      this.currentPairData = stockToDisplay[0];
+      // this.setState({ currentPairData: stockToDisplay[0] });
+    }
 
     $(document).mouseup(function (e) {
       if($("#switch-graph-type").hasClass("_active")) {
@@ -326,36 +373,28 @@ class Chart extends Component {
     });
 
     this.setGraphType("candle", 0);
-
-    // let { data: { data } } = await server.historicalData(this.treatPair(this.pair));
-    // console.log(data.length, data);
-
     this.plotGraphData();
-  }
-
-  componentWillUnmount() {
-    this.realTimeListener = false;
   }
 
   plotGraphDataInit = async () => {
     try {
-      let allPairs = this.allPairs;
-      if(!this.allPairs) {
-        const {
-          data: { data },
-        } = await server.getAllPairs(app.id());
-        app.allPairs(data);
-        allPairs = data;
+      let allPairs  = this.state.allPairs;
+
+      if(!Object.keys(allPairs).length) {
+        const req   = await server.getAllPairs();
+        allPairs    = req.data;
+        app.allPairs(allPairs);
       }
 
       const instruments = Object.keys(allPairs);
-      this.pair = allPairs.crypto[0];
+      this.pair         = allPairs.forex[0];
       this.setState({
-        allPairs: allPairs,
-        currentPairs: allPairs.crypto,
-        selectedPair: allPairs.crypto[0],
-        instruments,
+        allPairs:       allPairs,
+        currentPairs:   allPairs.forex,
+        selectedPair:   allPairs.forex[0],
+        instruments:    instruments
       });
+
     } catch (error) {
       return error.message;
     }
@@ -427,8 +466,8 @@ class Chart extends Component {
       await this.plotGraphDataInit();
     }
     this.setState({showLoader: true});
-    // await this.loadHistorical("1M");
-    // return null;
+    await this.loadHistorical("1M");
+    return null;
     await this.getSeries();
     window.realtTimeFetcher = async () => {
       if(this.realTimeListener && this.loadSeries) {
@@ -480,7 +519,9 @@ class Chart extends Component {
 
   handleOptionsChange = (e) => {
     this.pair = this.state.allPairs[e.target.value.toLowerCase()][0];
+    this.currentPairData = null;
     this.setState({
+      currentPairData: null,
       selectedOption: e.target.value,
       currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
       selectedPair: this.pair,
@@ -512,6 +553,15 @@ class Chart extends Component {
   }
 
   render() {
+
+    const _currentPairData = {
+      buy:    this.currentPairData ? this.currentPairData.ask    : this.state.buy,
+      sell:   this.currentPairData ? this.currentPairData.bid    : this.state.sell,
+      high:   this.currentPairData ? this.currentPairData.high   : this.state.high,
+      low:    this.currentPairData ? this.currentPairData.low    : this.state.low,
+      spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
+    }
+
     return (
       <div className='trade-comp-container'>
 
@@ -611,27 +661,27 @@ class Chart extends Component {
               <div className='sell'>
                 <div className='sell-info'>
                   <p>SELL</p>
-                  <p>{this.state.sell}</p>
+                  <p>{app.floatFormat(_currentPairData.sell)}</p>
                 </div>
                 <img src={WhiteDir} alt='' />
               </div>
-              <p className='sell-left'>L: {this.state.low}</p>
+              <p className='sell-left'>L: {app.floatFormat(_currentPairData.low)}</p>
             </div>
             <div className='chart-map'>
               <div className='map'>
                 <img src={MapIcon} alt='' />
               </div>
-              <p className='map-center'>S: {this.state.spread}</p>
+              <p className='map-center'>S: {app.floatFormat(_currentPairData.spread)}</p>
             </div>
             <div className='chart-buy' onClick={(e) => this.showBsellModal(e, "buy")}>
               <div className='buy'>
                 <img src={WhiteDir} alt='' />
                 <div className='buy-info'>
                   <p>BUY</p>
-                  <p>{this.state.buy}</p>
+                  <p>{app.floatFormat(_currentPairData.buy)}</p>
                 </div>
               </div>
-              <p className='buy-right'>H: {this.state.high}</p>
+              <p className='buy-right'>H: {app.floatFormat(_currentPairData.high)}</p>
             </div>
           </div>
         </div>

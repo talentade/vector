@@ -46,43 +46,19 @@ class SignIn extends Component {
 
     try {
       this.setState({ showSpinner: true });
+      let response = await server.login({username: email, password: password});
+      const user   = response.data.profile;
 
-      const { data: { data: { profile } } } = await server.login({username: email, password: password});
-
-      localStorage.setItem('email', email);
-
-      localStorage.setItem('id', profile.user_id);
-
-      this.props.saveUserProfile(profile);
-
-      localStorage.setItem('profile', JSON.stringify(profile));
-
-      this.props.setAccountType(app.accounts()[0]);
-
-      localStorage.setItem('accountType', app.accounts()[0]);
-
-      const { data: { data: { accounts } } } = await server.getAccounts(profile.user_id);
-
-      Object.entries(accounts).forEach(([key, val]) => {
-        accounts[key] = val.charAt(0).toUpperCase()+val.slice(1);
-      });
-
-      this.props.setAccounts(accounts);
-
-      localStorage.setItem('accounts', JSON.stringify(accounts));
-
+      app.profile(user);
+      const accounts = app.accounts();
       this.setState({ showSpinner: false });
-
-      this.props.history.push((profile.booking_history.data.length) ? '/Trade' : '/Book');
+      this.props.history.push(user.booked > 0 ? '/Trade' : '/Book');
     } catch (error) {
       this.setState({ showSpinner: false });
-
       if (!error.response) {
         return error;
       }
-
       const errorMessage = error.response.data.message;
-
       this.setState({ signinError: errorMessage });
     }
   };

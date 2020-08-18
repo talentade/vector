@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import './index.scss';
 import fav from '../../themes/popup/fav.PNG';
 import acc from '../../themes/popup/account.PNG';
@@ -7,13 +8,18 @@ import bc from '../../themes/popup/booked.PNG';
 import logout from "../../themes/images/tradeDashboard/t_nav4.svg";
 import CancelIcon from '../../themes/images/cancel.svg';
 
+const popupOut = (e) => {
+  if($(e.target).hasClass("overlay") && $(e.target).hasClass("popups")) {
+    $(e.target).find(".modal-cancel").click();
+  }
+}
 
 class FavPopup extends React.Component {
    render() {
     const { pair, show, cancel } = this.props;
     return (
       show ? (
-        <div className='overlay popups'>
+        <div className='overlay popups' onClick={popupOut}>
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
@@ -37,7 +43,7 @@ class Booked extends React.Component {
     const { text, show, cancel } = this.props;
     return (
       show ? (
-        <div className='overlay popups'>
+        <div className='overlay popups' onClick={popupOut}>
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
@@ -61,7 +67,7 @@ class Created extends React.Component {
     const { show, cancel, type, id } = this.props;
     return (
       show ? (
-        <div className='overlay popups'>
+        <div className='overlay popups' onClick={popupOut}>
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
@@ -85,7 +91,7 @@ class Insufficient extends React.Component {
     const { show, cancel, type, id } = this.props;
     return (
       show ? (
-        <div className='overlay popups'>
+        <div className='overlay popups' onClick={popupOut}>
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
@@ -109,7 +115,7 @@ class Logout extends React.Component {
     const { show, cancel, confirm } = this.props;
     return (
       show ? (
-        <div className='overlay popups'>
+        <div className='overlay popups' onClick={popupOut}>
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />

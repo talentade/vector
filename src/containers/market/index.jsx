@@ -10,14 +10,12 @@ import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
-import AddToFav from '../../components/addToFav/index';
 import Chart from '../../components/chart/index';
 import Spinner from '../../components/spinner/index';
 import Container from '../container/index';
 import { FavPopup } from '../../components/popups/index';
 import MarketSideBar from '../../components/marketSidebar/index';
 import { setHotStocks } from '../../redux/actions/index';
-
 import './index.scss';
 
 class Market extends Component {
@@ -32,9 +30,9 @@ class Market extends Component {
       selectedAccount: app.accountDetail(),
       selectedAccountVal: app.account(),
       hotStocks: [],
+      favouritePairs: [],
       favourites: [],
-      showLoader: false,
-      showAddFav: false,
+      showLoader: true,
       showSpinner: false,
       favPopup: false,
       favPopup_pair: "",
@@ -52,25 +50,22 @@ class Market extends Component {
         code: 200
       }
     });
+    this.socket = new WebSocket(app.hostURL("socket", 1));
   }
 
   fetchStock = async () => {
-    const userId = app.id();
-    try {
-      const {
-        data: {
-          data: { hot_stocks },
-        },
-      } = await server.getMarketAndNewsData(userId);
-      if(hot_stocks.length) {
-        this.setState({ hotStocks: hot_stocks, showLoader: false });
-      }
-    } catch (error) {
-      this.setState({ showLoader: false });
-      if (!error.response) {
-        return error.message;
-      }
-    }
+    // try {
+    //   const market = await server.getMarketAndNewsData();
+    //   let hot_stocks = market.data.pair_data;
+    //   if(hot_stocks.length) {
+    //     this.setState({ hotStocks: hot_stocks, showLoader: false });
+    //   }
+    // } catch (error) {
+    //   this.setState({ showLoader: false });
+    //   if (!error.response) {
+    //     return error.message;
+    //   }
+    // }
   }
 
   componentWillUnmount() {
@@ -78,106 +73,83 @@ class Market extends Component {
   }
 
   async componentDidMount() {
-    this.realTimeListener = true;
-    this.setState({ showLoader: true });
-    const accountType = app.account();
-
-    const userId = app.id();
-    
-    try {
-      await this.fetchStock();
-      await this.fetchFavs();
-    } catch (e) {
-      return e;
-    }
-
-    setInterval(async () => {
-      if(this.realTimeListener) {
-        this.fetchStock()
+    this.socket.addEventListener('message', ({data}) => {
+      try {
+        let message = JSON.parse(`${data}`);
+        let payload = message.payload;
+        // console.log(payload);
+        switch(message.event) {
+          case "PAIR_DATA":
+            this.fetchFavs();
+            this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
+          break;
+          case "GET_FAVOURITES":
+          if(payload.user == app.id() && payload.account == app.account()) {
+            let favs = [];
+            console.log("--fetched [favs]");
+            payload.favourites.forEach((fav) => {
+              if(fav) {
+                let fv = this.state.hotStocks.filter((pair) =>
+                          pair.pair.toLowerCase().match(fav.toLowerCase()),
+                        );
+                favs[favs.length] = fv[0];
+              }
+            });
+            setTimeout(() => {
+              this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
+            }, 10);
+          }
+          break;
+        }
+      } catch (e) {
+        throw e;
       }
-    }, 5000);
+    });
 
-    if (accountType) {
-      this.setState({ selectedAccount: app.accountDetail() });
-    }
+    this.realTimeListener = true;
+    this.setState({ selectedAccount: app.accountDetail(), accounts: app.accounts() });
 
-    const myAccounts = app.accounts();
+    // try {
+    //   await this.fetchStock();
+    // } catch (e) {
+    //   return e;
+    // }
+  }
 
-    this.setState({ accounts: myAccounts });
+  addToFav = async (pair) => {
+    this.setState({showSpinner: true});
+    console.log("--updating favs");
+    this.socket.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
+      pair:    pair,
+      user:    app.id(),
+      account: app.account(),
+    }}));
+  }
+
+  remFav = async (pair) => {
+    this.setState({showSpinner: true});
+    console.log("--reupdating favs");
+    this.socket.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
+      pair:    pair,
+      user:    app.id(),
+      account: app.account(),
+    }}));
   }
 
   fetchFavs = async () => {
     if(this.realTimeListener) {
-      try {
-        const { data: { data, code } } = await server.fetchFav();
-        if(code == 200) {
-          if(data.length) {
-            this.setState({favourites: data});
-          }
-        }
-        this.retryCounter = 0;
-      } catch (error) {
-        if(this.retryCounter < app.retryLimit) {
-          this.retryCounter += 1;
-          setTimeout(() => {
-            this.fetchFavs();
-          }, 15 * 1000);
-        }
-        return error.message;
-      } 
+      this.setState({showSpinner: true});
+      console.log("--fetching favs");
+      this.socket.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
+        user:    app.id(),
+        account: app.account(),
+      }}));
+      this.setState({showSpinner: false});
     }
   }
 
   toggleSideBar = () => {
     this.setState({ clicked: !this.state.clicked });
-  }
-
-  addFavPop = (e) => {
-    this.setState({showAddFav: true});
-  }
-
-  cancelFavPop = (e) => {
-    this.setState({showAddFav: false});
-  }
-
-  addToFav = async (e) => {
-    this.setState({showSpinner: true});
-    let pair = e.target.getAttribute("pair");
-    try {
-      const { data : { data: {}, code, message } } = await server.addToFav(app.id(), app.account(), pair);
-      this.setState({showSpinner: false});
-      if(code == 200) {
-        await this.fetchFavs();
-        await this.fetchStock();
-        this.setState({favPopup: true, favPopup_pair: pair});
-      }
-    } catch(error) {
-      this.setState({showSpinner: false});
-      return error;
-    }
-    this.setState({showSpinner: false});
-  }
-
-  remFav = async (e) => {
-    this.setState({showSpinner: true});
-    try {
-      let pair = e.target.getAttribute("pair");
-      const { status, message } = await server.removeFav(app.id(), app.account(), pair);
-      await this.fetchStock();
-      if(status == 200) {
-        let npair = [];
-        this.state.favourites.forEach((fav) => {
-          if(fav.pair != pair) {
-            npair.push(fav);
-          }
-        })
-        this.setState({favourites: npair});
-      }
-    } catch(error) {
-      this.setState({showSpinner: false});
-      return error;
-    }
-    this.setState({showSpinner: false});
   }
 
   showMainLoader = () => {
@@ -204,22 +176,15 @@ class Market extends Component {
   handleAccountChange = (e) => {
     let val = e.target.value;
     app.account(e.target.value);
-    this.setState({ selectedAccountVal: e.target.value });
-    window.location.href = "";
+    this.setState({ selectedAccountVal: e.target.value, selectedAccount: app.accountDetail(), accounts: app.accounts() });
   };
 
   render() {
-    const userId = app.id();
-
-    if (!userId) return <Redirect to='/Login' />;
-
     const { hotStocks, showLoader } = this.state;
 
-    const stocksToDisplay = this.props.filter
-      ? hotStocks.filter((stock) =>
-          stock.stock.toLowerCase().match(this.props.filter.toLowerCase()),
-        )
-      : hotStocks;
+    const stocksToDisplay = this.props.filter ? hotStocks.filter((pair) =>
+      pair.pair.toLowerCase().match(this.props.filter.toLowerCase()),
+    ) : hotStocks;
 
     const balanceItems = [
       {
@@ -230,7 +195,7 @@ class Market extends Component {
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: `$${this.state.selectedAccount.open_p_l}`,
+        figure: '$'+(this.state.selectedAccount.open_p_l || 0),
       },
       {
         className: 'equity',
@@ -246,23 +211,19 @@ class Market extends Component {
       },
       {
         margin: 'Free Margin',
-        price: `$${this.state.selectedAccount.free_margin}`,
+        price: '$'+(this.state.selectedAccount.free_margin || 0),
       },
       {
         margin: 'M. Level',
-        price: `$${this.state.selectedAccount.margin_level}`,
+        price: '$'+(this.state.selectedAccount.margin_level || 0),
       },
     ];
-
-    // const favouriteItems = this.state.selectedAccount.favorites;
-    const favouriteItems = this.state.favourites;
 
     return (
       <Container>
         <Spinner showSpinner={this.state.showSpinner} />
         <FavPopup show={this.state.favPopup} pair={this.state.favPopup_pair} cancel={(e) => this.setState({favPopup: false})} />
         <div className='trade-section market-section'>
-          { this.state.showAddFav ? <AddToFav cancelClick={this.cancelFavPop} /> : null}
           
           {this.state.buyandsellModal ? (
             <BuyandsellModal
@@ -291,6 +252,7 @@ class Market extends Component {
             clickHandler={this.toggleSideBar}
             hideText={this.state.clicked}
             showLoader={showLoader}
+            favouritePairs={this.state.favouritePairs}
             showBsellModal={this.showBsellModal}
             addToFav={this.addToFav}
             remFav={this.remFav}
@@ -320,9 +282,9 @@ class Market extends Component {
                     ))}
                   </div>
                 </div>
-                <Favourites favouritePairs={favouriteItems} refresh={this.fetchFavs} showSpinner={this.showMainLoader} showBsellModal2={this.showBsellModal2}/>
+                <Favourites favouritePairs={this.state.favourites} remove={this.remFav} refresh={this.fetchFavs} showSpinner={this.showMainLoader} showBsellModal2={this.showBsellModal2} />
               </div>
-              <Chart />
+              <Chart hotStocks={hotStocks} />
             </div>
           </div>
         </div>

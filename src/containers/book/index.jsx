@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import io from "socket.io-client";
 import Container from '../container/index';
 import book_call from '../../themes/images/book-call.png';
 import scheduled from '../../themes/images/scheduled.png';
 import check_mark from '../../themes/images/check-mark.png';
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 import { Booked } from '../../components/popups/index';
 import calendar_icon from '../../themes/images/calendar-icon.png';
@@ -31,7 +33,7 @@ class BookCall extends Component {
       days: [],
       am_pm: 'AM',
       showBooked: false,
-      email: localStorage.getItem("email"),
+      email: app.email(),
       meeting_date: null,
       meeting_time: null,
       meeting_id: null
@@ -39,46 +41,29 @@ class BookCall extends Component {
   }
 
   async componentDidMount() {
+
     let d = new Date();
     let m = d.getMonth();
     this.setState({thisYear: d.getFullYear()});
     this.monthList(m);
+
     setTimeout(() => {
       this.sevenRight(d.getDate());
     }, 100);
 
     try {
-      let meetings = await server.getMeeting(localStorage.getItem("id"));
+      let meetings = await server.getMeeting();
       if(meetings.status == 200) {
-        meetings = meetings.data.data;
-        if(meetings.length) {
-          this.setState({ bookState: 1, showLoader: false, iLoader: false});
-          this.monthListActive(m);
-          for (var i = 0; i < meetings.length; i++) {
-            if(i != meetings.length-1) {
-              let del = this.deleteMeeting(meetings[i].meeting_date, meetings[i].meeting_id);
-            } else {
-              this.setState({ meeting_date: meetings[i].meeting_date, meeting_time: meetings[i].meeting_starts, meeting_id: meetings[i].meeting_id});
-            }
-          }
-        } else {
-          this.setState({ bookState: 0, showLoader: false, iLoader: false});
-        }
+        this.setState({bookState: 1});
+        this.monthListActive(m);
+        let meeting = meetings.data;
+        this.setState({meeting_date: meeting.meeting_date, meeting_time: meeting.meeting_time});
       }
+      setTimeout(() => {
+        this.setState({showLoader: false, iLoader: false});
+      }, 50);
     } catch (error) {
       this.setState({ bookState: 0, showLoader: false, iLoader: false});
-    }
-  }
-
-  deleteMeeting = async (meeting_date, meeting_id, x = -1) =>  {
-    if(x > -1) {
-      this.setState({ showLoader: true });
-    }
-    let del = await server.deleteMeeting(localStorage.getItem("id"), meeting_date, meeting_id);
-    if(del.status == 200 && x > -1) {
-      window.location.reload(false);
-    } else {
-      this.setState({ showLoader: false });
     }
   }
 
@@ -221,14 +206,11 @@ class BookCall extends Component {
     let ch = this.state.currentHour;
     // ch = ch > 9 ? ch : "0"+ch;
     try {
-      const req = await server.bookMeeting(localStorage.getItem('id'), localStorage.getItem('email'), this.state.thisYear, this.state.activeM+1, t, ch, 0, ampm);
-      if(req.data.code == 201) {
-        localStorage.setItem("scheduled", "1");
-        let md = this.state.thisYear+"-"+m+"-"+t;
-        this.setState({ meeting_date: md, meeting_time: ch+":00 "+ampm+" on "+md, meeting_id: req.data.data.meeting_id});
+      const req = await server.bookMeeting(this.state.thisYear, this.state.activeM+1, t, ch, 0, ampm);
+      if(req.status == 201) {
         this.setState({ bookState: 1, showLoader: false, showBooked: true });
+        this.setState({ meeting_date: req.data.meeting_date, meeting_time: req.data.meeting_time});
       } else {
-        // alert(req.data.message);
         this.setState({ showLoader: false });
       }
     } catch (error) {
@@ -240,7 +222,15 @@ class BookCall extends Component {
   }
 
   rescheduleCall = async () => {
-    this.deleteMeeting(this.state.meeting_date, this.state.meeting_id, 0);
+    this.setState({ bookState: 0});
+    let d = new Date();
+    let m = d.getMonth();
+    this.setState({thisYear: d.getFullYear()});
+    this.monthList(m);
+    this.monthListActive(m);
+    setTimeout(() => {
+      this.sevenRight(d.getDate());
+    }, 100);
   }
 
   render() {
@@ -248,8 +238,7 @@ class BookCall extends Component {
       <Container>
         <Spinner showSpinner={this.state.showLoader} />
         <Booked show={this.state.showBooked} cancel={(e) => this.setState({showBooked: false})} />
-        { this.state.bookState == 0 ? (
-          <div className={"col-12"+(this.state.iLoader ? ' hide' : '')} id="book-container">
+          <div className="col-12" id="book-container" style={this.state.bookState == 1 || this.state.iLoader ? {display: "none"} : {display: "flex"}}>
             <img src={book_call} />
             <h2 className="bcw">Book a call with a broker</h2>
             <div className="calendar-container">
@@ -329,7 +318,6 @@ class BookCall extends Component {
 
             <button className="schedule-call" onClick={() => this.scheduleCall()}>SCHEDULE CALL</button>
           </div>
-        ) : null }
         { this.state.bookState == 1 ? (
           <div className="col-12" id="book-container">
             <img src={check_mark} />

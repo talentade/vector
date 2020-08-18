@@ -26,7 +26,7 @@ class Accounts extends Component {
       accounts: [],
       cid: "",
       ctype: "",
-      email: localStorage.getItem("email")
+      email: app.email()
     }
   }
 
@@ -41,23 +41,18 @@ class Accounts extends Component {
   }
 
   accountList = async () => {
-    this.setState({showSpinner: true});
-    const { data: { data: { profile } } } = await server.getProfile();
-    localStorage.setItem('profile', JSON.stringify(profile));
-
-    let accs = [];
-    const { data: { data: { accounts } } } = await server.getAccounts(localStorage.getItem("id"));
-    Object.entries(accounts).forEach(([key, val]) => {
-      let append;
-      append = app.accountDetail(val);
-      append["account_id"] = val.split("-")[1];
-      append["account_type"] = val.split("-")[0].toLowerCase();
-      append["account_id_val"] = val;
-      append["account_balance"] = append["balance"];
-      accs.push(append);
-    });
-
-    this.setState({accounts: accs, showSpinner: false});
+    try {
+      this.setState({showSpinner: true});
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
+      this.setState({showSpinner: false});
+    } catch(e) {
+      this.setState({showSpinner: false});
+      return e;
+    }
+    setTimeout(() => {
+      this.setState({accounts: app.profile().accounts});
+    }, 50);
   }
 
   handleClick = (e, i) => {
@@ -73,6 +68,7 @@ class Accounts extends Component {
       { this.state.addAcc ?
         <AddAccount
           sending={() => this.setState({showSpinner : true})}
+          unsending={() => this.setState({showSpinner : false})}
           sent={() => this.setState({showSpinner : false})}
           showCreated={(i, t) => this.setState({showSpinner: false, showCreated: true, cid: i, ctype: t})}
           confirmClick={(e) => this.setState({addAcc: false})}
@@ -102,8 +98,8 @@ class Accounts extends Component {
                 <img src={ins_down} className="ins_down" />
                 <img src={ins_up} className="ins_up" />
                 <span className="th">TRADING ACCOUNT</span>
-                <span className="td"><button className={"acc_type"+(acc.account_type.toLowerCase() == "live" ? " live" : "")}>{acc.account_type.toUpperCase()}</button>{this.state.email}<br /><small className="inf">{acc.account_id}</small></span></li>
-                <li className=""><span className="th">BALANCE</span><span className="td">{acc.account_balance} USD</span></li>
+                <span className="td"><button className={"acc_type"+(acc.account_type.toLowerCase() == "live" ? " live" : "")}>{acc.account_type.toUpperCase()}</button>AV-{acc.account_id}<br /><small className="inf">{acc.account_id}</small></span></li>
+                <li className=""><span className="th">BALANCE</span><span className="td">{acc.balance} USD</span></li>
                 <li className=""><span className="th">CREDIT</span><span className="td">{acc.credit} USD</span></li>
                 <li className=""><span className="th">LEVERAGE</span><span className="td">{acc.leverage}</span></li>
                 <li>

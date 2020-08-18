@@ -16,16 +16,17 @@ class Favourites extends Component {
   }
 
   async componentDidMount () {
-    let that = this;
-    if(document.getElementById("favContainers")) {
-       document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
-        that.props.refresh();
-      });
-    }
+    // let that = this;
+    // if(document.getElementById("favContainers")) {
+    //    document.getElementById("favContainers").addEventListener('refreshFav', async (e) => {
+    //     that.props.refresh();
+    //   });
+    // }
   }
 
   render () {
-    const { favouritePairs, secondClassName, showSpinner, refresh, showBsellModal2 } = this.props;
+    const { favouritePairs, remove, secondClassName, showSpinner, refresh, showBsellModal2 } = this.props;
+
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
         <h2>Favourites</h2>
@@ -34,7 +35,7 @@ class Favourites extends Component {
           <div className='favourite-flex'>
             <div className='favourite-section-containers' id="favContainers">
               {favouritePairs.map((card) => (
-                  (card) ? (<FavouriteCard showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} info={card} showBsellModal2={showBsellModal2} />) : (null)
+                  (card) ? (<FavouriteCard remove={remove} showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} info={card} showBsellModal2={showBsellModal2} />) : (null)
               ))}
             </div>
             <Link to="/Market" className='rect-box'>

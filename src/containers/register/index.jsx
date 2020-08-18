@@ -208,34 +208,21 @@ class Register extends Component {
           source: question,
           role: 'user',
           country: country,
-          countryCode: countryCode,
+          country_code: countryCode,
         });
 
-
-        const user = response.data;
-        userInfo.id = user.user_id;
+        const user        = response.data.profile;
+        userInfo.id       = user.user_id;
         userInfo.otpEmail = user.email_otp;
-        userInfo.otpPhone = user.phone_number_otp;
-        await server.sendEmail(firstName, lastName, email, user.email_otp);
-        await server.sendSMS(phone_number, user.phone_number_otp);
-        this.props.addUserInformation(userInfo);
-        localStorage.setItem('id', user.user_id);
+        userInfo.otpPhone = user.phone_otp;
 
-        localStorage.setItem('email', email);
+        app.profile(user);
+        const accounts   = app.accounts();
 
-        this.props.saveUserProfile(user.userdata);
-
-        localStorage.setItem('profile', JSON.stringify(user.userdata));
-
-        this.props.setAccountType(app.accounts()[0]);
-        localStorage.setItem('accountType', app.accounts()[0]);
-
-        const accounts = app.accounts();
-
+        this.props.saveUserProfile(user);
+        this.props.setAccountType(accounts[0]);
         this.props.setAccounts(accounts);
-
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-
+        
         this.setState({ showSpinner: !this.state.showSpinner });
 
         this.props.history.push('/VerifyEmail');

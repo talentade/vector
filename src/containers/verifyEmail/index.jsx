@@ -4,6 +4,7 @@ import AvarizLogo from '../../themes/images/avariz_logo.png';
 import EmailImage from '../../themes/images/email.svg';
 import './index.scss';
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 
 class VerifyEmail extends Component {
@@ -16,6 +17,7 @@ class VerifyEmail extends Component {
       name_3: '',
       name_4: '',
       error: null,
+      user_id: app.userid(),
       showSpinner: false
     };
   }
@@ -54,13 +56,12 @@ class VerifyEmail extends Component {
     this.setState({ showSpinner: true });
 
     try {
-      await server.verifyEmail(this.props.id, `${name}${name_2}${name_3}${name_4}`);
+      await server.verifyEmail(`${name}${name_2}${name_3}${name_4}`);
       this.setState({ showSpinner: false });
       this.props.history.push('/VerifyPhone');
     } catch (error) {
       this.setState({ showSpinner: false });
       const verificationError = error.response.data.message;
-
       this.setState({ error: verificationError });
     }
   };
@@ -96,7 +97,7 @@ class VerifyEmail extends Component {
 
         <div className='verification-text'>
           <p>
-            Enter 4-digits code sent to <b>{this.props.email}</b>
+            Enter 4-digits code sent to <b>{app.email()}</b>
           </p>
         </div>
 

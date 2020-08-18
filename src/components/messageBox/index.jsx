@@ -18,13 +18,13 @@ class MessageBox extends Component {
   }
 
   async componentDidMount () {
-    try {
-      let { data : { data }} = await server.getMessages();
-      // console.log(data.messages, "messanger");
-      this.setState({ messages : data.messages });
-    } catch (e) {
-      return e;
-    }
+    // try {
+    //   let { data : { data }} = await server.getMessages();
+    //   // console.log(data.messages, "messanger");
+    //   this.setState({ messages : data.messages });
+    // } catch (e) {
+    //   return e;
+    // }
   }
 
   newMessageThread = async () => {

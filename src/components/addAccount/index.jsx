@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './index.scss';
+import $ from 'jquery';
 import CancelIcon from '../../themes/images/cancel.svg';
 import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
@@ -17,7 +18,8 @@ class AddAccount extends Component {
     
 
     this.state = {
-      step : 0
+      step : 0,
+      errorMessage: ''
     };
 
     this.fireAccList = new CustomEvent('refreshAccList', {
@@ -28,8 +30,10 @@ class AddAccount extends Component {
 
   }
 
-  handleClick = (p) => {
-    // this.setState({ information : p});
+  popupOut = (e) => {
+    if($(e.target).hasClass("overlay") && $(e.target).hasClass("fav")) {
+      $(e.target).find(".modal-cancel").click();
+    }
   }
 
   componentDidMount () {
@@ -41,24 +45,28 @@ class AddAccount extends Component {
     let pas = document.getElementById("tr-pass").value;
     this.props.sending();
     try {
-      const { data : { data } } = await server.addAccount(sel, pas);
-      document.getElementById("account-container").dispatchEvent(this.fireAccList);
-      this.props.sent();
-      this.props.cancelClick();
-      this.props.showCreated(data.account_id.split("-")[1], data.account_id.split("-")[0]);
+      const acc = await server.addAccount(sel, pas);
+      this.props.unsending();
+      if(acc.status == 200 && acc.data.success) {
+        document.getElementById("account-container").dispatchEvent(this.fireAccList);
+        this.props.sent();
+        this.props.cancelClick();
+        this.props.showCreated(acc.data.account.account_id, acc.data.account.account_type);
+        this.setState({errorMessage: ""});
+      } else {
+        this.setState({errorMessage: acc.data.message});
+      }
     } catch (error) {
-      this.props.sent();
+      this.props.unsending();
       return error.message;
     }
-
-    this.props.cancelClick();
   }
 
   render () {
     const { text, cancelClick, confirmClick } = this.props;
     const { information, step } = this.state;
     return (
-      <div className='overlay fav'>
+      <div className='overlay fav' onClick={this.popupOut}>
         <div className='modal-section'>
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancelClick} />
@@ -67,7 +75,10 @@ class AddAccount extends Component {
               <p className="inps">
                 <select className="accs" id="tr-sel"><option value="demo">Demo</option><option value="live">Live</option></select>
                 <label>Confirm Password</label>
-                <input className="accs" id="tr-pass" type="password" />
+                <input className="accs" required id="tr-pass" type="password" />
+
+                {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
+
                 <button className="sacc" onClick={this.btnSave}>Add ACCOUNT</button>
               </p>
             </div>

@@ -225,6 +225,8 @@ class Chart extends Component {
   }
 
   render() {
+
+
     return (
       <div className='trade-comp-container'>
 
@@ -316,27 +318,27 @@ class Chart extends Component {
               <div className='sell'>
                 <div className='sell-info'>
                   <p>SELL</p>
-                  <p>{this.state.sell}</p>
+                  <p>{app.floatFormat(this.state.sell)}</p>
                 </div>
                 <img src={WhiteDir} alt='' />
               </div>
-              <p className='sell-left'>L: {this.state.low}</p>
+              <p className='sell-left'>L: {app.floatFormat(this.state.low)}</p>
             </div>
             <div className='chart-map'>
               <div className='map'>
                 <img src={MapIcon} alt='' />
               </div>
-              <p className='map-center'>S: {this.state.spread}</p>
+              <p className='map-center'>S: {app.floatFormat(this.state.spread)}</p>
             </div>
             <div className='chart-buy' onClick={this.showBsellModal}>
               <div className='buy'>
                 <img src={WhiteDir} alt='' />
                 <div className='buy-info'>
                   <p>BUY</p>
-                  <p>{this.state.buy}</p>
+                  <p>{app.floatFormat(this.state.buy)}</p>
                 </div>
               </div>
-              <p className='buy-right'>H: {this.state.high}</p>
+              <p className='buy-right'>H: {app.floatFormat(this.state.high)}</p>
             </div>
           </div>
         </div>

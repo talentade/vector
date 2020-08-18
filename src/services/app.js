@@ -1,55 +1,91 @@
 export default {
   id: () => {
-    return (localStorage.getItem("id") ? localStorage.getItem("id").toLowerCase() : false);
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.user_id;
   },
   userid: () => {
-    return localStorage.getItem("id").toLowerCase();
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.user_id;
   },
   auth: () => {
-    return localStorage.getItem("id").toLowerCase();
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.user_id;
   },
   account: (a = "") => {
-    return a.length ? localStorage.setItem("accountType", a) : localStorage.getItem("accountType");
+    if(a.length) {
+      return localStorage.setItem("avariz_active", a);
+    }
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    if(!profile.accounts.length) return "";
+    return (localStorage.getItem("avariz_active") || profile.accounts[0].account_name);
   },
   accountDetail: (acc = null) => {
-    let profile = JSON.parse(localStorage.getItem("profile"));
-    let selectd = acc ? acc : localStorage.getItem("accountType");
-    let account = profile[selectd];
-        account = account["demo"] ? account["demo"] : account["live"];
-    let ret = [];
-    Object.keys(account).forEach(key => {
-      if(key.toLowerCase().match(/(demo|live)/g)) {
-        ret[key.replace(/(demo_|live_)/g, "")] = account[key];
-      } else {
-        ret[key] = account[key];
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    if(!profile.accounts.length) return [];
+    let selectd = acc ? acc : (localStorage.getItem("avariz_active") || profile.accounts[0].account_name);
+    let ret     = null;
+    profile.accounts.forEach((acc) => {
+      if(selectd.toLowerCase() == acc["account_name"].toLowerCase()) {
+        ret = acc;
       }
     });
     return ret;
   },
   allPairs: (a = null) => {
-    return a ? localStorage.setItem('allPairs', JSON.stringify(a)) : JSON.parse(localStorage.getItem('allPairs'));
+    return a ? localStorage.setItem('avariz_pairs', JSON.stringify(a)) : JSON.parse(localStorage.getItem('avariz_pairs') || '{}');
   },
   accounts: () => {
-    let profile = JSON.parse(localStorage.getItem("profile"));
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
     let accounts = [];
-    Object.keys(profile).forEach(key => {
-      if(key.toLowerCase().match(/(demo|live)/g)) {
-        accounts.push(key);
-      }
+    profile.accounts.forEach((acc) => {
+      accounts.push(acc["account_name"]);
     });
     return accounts;
   },
   email: () => {
-    return localStorage.getItem("email").trim();
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.email.trim();
+  },
+  phone: () => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.phone_number.trim();
   },
   retryLimit: 10,
   profile: (p = null) => {
     if(p) {
-      localStorage.setItem('profile', JSON.stringify(p));
+      localStorage.setItem('avariz_profile', JSON.stringify(p));
     }
-    return JSON.parse(localStorage.getItem("profile"));
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile;
+  },
+  info: (i = null) => {
+    if(i) {
+      localStorage.setItem('avariz_info', JSON.stringify(i));
+    }
+    return JSON.parse(localStorage.getItem("avariz_info"));
+  },
+  hostURL: (url, type = 0) => {
+    let live = true;
+    if(type > 0) {
+      return live ? "ws://avariz-server-one.herokuapp.com" : "ws://localhost:3003";
+    } else {
+      return live ? "https://avariz-server-one.herokuapp.com/"+url : "http://localhost:3003/"+url;
+    }
   },
   isAdmin: () => {
     return false;
+  },
+  floatFormat: (x, dp = 4, txt = false) => {
+    let currency = parseFloat(parseFloat(x).toFixed(dp));
+    return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   }
 };

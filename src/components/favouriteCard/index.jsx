@@ -6,26 +6,10 @@ import Down from './down.svg';
 import './index.scss';
 import server from '../../services/server';
 
-const removeFav = async (pair, showSpinner) => {
-  showSpinner();
-  try {
-    const { status, message } = await server.removeFav(localStorage.getItem("id"), localStorage.getItem("accountType").split("-")[0].toLowerCase(), pair);
-    showSpinner();
-    let pair_id = "fav-pair-"+(pair.replace(/[^\w]/g, "_"));
-    if(document.getElementById(pair_id)) {
-      document.getElementById(pair_id).remove();
-    }
-  } catch (error) {
-    return error;
-    showSpinner();
-  }
-}
-
-const FavouriteCard = ({ direction, color, pair, info, price, showSpinner, showBsellModal2}) => (
+const FavouriteCard = ({ direction, remove, color, pair, info, price, showSpinner, showBsellModal2}) => (
   <div className="favourite-card" id={"fav-pair-"+pair.replace(/[^\w]/g, "_")}>
-    {/* <input value={price} onChange={(e) => console.log(e.target.value)} /> */}
     <div className="star-section">
-      <img src={Star} alt="" onClick={() => removeFav(pair, showSpinner)} />
+      <img src={Star} alt="" onClick={(e) => remove(pair)} />
       <p>{pair.split(" ")[0].trim()}</p>
     </div>
     <div className="smaller-items">
