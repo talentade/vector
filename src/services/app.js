@@ -76,9 +76,9 @@ export default {
   hostURL: (url, type = 0) => {
     let live = true;
     if(type > 0) {
-      return live ? "wss://avariz-server-one.herokuapp.com" : "ws://localhost:3003";
+      return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
     } else {
-      return live ? "https://avariz-server-one.herokuapp.com/"+url : "http://localhost:3003/"+url;
+      return live ? "https://avarizserver.herokuapp.com/"+url : "http://localhost:3003/"+url;
     }
   },
   isAdmin: () => {
