@@ -216,14 +216,19 @@ class Register extends Component {
         userInfo.otpEmail = user.email_otp;
         userInfo.otpPhone = user.phone_otp;
 
+        console.log("STEP 1");
         app.profile(user);
         const accounts   = app.accounts();
 
-        this.props.saveUserProfile(user);
-        this.props.setAccountType(accounts[0]);
-        this.props.setAccounts(accounts);
+        console.log("STEP 2");
+        // this.props.saveUserProfile(user);
+        // this.props.setAccountType(accounts[0]);
+        // this.props.setAccounts(accounts);
+
+        console.log("STEP 3");
         
         this.setState({ showSpinner: !this.state.showSpinner });
+        console.log("STEP 4");
 
         this.props.history.push('/VerifyEmail');
       } catch (error) {
