@@ -14,7 +14,7 @@ const Withdraw = ({
   currencies,
   cards,
 }) => {
-  let bdet = app.profile()["banking_details"];
+  // let bdet = app.profile()["banking_details"];
   return (
     <div className='deposit'>
       <h2>Withdraw Funds</h2>
@@ -75,9 +75,9 @@ const Withdraw = ({
         <div className='withdraw-card-select'>
           <label>Select Account Number:</label>
           <select>
-            {bdet.map((acc) => (
+            {/*bdet.map((acc) => (
               <option key={`${Math.random()}-${Math.random()}`}>{acc.account_number}</option>
-            ))}
+            ))*/}
           </select>
         </div>
         {account.split("-")[0].toLowerCase() == "live" ? (

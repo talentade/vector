@@ -59,10 +59,11 @@ class VerifyPhone extends Component {
       this.setState({ showSpinner: false });
       this.props.history.push('/Book');
     } catch (error) {
-      const verificationError = (error.response.data.message) || "An error occured";
       this.setState({ showSpinner: false });
-
-      this.setState({ error: verificationError });
+      if(error && error.response) {
+        const verificationError = error.response.data.message;
+        this.setState({ error: verificationError });
+      }
     }
   };
 

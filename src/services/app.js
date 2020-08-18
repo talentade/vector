@@ -1,4 +1,4 @@
-export default {
+const app = {
   id: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
@@ -21,17 +21,22 @@ export default {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
     if(!profile.accounts.length) return "";
-    return (localStorage.getItem("avariz_active") || profile.accounts[0].account_name);
+    if(localStorage.getItem("avariz_active") && Object.values(app.accounts()).indexOf(localStorage.getItem("avariz_active")) > 0) {
+      return localStorage.getItem("avariz_active");
+    } else {
+      localStorage.setItem("avariz_active", profile.accounts[0].account_name);
+      return profile.accounts[0].account_name;
+    }
   },
   accountDetail: (acc = null) => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
     if(!profile.accounts.length) return [];
-    let selectd = acc ? acc : (localStorage.getItem("avariz_active") || profile.accounts[0].account_name);
+    let selectd = acc ? acc : (app.account() || profile.accounts[0].account_name);
     let ret     = null;
-    profile.accounts.forEach((acc) => {
-      if(selectd.toLowerCase() == acc["account_name"].toLowerCase()) {
-        ret = acc;
+    profile.accounts.forEach((acc2) => {
+      if(selectd.toLowerCase() == acc2["account_name"].toLowerCase()) {
+        ret = acc2;
       }
     });
     return ret;
@@ -74,7 +79,7 @@ export default {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   hostURL: (url, type = 0) => {
-    let live = true;
+    let live = !true;
     if(type > 0) {
       return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
     } else {
@@ -89,3 +94,5 @@ export default {
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   }
 };
+
+export default app;

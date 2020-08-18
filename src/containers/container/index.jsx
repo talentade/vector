@@ -38,7 +38,6 @@ class Container extends Component {
       const email = this.profile.email;
       localStorage.clear();
       this.props.history.push('/Login');
-      // await server.logout(user_id, email);
     } catch (error) {
       
     }
