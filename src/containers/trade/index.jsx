@@ -55,7 +55,7 @@ class TradeDashboard extends Component {
     this.retryCounter = 0;
 
     this.profile = app.profile();
-    this.socket = new WebSocket(app.hostURL("socket", 1));
+    this.socket = window.WebSocketPlug = new WebSocket(app.hostURL("socket", 1));
   }
 
   componentWillUnmount() {

@@ -25,7 +25,7 @@ class Favourites extends Component {
   }
 
   render () {
-    const { favouritePairs, remove, secondClassName, showSpinner, refresh, showBsellModal2 } = this.props;
+    const { _favouritePairs, favouritePairs, remove, secondClassName, showSpinner, refresh, showBsellModal2 } = this.props;
 
     return (
       <div className={`favourites ${secondClassName ? 'show-fav-under' : ''}`}>
@@ -37,6 +37,9 @@ class Favourites extends Component {
               {favouritePairs.map((card) => (
                   (card) ? (<FavouriteCard remove={remove} showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} info={card} showBsellModal2={showBsellModal2} />) : (null)
               ))}
+              {_favouritePairs ? _favouritePairs.map((card) => (
+                  (card) ? (<FavouriteCard fade remove={remove} showSpinner={showSpinner} direction="up" color="" pair={card.pair} price={card.open} info={card} showBsellModal2={showBsellModal2} />) : (null)
+              )): (null)}
             </div>
             <Link to="/Market" className='rect-box'>
               <p>+</p>

@@ -31,6 +31,7 @@ class Market extends Component {
       selectedAccountVal: app.account(),
       hotStocks: [],
       favouritePairs: [],
+      _favouritePairs: [],
       favourites: [],
       showLoader: true,
       showSpinner: false,
@@ -50,7 +51,7 @@ class Market extends Component {
         code: 200
       }
     });
-    this.socket = new WebSocket(app.hostURL("socket", 1));
+    this.socket = window.WebSocketPlug = new WebSocket(app.hostURL("socket", 1));
   }
 
   fetchStock = async () => {
@@ -85,17 +86,26 @@ class Market extends Component {
           break;
           case "GET_FAVOURITES":
           if(payload.user == app.id() && payload.account == app.account()) {
-            let favs = [];
-            console.log("--fetched [favs]");
+            let favs = [], _unfav = false;
+            // console.log("--fetched [favs]");
             payload.favourites.forEach((fav) => {
               if(fav) {
-                let fv = this.state.hotStocks.filter((pair) =>
-                          pair.pair.toLowerCase().match(fav.toLowerCase()),
-                        );
+                let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
                 favs[favs.length] = fv[0];
+                if(this.state._favouritePairs.length) {
+                  let _fv = [];
+                  Object.values(this.state._favouritePairs).forEach((_pair) => {
+                    if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
+                      _unfav = true;
+                    }
+                  });
+                }
               }
             });
             setTimeout(() => {
+              if(_unfav) {
+                this.setState({_favouritePairs: []});
+              }
               this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
             }, 10);
           }
@@ -118,7 +128,14 @@ class Market extends Component {
 
   addToFav = async (pair) => {
     this.setState({showSpinner: true});
-    console.log("--updating favs");
+
+    let favs          = this.state._favouritePairs;
+    let fv            = this.state.hotStocks.filter((p) => p.pair.toLowerCase().match(pair.toLowerCase()));
+    favs[favs.length] = fv[0];
+    this.setState({_favouritePairs: favs });
+
+    // console.log("--addToFav");
+
     this.socket.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
       pair:    pair,
       user:    app.id(),
@@ -128,7 +145,7 @@ class Market extends Component {
 
   remFav = async (pair) => {
     this.setState({showSpinner: true});
-    console.log("--reupdating favs");
+    // console.log("--reupdating favs");
     this.socket.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
       pair:    pair,
       user:    app.id(),
@@ -139,7 +156,7 @@ class Market extends Component {
   fetchFavs = async () => {
     if(this.realTimeListener) {
       this.setState({showSpinner: true});
-      console.log("--fetching favs");
+      // console.log("--fetching favs");
       this.socket.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
         user:    app.id(),
         account: app.account(),
@@ -227,7 +244,6 @@ class Market extends Component {
           
           {this.state.buyandsellModal ? (
             <BuyandsellModal
-              text={``}
               pair={window.buyAndSellData.pair}
               buy={window.buyAndSellData.buy}
               sell={window.buyAndSellData.sell}
@@ -252,6 +268,7 @@ class Market extends Component {
             clickHandler={this.toggleSideBar}
             hideText={this.state.clicked}
             showLoader={showLoader}
+            _favouritePairs={this.state._favouritePairs}
             favouritePairs={this.state.favouritePairs}
             showBsellModal={this.showBsellModal}
             addToFav={this.addToFav}

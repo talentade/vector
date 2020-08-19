@@ -10,6 +10,7 @@ import DirectionIcon from '../../themes/images/direction.svg';
 
 import Up from './up.svg';
 import Down from './down.svg';
+import app from '../../services/app';
 
 import CompassIcon from '../../themes/images/compass.svg';
 import SearchIcon from '../../themes/images/micro.svg';
@@ -54,6 +55,7 @@ const MarketSideBar = ({
   pairs,
   filter,
   favouritePairs,
+  _favouritePairs,
   filterInstrument,
   showLoader,
   showBsellModal,
@@ -111,7 +113,8 @@ const MarketSideBar = ({
               <div className='market-pair-flex'>
                 <h5>{pair.pair}</h5>{/*<small style={{color: "#fff"}}>{pair.timestamp}</small>*/}
                 <span>
-                { favouritePairs.length && Object.values(favouritePairs).indexOf(pair.pair) > -1
+                { favouritePairs.length && Object.values(favouritePairs).indexOf(pair.pair) > -1 ||
+                  _favouritePairs.length && Object.values(_favouritePairs).indexOf(pair.pair) > -1
                   ? (<button type="button" className="for-star" onClick={(e) => remFav(pair.pair)}>
                       <img src={starIcon2} alt='' />
                      </button>)
@@ -129,12 +132,11 @@ const MarketSideBar = ({
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
-                        <p>{pair.bid}</p>
+                        <p>{app.floatFormat(pair.bid)}</p>
                       </div>
-                      <img className={"directionSell up"} src={Up} />
-                      <img className={"directionSell down hide"} src={Down} />
+                      {pair.bid_up > 0 ? <img className={"directionSell up"} src={Up} /> : <img className={"directionSell down"} src={Down} />}
                     </div>
-                    <p>{pair.low}</p>
+                    <p>{app.floatFormat(pair.low)}</p>
                   </div>
                   <div className='market-spread'>
                     <div className='market-spread-data'>
@@ -144,14 +146,13 @@ const MarketSideBar = ({
                   </div>
                   <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy"}; showBsellModal(e)}}>
                     <div className='market-buy-data'>
-                      <img className={"direction up"} src={Up} />
-                      <img className={"direction down hide"} src={Down} />
+                      {pair.ask_up > 0 ? <img className={"direction up"} src={Up} /> : <img className={"direction down"} src={Down} />}
                       <div className='market-buy-info'>
                         <h6>BUY</h6>
-                        <p id={"pair-buy-"+pair.pair.replace(/[^\w]/g, "_")}>{pair.ask}</p>
+                        <p id={"pair-buy-"+pair.pair.replace(/[^\w]/g, "_")}>{app.floatFormat(pair.ask)}</p>
                       </div>
                     </div>
-                    <p>{pair.high}</p>
+                    <p>{app.floatFormat(pair.high)}</p>
                   </div>
                 </div>
               </div>

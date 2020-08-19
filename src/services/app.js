@@ -14,6 +14,9 @@ const app = {
     if(!profile) window.location.href = "/login";
     return profile.user_id;
   },
+  leverage: () => {
+    return parseInt(app.accountDetail()["leverage"].replace("1:", ""));
+  },
   account: (a = "") => {
     if(a.length) {
       return localStorage.setItem("avariz_active", a);
@@ -79,7 +82,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   hostURL: (url, type = 0) => {
-    let live = true;
+    let live = !true;
     if(type > 0) {
       return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
     } else {
@@ -89,7 +92,7 @@ const app = {
   isAdmin: () => {
     return false;
   },
-  floatFormat: (x, dp = 4, txt = false) => {
+  floatFormat: (x, dp = 5, txt = false) => {
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   }

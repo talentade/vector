@@ -13,6 +13,9 @@ import areaGrf from './graph/area.svg';
 import barGrf from './graph/bar.png';
 import histGrf from './graph/hist.png';
 
+import Up from './up.svg';
+import Down from './down.svg';
+
 import StopWatch from '../../themes/images/tradeDashboard/stopwatch.svg';
 import Wave from '../../themes/images/tradeDashboard/wave.svg';
 import Wave2 from '../../themes/images/tradeDashboard/wave.svg';
@@ -559,6 +562,8 @@ class Chart extends Component {
       sell:   this.currentPairData ? this.currentPairData.bid    : this.state.sell,
       high:   this.currentPairData ? this.currentPairData.high   : this.state.high,
       low:    this.currentPairData ? this.currentPairData.low    : this.state.low,
+      ask_up: this.currentPairData ? this.currentPairData.ask_up : 1,
+      bid_up: this.currentPairData ? this.currentPairData.bid_up : 1,
       spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
     }
 
@@ -567,10 +572,9 @@ class Chart extends Component {
 
           {this.state.buyandsellModal ? (
             <BuyandsellModal
-              text={``}
               pair={this.state.selectedPair}
-              buy={this.state.buy}
-              sell={this.state.sell}
+              buy={_currentPairData.buy}
+              sell={_currentPairData.sell}
               act={this.state.buyandsellAct}
               cancelClick={this.cancelBsellModal}
               confirmClick={this.confirmBsellModal}
@@ -658,12 +662,13 @@ class Chart extends Component {
           </div>
           <div className='chart-cta-section'>
             <div className='chart-sell' onClick={(e) => this.showBsellModal(e, "sell")}>
-              <div className='sell'>
-                <div className='sell-info'>
+              <div className='sell' align="center">
+                <div className='sell-info' style={{minWidth: "50%"}}>
                   <p>SELL</p>
                   <p>{app.floatFormat(_currentPairData.sell)}</p>
                 </div>
-                <img src={WhiteDir} alt='' />
+                {/*<img src={WhiteDir} alt='' />*/}
+                {_currentPairData.bid_up > 0 ? <img className={"directionSell up"} src={Up} /> : <img className={"directionSell down"} src={Down} />}
               </div>
               <p className='sell-left'>L: {app.floatFormat(_currentPairData.low)}</p>
             </div>
@@ -674,9 +679,9 @@ class Chart extends Component {
               <p className='map-center'>S: {app.floatFormat(_currentPairData.spread)}</p>
             </div>
             <div className='chart-buy' onClick={(e) => this.showBsellModal(e, "buy")}>
-              <div className='buy'>
-                <img src={WhiteDir} alt='' />
-                <div className='buy-info'>
+              <div className='buy' align="center">
+                {_currentPairData.ask_up > 0 ? <img className={"direction up"} src={Up} /> : <img className={"direction down"} src={Down} />}
+                <div className='buy-info' style={{minWidth: "50%"}}>
                   <p>BUY</p>
                   <p>{app.floatFormat(_currentPairData.buy)}</p>
                 </div>

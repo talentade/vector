@@ -6,10 +6,10 @@ import Down from './down.svg';
 import './index.scss';
 import server from '../../services/server';
 
-const FavouriteCard = ({ direction, remove, color, pair, info, price, showSpinner, showBsellModal2}) => (
-  <div className="favourite-card" id={"fav-pair-"+pair.replace(/[^\w]/g, "_")}>
+const FavouriteCard = ({ fade, direction, remove, color, pair, info, price, showSpinner, showBsellModal2}) => (
+  <div className="favourite-card" id={"fav-pair-"+pair.replace(/[^\w]/g, "_")} style={{opacity: fade ? '0.5' : 1}}>
     <div className="star-section">
-      <img src={Star} alt="" onClick={(e) => remove(pair)} />
+      <img src={Star} alt="" onClick={(e) => fade ? console.log("Empty") : remove(pair)} />
       <p>{pair.split(" ")[0].trim()}</p>
     </div>
     <div className="smaller-items">
