@@ -25,12 +25,15 @@ class BuyandsellModal extends Component {
 
     this.state = {
       information : info,
-      base: '',
+      pair: '',
+      base1: '',
       base2: '',
       volume: 0.01,
       lot_str: "1000.00",
       pip_str: "",
       required_margin_str: "",
+      conversion_1: 0,
+      conversion_2: 0,
 
 
 
@@ -53,9 +56,39 @@ class BuyandsellModal extends Component {
       errorMessage: "",
     };
 
+    this.prev_buy = 0;
+    this.prev_sell = 0;
+
     this.retryCounter = 0;
     this.realTimeListener = true;
     this.socket = window.WebSocketPlug;
+  }
+
+  componentDidUpdate () {
+    if(this.state.mode == "buy") {
+      if(this.prev_buy != this.props.buy) {
+        console.log("---- trigger pip update", this.prev_buy, this.props.buy, );
+        this.prev_buy = this.props.buy;
+        this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+          user:      app.id(),
+          account:   app.account(),
+          base1:     this.state.base1,
+          base2:     this.state.base2
+        }}));
+      }
+    }
+    if(this.state.mode == "sell") {
+      if(this.prev_sell != this.props.sell) {
+        console.log("---- trigger pip update", this.prev_sell, this.props.sell);
+        this.prev_sell = this.props.sell;
+        this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+          user:      app.id(),
+          account:   app.account(),
+          base1:     this.state.base1,
+          base2:     this.state.base2
+        }}));
+      }
+    }
   }
 
   async componentDidMount() {
@@ -64,6 +97,17 @@ class BuyandsellModal extends Component {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
         switch(message.event) {
+          case "GET_CONVERSION":
+          if(payload.user == app.id() && payload.account == app.account()) {
+            this.setState({
+              analysis:     true,
+              conversion_1: payload.conversion_1,
+              conversion_2: payload.conversion_2
+            });
+            console.log(payload.conversion_1, payload.conversion_2);
+            this.pip_margin();
+          }
+          break;
           case "ANALYSIS":
           if(payload.user == app.id() && payload.account == app.account() && payload.lots == this.state.volume) {
             this.setState({
@@ -95,27 +139,23 @@ class BuyandsellModal extends Component {
       base2 = base[1];
     }
     this.setState({
-      base: base1.trim(),
+      pair:  base,
+      base1: base1.trim(),
       base2: base2.trim()
-    })
+    });
+
     if(this.props.act == "buy") {
       this.btnBsell("btnBuy", "btnSell");
     } else {
       this.btnBsell("btnSell", "btnBuy");
     }
 
-    this.socket.send(JSON.stringify({"event": "GET_ANALYSIS", "payload": {
-      lots:      this.state.volume,
+    this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
       user:      app.id(),
       account:   app.account(),
-      leverage:  app.leverage(),
-      base:      base1.trim(),
+      base1:     base1.trim(),
       base2:     base2.trim()
     }}));
-  }
-
-  changeVolume = async (e) => {
-    this.setState({ volume : e.target.value });
   }
 
   handleClick = (p) => {
@@ -128,31 +168,38 @@ class BuyandsellModal extends Component {
     }
   }
 
+  changeVolume = async (e) => {
+    this.setState({ volume : e.target.value });
+    this.vlvChange();
+  }
 
-
-
-  vlvChange = (u) => {
+  vlvChange = (u = "") => {
     let lots = parseFloat($("#vlv").val());
 
-    if(u === "up") {
-      lots += 0.01;
-    } else {
-      lots -= 0.01;
+    if(u.length) {
+      if(u === "up") {
+        lots += 0.01;
+      } else {
+        lots -= 0.01;
+      }
     }
 
     lots = lots.toFixed(2);
-
     $("#vlv").val(lots);
-    this.setState({ volume : lots, lot_str : (100000 * lots).toFixed(2), analysis : false });
 
-    this.socket.send(JSON.stringify({"event": "GET_ANALYSIS", "payload": {
-      lots:      lots,
-      user:      app.id(),
-      account:   app.account(),
-      leverage:  app.leverage(),
-      base:      this.state.base,
-      base2:     this.state.base2
-    }}));
+    this.setState({ volume : lots, lot_str : (100000 * lots).toFixed(2) });
+    this.pip_margin(lots);
+  }
+
+  pip_margin = (lots = null) => {
+    let l = lots ? lots : this.state.volume;
+    if(this.state.conversion_1 > 0 && this.state.conversion_2 > 0) {
+      let base_rate        =  this.state.conversion_1;
+      let pip_rate         =  this.state.conversion_1;
+      let required_margin  =  base_rate * (1/app.leverage()) * l * 100000;
+      let pip              =  pip_rate * (this.state.base2 == "JPY" ? 1000 : 10) * l;
+      this.setState({ pip_str: pip.toFixed(2), required_margin_str: required_margin.toFixed(2) });
+    }
   }
 
 
@@ -195,6 +242,15 @@ class BuyandsellModal extends Component {
   }
 
   tradeAnalysis = async () => {
+
+    // this.socket.send(JSON.stringify({"event": "GET_ANALYSIS", "payload": {
+    //   lots:      lots,
+    //   user:      app.id(),
+    //   account:   app.account(),
+    //   leverage:  app.leverage(),
+    //   base1:     this.state.base,
+    //   base2:     this.state.base2
+    // }}));
     // try {
     //   this.setState({analysis: false});
     //   let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
