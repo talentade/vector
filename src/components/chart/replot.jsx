@@ -4,7 +4,6 @@ import { createChart, CrosshairMode } from 'lightweight-charts';
 // import { CIQ } from 'chartiq';
 import $ from 'jquery';
 import moment from 'moment';
-import moment_tz from 'moment-timezone';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
@@ -69,7 +68,6 @@ class Chart extends Component {
       showLoader: false,
       instruments: []
     };
-
   }
 
   loadHistorical = async (h) => {
@@ -101,43 +99,19 @@ class Chart extends Component {
                 visible: true,
                 timeVisible: true,
                 secondsVisible: false,
+                // tickMarkFormatter: (time, tickMarkType, locale) => {
+                //     console.log(time, tickMarkType, locale);
+                //     const year = LightweightCharts.isBusinessDay(time) ? time.year : new Date(time * 1000).getUTCFullYear();
+                //     return String(year);
+                // },
             },
         });
-
         try {
 
-          const convertDateToAnotherTimeZone = (date, timezone) => {
-            console.log(timezone)
-            const dateString = date.toLocaleString('en-US', {
-              timeZone: timezone
-            });
-            return new Date(dateString);
-          }
-
-          const getOffsetBetweenTimezonesForDate = (date, timezone1, timezone2) => {
-            const timezone1Date = convertDateToAnotherTimeZone(date, timezone1);
-            const timezone2Date = convertDateToAnotherTimeZone(date, timezone2);
-            return timezone1Date.getHours() - timezone2Date.getHours();
-            // return timezone1Date.getTime() - timezone2Date.getTime();
-          }
-
-          let graphOffset = 0;
-          if(this.historySeriesPair != this.treatPair(this.pair)) {
-            this.lastFetch = moment().unix();
-            let history = await server.historicalData(this.treatPair(this.pair), "1m", {
-              from: moment().subtract(2, "hour").unix(),
-              to: this.lastFetch
-            });
-
-            this.historySeries = [];
-            let data = history.data.result;
-  
-            const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, data.meta.exchangeTimezoneName);
-            graphOffset = (offset+1)*3600;
-
+          const in_fn_plot = (data, replot = false) => {
             for (let x = 0; x < data.timestamp.length; x++) {
               let plot = this.graphData2({
-                Date:   data.timestamp[x]+graphOffset,
+                Date:   data.timestamp[x],
                 Open:   data.indicators.quote[0].open[x],
                 High:   data.indicators.quote[0].high[x],
                 Low:    data.indicators.quote[0].low[x],
@@ -146,91 +120,91 @@ class Chart extends Component {
               }, this.pair);
               this.historySeries.push(plot);
               this.historySeriesPair = this.treatPair(this.pair);
-              this.plotGraph(plot);
-
-              console.log(
-                data.timestamp[x],
-                data.timestamp[x]+(offset*3600),
-              )
-            }
-
-            // console.log(this.historySeries.length, "Initial series length");
-          } else {
-
-            let hdata = this.historySeries;
-            for (let x = 0; x < (hdata.length); x++) {
-              this.plotGraph(hdata[x]);
-            }
-
-          }
-
-          // meta.exchangeTimezoneName
-          // Intl.DateTimeFormat().resolvedOptions().timeZone
-
-          console.log("+++++++++++", this.chart.current.options(), "||||||||||");
-          console.log("-----------", moment().unix(), "||||||||||");
-
-          this.setState({showLoader: false});
-          this.chart.current.timeScale().setVisibleRange({
-              from: moment().subtract(1, "hour").unix()+graphOffset,
-              to: moment().unix()+graphOffset
-          });
-
-          let check_for_update = async (pair) => {
-            console.log("-- checking_for_update");
-            setTimeout(async () => {
-              if(this.historySeriesPair == pair) {
-                try {
-                  let _history = await server.historicalData(pair, "1m", {
-                    from: moment().subtract(2, "hour").unix(),
-                    to: moment().unix()
-                  });
-
-                  let prelength = this.historySeries.length;
-                  this.historySeriesPair = pair;
-                  this.historySeries = [];
-                  let _data      = _history.data.result;
-                  
-                  for (let x = 0; x < _data.timestamp.length; x++) {
-                    let plot = this.graphData2({
-                      Date:  _data.timestamp[x]+graphOffset,
-                      Open:  _data.indicators.quote[0].open[x],
-                      High:  _data.indicators.quote[0].high[x],
-                      Low:  _data.indicators.quote[0].low[x],
-                      Close:  _data.indicators.quote[0].close[x],
-                      Volume:  _data.indicators.quote[0].volume[x]
-                    }, this.pair);
-                    this.historySeries.push(plot);
-                  }
-
-                  this.loadSeries = true;
-                  this.seriesIterator = 0;
-                  this.chart.current.removeSeries(this.chartSeries);
-                  this.setGraphType(this.currentGrpahType, 0);
-                  this.plotGraph(this.historySeries);
-        
-                  if(prelength < this.historySeries.length) {
-                    this.chart.current.timeScale().scrollToPosition(1, true);
-                  }
-
-                  // this.chart.current.timeScale().setVisibleRange({
-                  //     from: moment().subtract(1, "hour").unix(),
-                  //     to: moment().unix()
-                  // });
-
-                  console.log("-- Updated HIST");
-                  check_for_update(pair);
-                } catch (e) {
-                  throw e;
-                  check_for_update(pair);
-                  console.log("-- Update ERR");
-                  return e;
-                }
+              console.log("Reploting is", replot);
+              if(replot) {
+                this.setGraphType(this.currentGrpahType, 0);
+                this.seriesIterator = 0;
+                this.plotGraph(plot);
+              } else {
+                this.plotGraph(plot);
               }
-            }, 5 * 1000);
+            }
           }
 
-          check_for_update(this.treatPair(this.pair));
+          let real_time_update = async (replot = false) => {
+            console.log("Checking for updates...", replot);
+            if(this.historySeriesPair != this.treatPair(this.pair) || replot) {
+              this.lastFetch = null;
+              let history = await server.historicalData(this.treatPair(this.pair), "1m", {
+                from: moment().subtract(1, "hour").unix(),
+                to: moment().unix()
+              });
+              this.historySeries = [];
+              let data = history.data.result;
+              if(data.timestamp.length > 1) {
+                this.lastFetch = data.timestamp[data.timestamp.length - 1];
+              }
+              in_fn_plot(data, replot);
+            } else {
+              let hdata = this.historySeries;
+              for (let x = 0; x < (hdata.length); x++) {
+                this.plotGraph(hdata[x]);
+              }
+            }
+            this.setState({showLoader: false});
+            this.chart.current.timeScale().setVisibleRange({
+                from: moment().subtract(1, "hour").unix(),
+                to: moment().unix()
+            });
+          }
+
+          real_time_update();
+
+          setInterval(async() => {
+            await real_time_update(true);
+          }, 10 * 1000);
+
+
+          // let check_for_update = async (pair, distance) => {
+          //   console.log("-- checking_for_update");
+          //   setTimeout(async () => {
+          //     try {
+          //       let _history = await server.historicalData(pair, distance, {
+          //         from: moment().subtract(10, "minutes").unix(),
+          //         to: moment().unix()
+          //       });
+          //       let _data      = _history.data.result;
+          //       let time_stamp = [];
+          //       let start      = false;
+          //       if(_data.timestamp && _data.timestamp.length) {
+          //         _data.timestamp.forEach((tim, ki) => {
+          //           if(tim > this.lastFetch) {
+          //             if(tim - this.lastFetch > 59) {
+          //               time_stamp.push(tim);
+          //               if(start === false) {
+          //                 start = ki;
+          //               }
+          //             }
+          //           }
+          //         });
+          //         if(time_stamp.length) {
+          //           this.lastFetch = time_stamp[time_stamp.length - 1];
+          //         }
+          //         check_for_update(pair, distance);
+          //         console.log("-- Update is", time_stamp.length ? "loaded" : "empty", "index =>", start);
+          //         if(start) {
+          //           in_fn_plot(_data, start);
+          //         }
+          //       }
+          //     } catch (e) {
+          //       check_for_update(pair, distance);
+          //       console.log("-- Update ERR");
+          //       return e;
+          //     }
+          //   }, 20 * 1000);
+          // }
+
+          // check_for_update(this.treatPair(this.pair), "1m");
 
           // this.chart.current.timeScale().setVisibleRange({
           //     from: moment().subtract(upm[1], upm[0]).unix(),
@@ -493,10 +467,7 @@ class Chart extends Component {
   }
 
   treatPair = (pair) => {
-    if(pair == undefined) {
-      return this.pair;
-    }
-    return pair.indexOf(" ") > -1 ? pair.split(" ")[0].trim() : pair.trim();
+    return pair.split(" ")[0].trim();
   }
 
   handleDataChange = async (pair) => {
@@ -511,20 +482,20 @@ class Chart extends Component {
   }
 
   getSeries = async () => {
-    // this.dataPlotSeries = [];
-    // this.setState({showLoader: true});
-    // try {
-    //   let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
-    //   let xdata = data[0];
-    //   for (let x = 0; x < data.length; x++) {
-    //     // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
-    //     this.plotGraph(this.graphData(data[x], this.pair));
-    //   }
-    // } catch (e) {
-    //   this.setState({showLoader: false});
-    //   return e;
-    // }
-    // this.setState({showLoader: false});
+    this.dataPlotSeries = [];
+    this.setState({showLoader: true});
+    try {
+      let { data: { data } } = await server.getSeries(this.treatPair(this.pair), 30);
+      let xdata = data[0];
+      for (let x = 0; x < data.length; x++) {
+        // this.plotGraph(this.graphData2({Close: data[0].close, Date: data[x].when, High: data[x].high, Low: data[x].low, Open: data[x].open}, this.pair));
+        this.plotGraph(this.graphData(data[x], this.pair));
+      }
+    } catch (e) {
+      this.setState({showLoader: false});
+      return e;
+    }
+    this.setState({showLoader: false});
   }
 
   graphData = (data) => {
@@ -563,59 +534,53 @@ class Chart extends Component {
     this.setState({showLoader: true});
     await this.loadHistorical("1M");
     return null;
-    // await this.getSeries();
-    // window.realtTimeFetcher = async () => {
-    //   if(this.realTimeListener && this.loadSeries) {
-    //     let data = await this.handleDataChange(this.treatPair(this.pair));
-    //     // console.log(data, "--real");
-    //     if(this.loadSeries) {
-    //       this.plotGraph(data);
-    //     }
-    //   }
-    // }
-    // this.setState({showLoader: false});
-    // setInterval(window.realtTimeFetcher, 10 * 1000);
+    await this.getSeries();
+    window.realtTimeFetcher = async () => {
+      if(this.realTimeListener && this.loadSeries) {
+        let data = await this.handleDataChange(this.treatPair(this.pair));
+        // console.log(data, "--real");
+        if(this.loadSeries) {
+          this.plotGraph(data);
+        }
+      }
+    }
+    this.setState({showLoader: false});
+    setInterval(window.realtTimeFetcher, 10 * 1000);
   }
 
   plotGraph = (data) => {
     if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
-      let not_raw = Object.keys(plot_data).length < 15;
-      if(not_raw) {
-        this.dataPlotSeries.push(plot_data);
-        if(this.currentGrpahType == "candle") {
-          // default
-        } else if(this.currentGrpahType == "line") {
-          plot_data = {time: data.time, value: data.open};
-        } else if(this.currentGrpahType == "area") {
-          plot_data = {time: data.time, value: data.open};
-        } else if(this.currentGrpahType == "bar") {
-          // default
-        } else if(this.currentGrpahType == "hist") {
-          plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
-        }
+      this.dataPlotSeries.push(plot_data);
+      if(this.currentGrpahType == "candle") {
+        // default
+      } else if(this.currentGrpahType == "line") {
+        plot_data = {time: data.time, value: data.open};
+      } else if(this.currentGrpahType == "area") {
+        plot_data = {time: data.time, value: data.open};
+      } else if(this.currentGrpahType == "bar") {
+        // default
+      } else if(this.currentGrpahType == "hist") {
+        plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
+      }
 
-        if(this.seriesIterator > 0) {
-          this.chartSeries.update(plot_data);
-        } else {
-          this.seriesIterator += 1;
-          this.chartSeries.setData([plot_data]);
-        }
-
-        this.setState({
-          showLoader: false,
-          buy: data.bid,
-          sell: data.ask,
-          low: data.low,
-          high: data.high,
-          spread: data.spread,
-        });
-        this.chart.current.timeScale().fitContent();
+      if(this.seriesIterator > 0) {
+        this.chartSeries.update(plot_data);
       } else {
         this.seriesIterator += 1;
-        this.chartSeries.setData(plot_data);
+        this.chartSeries.setData([plot_data]);
       }
+
+      this.setState({
+        showLoader: false,
+        buy: data.bid,
+        sell: data.ask,
+        low: data.low,
+        high: data.high,
+        spread: data.spread,
+      });
       
+      this.chart.current.timeScale().fitContent();
     }
   }
 
