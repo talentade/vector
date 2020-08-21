@@ -109,6 +109,27 @@ export default {
   //     }
   //   })
   // },
+  // placeOrder(mode, pair, pip, lots, margin, order) {
+  //   console.log(order);
+  //   return axios.request({
+  //     method: 'PUT',
+  //     url: 'https://avariz-core.herokuapp.com/wallet/'+mode+'/order?email='+app.email()+'&account='+app.account()+'&currency='+pair.split(" ")[0].trim(),
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: {
+  //       order: order
+  //       // {
+  //       //   "pip_value" : pip,
+  //       //   "volume_lots": lots,
+  //       //   "required_margin" : margin,
+  //       //   "stop_loss" : null, // {"configs" : null},
+  //       //   "take_profit" : null, // {"configs" : null},
+  //       //   "sell_when" : null, // {"configs" : null}
+  //       // }
+  //     }
+  //   });
+  // },
 
 
 
@@ -252,6 +273,19 @@ export default {
     })
   },
 
+
+  placeOrder (data) {
+    let mode = data.mode;
+    delete data.mode;
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('trade/'+mode+'/'+app.account()),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
 
 
 
@@ -401,28 +435,6 @@ export default {
       url: 'https://avariz-core.herokuapp.com/calendar/meeting/delete/'+nd.join("-")+'/'+id,
       headers: {
         'Authorization': app.auth()
-      }
-    });
-  },
-
-  placeOrder(mode, pair, pip, lots, margin, order) {
-    console.log(order);
-    return axios.request({
-      method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/wallet/'+mode+'/order?email='+app.email()+'&account='+app.account()+'&currency='+pair.split(" ")[0].trim(),
-      headers: {
-        'Authorization': app.auth()
-      },
-      data: {
-        order: order
-        // {
-        //   "pip_value" : pip,
-        //   "volume_lots": lots,
-        //   "required_margin" : margin,
-        //   "stop_loss" : null, // {"configs" : null},
-        //   "take_profit" : null, // {"configs" : null},
-        //   "sell_when" : null, // {"configs" : null}
-        // }
       }
     });
   },

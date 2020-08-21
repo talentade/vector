@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import server from '../../services/server';
 import app from '../../services/app';
+import $ from 'jquery';
 import Balance from '../../components/balance/index';
 import Demo from '../../components/demo/index';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
-import con_buysell from '../../themes/images/con_buysell.png';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
 import Chart from '../../components/chart/index';
@@ -36,6 +36,7 @@ class Market extends Component {
       showLoader: true,
       showSpinner: false,
       favPopup: false,
+      confirmtext: "",
       favPopup_pair: "",
       buyandsellAct: 'buy',
       buyandsellModal: false,
@@ -119,6 +120,12 @@ class Market extends Component {
     this.realTimeListener = true;
     this.setState({ selectedAccount: app.accountDetail(), accounts: app.accounts() });
 
+    $(".balance").on("refresh", () => {
+      this.setState({profile: app.profile(), selectedAccount: app.accountDetail(), accounts: app.accounts()});
+      console.log(app.accountDetail().balance, "--trigger");
+      this.profile = app.profile();
+    });
+
     // try {
     //   await this.fetchStock();
     // } catch (e) {
@@ -186,8 +193,8 @@ class Market extends Component {
     this.setState({ buyandsellModal: true, buyandsellModalInfo: true, showLoader: false, buyandsellAct: s });
   }
 
-  confirmBsellModal = (e) => {
-    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false });
+  confirmBsellModal = (txt = "") => {
+    this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false, confirmtext: txt });
   }
 
   handleAccountChange = (e) => {
@@ -248,20 +255,18 @@ class Market extends Component {
               buy={window.buyAndSellData.buy}
               sell={window.buyAndSellData.sell}
               act={window.buyAndSellData.act}
+              type={window.buyAndSellData.type}
               cancelClick={this.cancelBsellModal}
               confirmClick={this.confirmBsellModal}
               information={this.state.buyandsellModalInfo}
             />
           ) : null}
 
-          {this.state.buyandsellConfirmed ? (
-            <BsConfirmationModal
-              imageUrl={con_buysell}
-              text={``}
-              cancelClick={this.cancelBsellModal}
-              confirmClick={()=>{}}
-            />
-          ) : null}
+          <BsConfirmationModal
+            text={this.state.confirmtext}
+            show={this.state.buyandsellConfirmed}
+            cancel={this.cancelBsellModal}
+          />
 
           <MarketSideBar
             pairs={stocksToDisplay}

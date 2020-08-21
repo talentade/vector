@@ -122,13 +122,13 @@ const MarketSideBar = ({
                       <img src={starIcon} alt='' />
                      </button>)
                 }
-                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.buy, sell: pair.sell, act: "buy"}; showBsellModal2(e)}} />
+                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.buy, sell: pair.sell, act: "buy", type: pair.type}; showBsellModal2(e)}} />
                 </span>
               </div>
               <div className='market-big-flex'>
                 <p className='pair-percentage'>{pair._change}</p>
                 <div className='market-cta-section'>
-                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell"}; showBsellModal(e)}}>
+                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type}; showBsellModal(e)}}>
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
@@ -142,7 +142,7 @@ const MarketSideBar = ({
                     <div className='market-spread-data'>
                       <img src={CompassIcon} alt='' />
                     </div>
-                    <p>{pair.spread || "_"}</p>
+                    <p>{app.floatFormat(pair.high - pair.low)}</p>
                   </div>
                   <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy"}; showBsellModal(e)}}>
                     <div className='market-buy-data'>

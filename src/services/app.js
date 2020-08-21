@@ -95,6 +95,25 @@ const app = {
   floatFormat: (x, dp = 5, txt = false) => {
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
+  },
+  guessTimate: (x, raw = false) => {
+    let str = String(x).substr(0, 7);
+    if(!raw) {
+      return Number(str);
+    }
+    var y = Math.random();
+        y = y < 0.5 ? Math.floor(y) : Math.ceil(y);
+    let bfd = parseInt(str);
+    let afd = str.split(".")[1];
+    if(afd && afd.length > 1) {
+      let scp = Math.floor((Math.random() * 5));
+      let af_ = String(Number(afd)+(y ? scp : -scp));
+      let rpt = afd.length-af_.length;
+      let _fd = Number(String(bfd)+"."+(rpt > 0 ? "0".repeat(rpt) : "")+af_);
+      return _fd;
+    } else {
+      return Number(str);
+    }
   }
 };
 

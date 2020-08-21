@@ -7,7 +7,6 @@ import moment from 'moment';
 import moment_tz from 'moment-timezone';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
-import con_buysell from '../../themes/images/con_buysell.png';
 import candleGrf from './graph/candle.png';
 import lineGrf from './graph/line.png';
 import areaGrf from './graph/area.svg';
@@ -62,6 +61,7 @@ class Chart extends Component {
       spread: 0,
       high: 0,
       low: 0,
+      confirmtext: "",
       historyLevel: "1D",
       buyandsellModal: false,
       buyandsellAct: 'buy',
@@ -107,7 +107,6 @@ class Chart extends Component {
         try {
 
           const convertDateToAnotherTimeZone = (date, timezone) => {
-            console.log(timezone)
             const dateString = date.toLocaleString('en-US', {
               timeZone: timezone
             });
@@ -118,127 +117,158 @@ class Chart extends Component {
             const timezone1Date = convertDateToAnotherTimeZone(date, timezone1);
             const timezone2Date = convertDateToAnotherTimeZone(date, timezone2);
             return timezone1Date.getHours() - timezone2Date.getHours();
-            // return timezone1Date.getTime() - timezone2Date.getTime();
           }
 
           let graphOffset = 0;
-          if(this.historySeriesPair != this.treatPair(this.pair)) {
-            this.lastFetch = moment().unix();
-            let history = await server.historicalData(this.treatPair(this.pair), "1m", {
-              from: moment().subtract(2, "hour").unix(),
-              to: this.lastFetch
-            });
+          let pairMaster  = this.treatPair(this.pair);
 
-            this.historySeries = [];
-            let data = history.data.result;
+          // if(this.historySeriesPair != this.treatPair(this.pair) || true) {
+          //   this.lastFetch = moment().unix();
+          //   let history = await server.historicalData(pairMaster, "1m", {
+          //     from: moment().subtract(2, "hour").unix(),
+          //     to: this.lastFetch
+          //   });
+
+          //   this.historySeries = [];
+          //   let data = history.data.result;
   
-            const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, data.meta.exchangeTimezoneName);
-            graphOffset = (offset+1)*3600;
+          //   const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, data.meta.exchangeTimezoneName);
+          //   graphOffset = (offset+1)*3600;
 
-            for (let x = 0; x < data.timestamp.length; x++) {
-              let plot = this.graphData2({
-                Date:   data.timestamp[x]+graphOffset,
-                Open:   data.indicators.quote[0].open[x],
-                High:   data.indicators.quote[0].high[x],
-                Low:    data.indicators.quote[0].low[x],
-                Close:  data.indicators.quote[0].close[x],
-                Volume: data.indicators.quote[0].volume[x]
-              }, this.pair);
-              this.historySeries.push(plot);
-              this.historySeriesPair = this.treatPair(this.pair);
-              this.plotGraph(plot);
+          //   for (let x = 0; x < data.timestamp.length; x++) {
+          //     let plot = this.graphData2({
+          //       Date:   data.timestamp[x]+graphOffset,
+          //       Open:   data.indicators.quote[0].open[x],
+          //       High:   data.indicators.quote[0].high[x],
+          //       Low:    data.indicators.quote[0].low[x],
+          //       Close:  data.indicators.quote[0].close[x],
+          //       Volume: data.indicators.quote[0].volume[x]
+          //     }, pairMaster);
+          //     this.historySeries.push(plot);
+          //     this.historySeriesPair = pairMaster;
+          //     this.plotGraph(plot);
+          //   }
+          //   // console.log(this.historySeries.length, "Initial series length");
+          // } else {
 
-              console.log(
-                data.timestamp[x],
-                data.timestamp[x]+(offset*3600),
-              )
-            }
+          //   let hdata = this.historySeries;
+          //   for (let x = 0; x < (hdata.length); x++) {
+          //     this.plotGraph(hdata[x]);
+          //   }
 
-            // console.log(this.historySeries.length, "Initial series length");
-          } else {
+          // }
 
-            let hdata = this.historySeries;
-            for (let x = 0; x < (hdata.length); x++) {
-              this.plotGraph(hdata[x]);
-            }
-
-          }
-
-          // meta.exchangeTimezoneName
-          // Intl.DateTimeFormat().resolvedOptions().timeZone
-
-          console.log("+++++++++++", this.chart.current.options(), "||||||||||");
-          console.log("-----------", moment().unix(), "||||||||||");
-
-          this.setState({showLoader: false});
-          this.chart.current.timeScale().setVisibleRange({
-              from: moment().subtract(1, "hour").unix()+graphOffset,
-              to: moment().unix()+graphOffset
-          });
-
-          let check_for_update = async (pair) => {
-            console.log("-- checking_for_update");
-            setTimeout(async () => {
-              if(this.historySeriesPair == pair) {
-                try {
-                  let _history = await server.historicalData(pair, "1m", {
-                    from: moment().subtract(2, "hour").unix(),
-                    to: moment().unix()
-                  });
-
-                  let prelength = this.historySeries.length;
-                  this.historySeriesPair = pair;
-                  this.historySeries = [];
-                  let _data      = _history.data.result;
-                  
-                  for (let x = 0; x < _data.timestamp.length; x++) {
-                    let plot = this.graphData2({
-                      Date:  _data.timestamp[x]+graphOffset,
-                      Open:  _data.indicators.quote[0].open[x],
-                      High:  _data.indicators.quote[0].high[x],
-                      Low:  _data.indicators.quote[0].low[x],
-                      Close:  _data.indicators.quote[0].close[x],
-                      Volume:  _data.indicators.quote[0].volume[x]
-                    }, this.pair);
-                    this.historySeries.push(plot);
-                  }
-
-                  this.loadSeries = true;
-                  this.seriesIterator = 0;
-                  this.chart.current.removeSeries(this.chartSeries);
-                  this.setGraphType(this.currentGrpahType, 0);
-                  this.plotGraph(this.historySeries);
-        
-                  if(prelength < this.historySeries.length) {
-                    this.chart.current.timeScale().scrollToPosition(1, true);
-                  }
-
-                  // this.chart.current.timeScale().setVisibleRange({
-                  //     from: moment().subtract(1, "hour").unix(),
-                  //     to: moment().unix()
-                  // });
-
-                  console.log("-- Updated HIST");
-                  check_for_update(pair);
-                } catch (e) {
-                  throw e;
-                  check_for_update(pair);
-                  console.log("-- Update ERR");
-                  return e;
-                }
-              }
-            }, 5 * 1000);
-          }
-
-          check_for_update(this.treatPair(this.pair));
-
+          // this.setState({showLoader: false});
           // this.chart.current.timeScale().setVisibleRange({
-          //     from: moment().subtract(upm[1], upm[0]).unix(),
-          //     to: moment().unix()
+          //     from: moment().subtract(1, "hour").unix()+graphOffset,
+          //     to: moment().unix()+graphOffset
           // });
+
+          this.historySeries = [];
+          this.historySeriesPair = pairMaster;
+
+          let check_for_update = async (pair, firstUpdate = false) => {
+            if(this.historySeriesPair == pair) {
+              setTimeout(async () => {
+                console.log("-- checking_for_update for", pair);
+                if(this.historySeriesPair == pair) {
+                  try {
+                    let _history = await server.historicalData(pair, "1m", {
+                      from: moment().subtract(2, "hour").unix(),
+                      to: moment().unix()
+                    });
+                    
+                    this.setState({showLoader: false});
+                    let _data      = _history.data.result;
+
+                    const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, _data.meta.exchangeTimezoneName);
+                    graphOffset = (offset+1)*3600;
+
+                    let _plotHistory = () => {
+                      if(this.historySeriesPair == pair) {
+                        let prelength = this.historySeries.length;
+                        this.historySeriesPair = pair;
+                        this.historySeries = [];
+                        
+                        try {
+                          for (let x = 0; x < _data.timestamp.length; x++) {
+                            let lastOpen = x == (_data.timestamp.length - 1);
+                            let _plt;
+                            if(lastOpen) {
+                              let gst = app.guessTimate(_data.indicators.quote[0].open[x], lastOpen);
+                              // console.log(gst, _data.indicators.quote[0].open[x], _data.indicators.quote[0].open[x-1], "<<<<");
+                              _plt = {
+                                Date:  _data.timestamp[x]+graphOffset, Open: gst, High: gst, Low: gst, Close: gst, Volume: _data.indicators.quote[0].volume[x]
+                              };
+                            } else {
+                              _plt = {
+                                Date:  _data.timestamp[x]+graphOffset,
+                                Open:  app.guessTimate(_data.indicators.quote[0].open[x], lastOpen),
+                                High:  _data.indicators.quote[0].high[x],
+                                Low:  _data.indicators.quote[0].low[x],
+                                Close:  _data.indicators.quote[0].close[x],
+                                Volume:  _data.indicators.quote[0].volume[x]
+                              }
+                            }
+                            let plot = this.graphData2(_plt, pair);
+                            this.historySeries.push(plot);
+                          }
+                        } catch (error) {
+                          // alert();
+                          return null;
+                          // return (setTimeout(async () => {
+                          //   return check_for_update(pair);
+                          // }, 3000));
+                        }
+
+                        if(this.historySeries.length) {
+                          this.loadSeries = true;
+                          this.seriesIterator = 0;
+                          this.chart.current.removeSeries(this.chartSeries);
+                          this.setGraphType(this.currentGrpahType, 0);
+                          this.plotGraph(this.historySeries);
+
+                          if(firstUpdate) {
+                            this.chart.current.timeScale().setVisibleRange({
+                              from: _data.timestamp[parseInt(_data.timestamp.length/2)]+graphOffset,
+                              to: _data.timestamp[_data.timestamp.length - 1]+graphOffset
+                            });
+                          } else {
+                            if(prelength < this.historySeries.length) {
+                              this.chart.current.timeScale().scrollToPosition(1, true);
+                            }
+                          }
+                        }
+                      }
+                    }
+                    if(this.historySeriesPair == pair) {
+                      _plotHistory();
+                      if(this.historySeries.length) {
+                        setTimeout(() => {
+                          if(this.historySeriesPair == pair) {
+                            _plotHistory();
+                          }
+                        }, 2.65 * 1000);
+                      check_for_update(pair);
+                    } else {
+                      console.log("No data for", pair, "oo");
+                    }
+                  }
+                  } catch (e) {
+                    throw e;
+                    check_for_update(pair);
+                    console.log("-- Update ERR");
+                    return e;
+                  }
+                }
+              }, firstUpdate ? 0 : 5 * 1000);
+            }
+          }
+
+          check_for_update(pairMaster, true);
+
           // this.chart.current.timeScale().scrollToPosition(2, true);
           // this.chart.current.timeScale().fitContent();
-          // console.log(upm);
         } catch(e) {
           this.setState({showLoader: false});
           return e;
@@ -298,25 +328,7 @@ class Chart extends Component {
         localization: {
           locale: 'en-US',
           priceFormatter: (price) => {
-            let flot = price - parseInt(price);
-            let len = String(flot).length - 2;
-            if(flot > 0) {
-              if(len >= 4) {
-                if(parseFloat(flot.toFixed(4)) > parseFloat(flot.toFixed(3))) {
-                  return price.toFixed(4);
-                } else if(parseFloat(flot.toFixed(3)) > parseFloat(flot.toFixed(2))) {
-                  return price.toFixed(3);
-                } else if(parseFloat(flot.toFixed(2)) > parseFloat(flot.toFixed(1))) {
-                  return price.toFixed(2);
-                } else {
-                  return price.toFixed(1);
-                }
-              } else {
-                return price.toFixed(len < 0 ? 0 : Number(len));
-              }
-            } else {
-              return price;
-            }
+            return Number(String(price).substr(0, 7));
           }
         },
     });
@@ -580,7 +592,7 @@ class Chart extends Component {
   plotGraph = (data) => {
     if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
-      let not_raw = Object.keys(plot_data).length < 15;
+      let not_raw   = Object.keys(plot_data).indexOf("time") > -1;
       if(not_raw) {
         this.dataPlotSeries.push(plot_data);
         if(this.currentGrpahType == "candle") {
@@ -650,8 +662,8 @@ class Chart extends Component {
     this.setState({ buyandsellModal: true, showLoader: false, buyandsellAct: s});
   }
 
-  confirmBsellModal = (e) => {
-    this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false });
+  confirmBsellModal = (txt = "") => {
+    this.setState({ buyandsellModal: false, buyandsellConfirmed: true, showLoader: false, confirmtext: txt });
   }
 
   render() {
@@ -661,6 +673,7 @@ class Chart extends Component {
       sell:   this.currentPairData ? this.currentPairData.bid    : this.state.sell,
       high:   this.currentPairData ? this.currentPairData.high   : this.state.high,
       low:    this.currentPairData ? this.currentPairData.low    : this.state.low,
+      type:   this.currentPairData ? this.currentPairData.type   : this.state.selectedOption,
       ask_up: this.currentPairData ? this.currentPairData.ask_up : 1,
       bid_up: this.currentPairData ? this.currentPairData.bid_up : 1,
       spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
@@ -674,20 +687,17 @@ class Chart extends Component {
               pair={this.state.selectedPair}
               buy={_currentPairData.buy}
               sell={_currentPairData.sell}
+              type={_currentPairData.type}
               act={this.state.buyandsellAct}
               cancelClick={this.cancelBsellModal}
               confirmClick={this.confirmBsellModal}
             />
           ) : null}
-
-          {this.state.buyandsellConfirmed ? (
-            <BsConfirmationModal
-              imageUrl={con_buysell}
-              text={``}
-              cancelClick={this.cancelBsellModal}
-              confirmClick={()=>{}}
-            />
-          ) : null}
+          <BsConfirmationModal
+            text={this.state.confirmtext}
+            show={this.state.buyandsellConfirmed}
+            cancel={this.cancelBsellModal}
+          />
 
         <div className='chart-section'>
           <div className='chart-section-top'>

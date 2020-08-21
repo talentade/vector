@@ -25,6 +25,7 @@ class BuyandsellModal extends Component {
 
     this.state = {
       information : info,
+      mode: "buy",
       pair: '',
       base1: '',
       base2: '',
@@ -34,6 +35,7 @@ class BuyandsellModal extends Component {
       required_margin_str: "",
       conversion_1: 0,
       conversion_2: 0,
+      delimeter: "",
 
 
 
@@ -44,7 +46,6 @@ class BuyandsellModal extends Component {
       changedLot: 0.01,
       changed_lot: 0.01,
       showLoader: false,
-      mode: "buy",
       live: 0,
       estimated_price1: 0,
       estimated_price2: 0,
@@ -65,30 +66,32 @@ class BuyandsellModal extends Component {
   }
 
   componentDidUpdate () {
-    if(this.state.mode == "buy") {
-      if(this.prev_buy != this.props.buy) {
-        console.log("---- trigger pip update", this.prev_buy, this.props.buy, );
-        this.prev_buy = this.props.buy;
-        this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
-          user:      app.id(),
-          account:   app.account(),
-          base1:     this.state.base1,
-          base2:     this.state.base2
-        }}));
-      }
-    }
-    if(this.state.mode == "sell") {
-      if(this.prev_sell != this.props.sell) {
-        console.log("---- trigger pip update", this.prev_sell, this.props.sell);
-        this.prev_sell = this.props.sell;
-        this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
-          user:      app.id(),
-          account:   app.account(),
-          base1:     this.state.base1,
-          base2:     this.state.base2
-        }}));
-      }
-    }
+    // if(this.state.mode == "buy") {
+    //   if(this.prev_buy != this.props.buy) {
+    //     console.log("---- trigger pip update", this.prev_buy, this.props.buy, );
+    //     this.prev_buy = this.props.buy;
+    //     this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+    //       user:      app.id(),
+    //       account:   app.account(),
+    //       base1:     this.state.base1,
+    //       base2:     this.state.base2,
+    //       delimeter: this.state.delimeter
+    //     }}));
+    //   }
+    // }
+    // if(this.state.mode == "sell") {
+    //   if(this.prev_sell != this.props.sell) {
+    //     console.log("---- trigger pip update", this.prev_sell, this.props.sell);
+    //     this.prev_sell = this.props.sell;
+    //     this.socket.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+    //       user:      app.id(),
+    //       account:   app.account(),
+    //       base1:     this.state.base1,
+    //       base2:     this.state.base2,
+    //       delimeter: this.state.delimeter
+    //     }}));
+    //   }
+    // }
   }
 
   async componentDidMount() {
@@ -126,20 +129,26 @@ class BuyandsellModal extends Component {
   }
 
   initLoader = async () => {
-    let base = this.props.pair, base1, base2;
-
+    let base = this.props.pair.trim(), base1, base2;
+    let delimeter = "";
     if(base.indexOf("/") > -1) {
       base  = base.split("/");
       base1 = base[0];
-      base2 = base[1];
-    }
-    if(base.indexOf("-") > -1) {
-      base  = base.split("-")[0];
+      base2 = base[1] || "USD";
+      delimeter = "/";
+    } else if(base.indexOf("-") > -1) {
+      base  = base.split("-");
       base1 = base[0];
-      base2 = base[1];
+      base2 = base[1] || "USD";
+      delimeter = "-";
+    } else {
+      base  = base;
+      base1 = base;
+      base2 = "USD";
+      delimeter = "";
     }
     this.setState({
-      pair:  base,
+      pair:  this.props.pair,
       base1: base1.trim(),
       base2: base2.trim()
     });
@@ -154,7 +163,8 @@ class BuyandsellModal extends Component {
       user:      app.id(),
       account:   app.account(),
       base1:     base1.trim(),
-      base2:     base2.trim()
+      base2:     base2.trim(),
+      delimeter: delimeter
     }}));
   }
 
@@ -242,7 +252,6 @@ class BuyandsellModal extends Component {
   }
 
   tradeAnalysis = async () => {
-
     // this.socket.send(JSON.stringify({"event": "GET_ANALYSIS", "payload": {
     //   lots:      lots,
     //   user:      app.id(),
@@ -251,64 +260,37 @@ class BuyandsellModal extends Component {
     //   base1:     this.state.base,
     //   base2:     this.state.base2
     // }}));
-    // try {
-    //   this.setState({analysis: false});
-    //   let analysis = await server.tradeAnalysis(this.props.pair, this.state.mode, this.state.lot_val);
-    //   analysis = analysis.data.data;
-    //   this.setState({pip_val: analysis.pip_value, live: analysis.rate, margin: analysis.required_margin, pip_str: analysis.pip_value_str, lots: analysis.lot_size, lot_str: analysis.lot_size_str, required_margin_str: analysis.required_margin_str, changed_lot: analysis.lots});
-    //   this.setState({analysis: true});
-    //   this.estimate();
-    //   this.retryCounter = 0;
-    //   // console.log(analysis);
-    // } catch (error) {
-    //   if(this.retryCounter < app.retryLimit) {
-    //     this.retryCounter += 1;
-    //       setTimeout(() => {
-    //         this.tradeAnalysis();
-    //       }, 2000);
-    //   }
-    //   return error;
-    // }
   }
 
-  // changeLot = async (e) => {
-    // this.setState({lot_val: e.target.value, changedLot: e.target.value, counter: 0});
-    // this.tradeAnalysis();
-  // }
-
   placeOrder = async () => {
-    let order = {"pip_value": this.state.pip_val, "volume_lots": this.state.lot_val, "required_margin": this.state.margin};
-
-    if(document.getElementById("stop_loss").checked) {
-      order["stop_loss"] = this.state.stop_loss;
-    }
-    if(document.getElementById("take_profit").checked) {
-      order["take_profit"] = this.state.stop_loss;
-    }
-    if(document.getElementById("only_buy_when").checked) {
-      order["only_buy_sell_when"] = document.getElementById("only_buy_when_actual").value;
-    }
-
-    this.setState({showSpinner: true});
-
-    try {
-      const place_order = await server.placeOrder(this.state.mode, this.props.pair, this.state.pip_val, this.state.lots, this.state.margin, order);
-      console.log(place_order.status);
-      if(place_order.status == 200) {
-        const { data: { data: { profile } } } = await server.getProfile();
-        app.profile(profile);
-        $(".balance").trigger("refresh");
-        // window.location.href = "";
-        // this.props.confirmClick();
-      } else {
-        console.log(place_order);
+    let order = {
+        "mode"            : this.state.mode,
+        "type"            : this.props.type,
+        "instrument"      : this.state.pair,
+        "rate"            : this.state.mode == "buy" ? app.floatFormat(this.props.buy) : app.floatFormat(this.props.sell),
+        "pip"             : this.state.pip_str,
+        "lots"            : this.state.lot_str,
+        "margin"          : this.state.required_margin_str,
+        "stop_loss"       : document.getElementById("stop_loss").checked ? this.state.stop_loss : null,
+        "take_profit"     : document.getElementById("take_profit").checked ? this.state.take_profit : null,
+        "trade_when"      : document.getElementById("only_buy_when").checked ? document.getElementById("only_buy_when_actual").value : null,
+        "time"            : new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
       }
-      this.setState({showSpinner: false});
-    } catch (e) {
-      if(e.toString().match(/(401)/g)) {
+
+    this.setState({showSpinner: true, analysis: false});
+    try {
+      const place_order = await server.placeOrder(order);
+      if(place_order.status == 200) {
+        const gp = await server.getProfile();
+        app.profile(gp.data.profile);
+        $(".balance").trigger("refresh");
+        this.props.confirmClick("Your have successfully placed a "+this.state.mode+" order for "+this.props.pair);
+      } else {
         this.setState({showInssufficient: true});
       }
-      this.setState({showSpinner: false});
+      this.setState({showSpinner: false, analysis: true});
+    } catch (e) {
+      this.setState({showSpinner: false, analysis: true});
       return e;
     }
   }
