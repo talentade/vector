@@ -139,7 +139,16 @@ export default {
   //     }
   //   })
   // },
-
+  // loadCore(user_id, link) {
+  //   let Authorization = user_id;
+  //   return axios.request({
+  //     method: 'GET',
+  //     url: link,
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     }
+  //   });
+  // },
 
 
 
@@ -306,6 +315,26 @@ export default {
     })
   },
 
+  fetchNews() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('news'),
+      headers: {
+        'Authorization': app.auth(),
+      },
+    })
+  },
+
+  loadLink(link) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL(link),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
 
 
 
@@ -418,17 +447,6 @@ export default {
     return axios.request({
       method: 'GET',
       url: 'http://avariz-core.herokuapp.com/utils/messages/'+app.email()+'/'+app.account()+'/pull',
-      headers: {
-        'Authorization': app.auth()
-      }
-    });
-  },
-
-  loadCore(user_id, link) {
-    let Authorization = user_id;
-    return axios.request({
-      method: 'GET',
-      url: link,
       headers: {
         'Authorization': app.auth()
       }

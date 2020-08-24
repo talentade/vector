@@ -6,6 +6,13 @@
     display: flex;
     height: calc(100% - 260px);
 
+    .loader-container {
+    	position: absolute;
+	    top: 30%;
+	    z-index: 100000000;
+	    left: 50%;
+    }
+
 	a.publish-btn {
 		position: fixed;
 		width: 150px;

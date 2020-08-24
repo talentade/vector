@@ -36,20 +36,19 @@ class News extends Component {
 
   async componentDidMount () {
 
-    // this.fetchStock();
+    this.fetchNews();
 
   }
 
 
-  fetchStock = async () => {
+  fetchNews = async () => {
     this.setState({ showLoader: true });
-    const userId = localStorage.getItem('id');
     try {
       let {
         data: {
           data: { news },
         },
-      } = await server.getMarketAndNewsData(userId);
+      } = await server.fetchNews();
       this.setState({ showLoader: false });
       if(news) {
         news = this.processNews(news);
@@ -133,10 +132,9 @@ class News extends Component {
 
   readMore = async (link) => {
     this.setState({ showLoader: true });
-    const userId = localStorage.getItem('id');
     try {
-      let fulltext = await server.loadCore(userId, link);
-      if(fulltext.status == 200) {
+      let fulltext = await server.loadLink(link);
+      if(fulltext.status == 200 && fulltext.data.length) {
         let news = this.state.activeNews;
         news["readMore"] = fulltext.data.replace(/(href="http)/g, 'style="color: #1FCF65 !important;" target="_blank" href="http');
         this.setState({ activeNews : news });
@@ -153,8 +151,12 @@ class News extends Component {
   render() {
     return (
       <Container>
-      <Spinner showSpinner={this.state.showLoader} />
+      {/*<Spinner showSpinner={this.state.showLoader} />*/}
       <div className="col-12" id="news-container">
+          <div className='loader-container' style={{ display: this.state.showLoader ? 'block' : 'none' }}>
+            <div className='loader'></div>
+          </div>
+
           {(this.state.activeNews) ? (
           <div className="news-section-left">
             <TableFilters

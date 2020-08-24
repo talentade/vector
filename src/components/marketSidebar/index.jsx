@@ -16,38 +16,6 @@ import CompassIcon from '../../themes/images/compass.svg';
 import SearchIcon from '../../themes/images/micro.svg';
 import { filterInstrument } from '../../redux/actions/index';
 
-window.pairExBuy = [];
-window.pairExSell = [];
-
-const findDiv = (pair) => {
-  // let md = "market-pair-"+pair.stock.replace(/[^\w]/g, "_");
-  // setTimeout(() => {
-  //   let id = "fav-pair-"+pair.stock.replace(/[^\w]/g, "_");
-  //   let elem = document.getElementById(id);
-  //   let price;
-  //   let price2;
-  //   if($("#"+id).length) {
-  //     price = parseFloat($("#"+id).find(".p-price").text());
-  //     $("#"+id).find(".p-price").text(pair.buy);
-  //     $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-  //     $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
-  //   }
-
-  //   price = window.pairExBuy[md] || 0;
-  //   $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-  //   $("#"+id+", #"+md).find(".direction."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
-
-  //   price2 = window.pairExSell[md] || 0;
-  //   $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'up' : 'down')).addClass("hide");
-  //   $("#"+id+", #"+md).find(".directionSell."+(price > pair.buy ? 'down' : 'up')).removeClass("hide");
-
-  //   // console.log(pair.stock+" show "+(price > pair.buy ? 'DOWN' : 'UP'));
-
-  //   window.pairExBuy[md] = pair.buy;
-  //   window.pairExSell[md] = pair.sell;
-  // }, 10);
-}
-
 const MarketSideBar = ({
   sideNav,
   hideText,
@@ -156,7 +124,6 @@ const MarketSideBar = ({
                   </div>
                 </div>
               </div>
-            {/*findDiv(pair)*/}
             </div>
           ))}
         </div>
