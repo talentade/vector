@@ -59,8 +59,7 @@ class OutterTopNav extends Component {
                 <img src={liveChat} alt='' onMouseEnter={() => this.setState({mbox: true})} onClick={() => this.setState({mbox: true})}/>
                 <MessageBox
                   name={`${firstName} ${lastName}`}
-                  email={email}
-                  balance={`$${balance}`}
+                  show={this.state.mbox}
                 />
               </li>
               <li style={{marginLeft: "2em"}}><img src={Tnav2} alt='' /></li>
@@ -76,8 +75,7 @@ class OutterTopNav extends Component {
               <img src={liveChat} alt='' onMouseEnter={() => this.setState({mbox: true})} onClick={() => this.setState({mbox: true})}/>
               <MessageBox
                 name={`${firstName} ${lastName}`}
-                email={email}
-                balance={`$${balance}`}
+                show={this.state.mbox}
               />
             </li>
             <li><img src={Tnav2} alt='' /></li>

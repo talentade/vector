@@ -52,7 +52,6 @@ class Market extends Component {
         code: 200
       }
     });
-    this.socket = window.WebSocketPlug = new WebSocket(app.hostURL("socket", 1));
   }
 
   fetchStock = async () => {
@@ -75,46 +74,49 @@ class Market extends Component {
   }
 
   async componentDidMount() {
-    this.socket.addEventListener('message', ({data}) => {
-      try {
-        let message = JSON.parse(`${data}`);
-        let payload = message.payload;
-        // console.log(payload);
-        switch(message.event) {
-          case "PAIR_DATA":
-            this.fetchFavs();
-            this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
-          break;
-          case "GET_FAVOURITES":
-          if(payload.user == app.id() && payload.account == app.account()) {
-            let favs = [], _unfav = false;
-            // console.log("--fetched [favs]");
-            payload.favourites.forEach((fav) => {
-              if(fav) {
-                let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
-                favs[favs.length] = fv[0];
-                if(this.state._favouritePairs.length) {
-                  let _fv = [];
-                  Object.values(this.state._favouritePairs).forEach((_pair) => {
-                    if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
-                      _unfav = true;
-                    }
-                  });
+    $(window).on("renewSocket", () => {
+      this.socket = window.WebSocketPlug;
+      this.socket.addEventListener('message', ({data}) => {
+        try {
+          let message = JSON.parse(`${data}`);
+          let payload = message.payload;
+          // console.log(payload);
+          switch(message.event) {
+            case "PAIR_DATA":
+              this.fetchFavs();
+              this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
+            break;
+            case "GET_FAVOURITES":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              let favs = [], _unfav = false;
+              // console.log("--fetched [favs]");
+              payload.favourites.forEach((fav) => {
+                if(fav) {
+                  let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
+                  favs[favs.length] = fv[0];
+                  if(this.state._favouritePairs.length) {
+                    let _fv = [];
+                    Object.values(this.state._favouritePairs).forEach((_pair) => {
+                      if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
+                        _unfav = true;
+                      }
+                    });
+                  }
                 }
-              }
-            });
-            setTimeout(() => {
-              if(_unfav) {
-                this.setState({_favouritePairs: []});
-              }
-              this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
-            }, 10);
+              });
+              setTimeout(() => {
+                if(_unfav) {
+                  this.setState({_favouritePairs: []});
+                }
+                this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
+              }, 10);
+            }
+            break;
           }
-          break;
+        } catch (e) {
+          throw e;
         }
-      } catch (e) {
-        throw e;
-      }
+      });
     });
 
     this.realTimeListener = true;
@@ -122,7 +124,7 @@ class Market extends Component {
 
     $(".balance").on("refresh", () => {
       this.setState({profile: app.profile(), selectedAccount: app.accountDetail(), accounts: app.accounts()});
-      console.log(app.accountDetail().balance, "--trigger");
+      // console.log(app.accountDetail().balance, "--trigger");
       this.profile = app.profile();
     });
 

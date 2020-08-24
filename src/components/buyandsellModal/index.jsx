@@ -62,7 +62,6 @@ class BuyandsellModal extends Component {
 
     this.retryCounter = 0;
     this.realTimeListener = true;
-    this.socket = window.WebSocketPlug;
   }
 
   componentDidUpdate () {
@@ -95,35 +94,38 @@ class BuyandsellModal extends Component {
   }
 
   async componentDidMount() {
-    this.socket.addEventListener('message', ({data}) => {
-      try {
-        let message = JSON.parse(`${data}`);
-        let payload = message.payload;
-        switch(message.event) {
-          case "GET_CONVERSION":
-          if(payload.user == app.id() && payload.account == app.account()) {
-            this.setState({
-              analysis:     true,
-              conversion_1: payload.conversion_1,
-              conversion_2: payload.conversion_2
-            });
-            console.log(payload.conversion_1, payload.conversion_2);
-            this.pip_margin();
+    $(window).on("renewSocket", () => {
+      this.socket = window.WebSocketPlug;
+      this.socket.addEventListener('message', ({data}) => {
+        try {
+          let message = JSON.parse(`${data}`);
+          let payload = message.payload;
+          switch(message.event) {
+            case "GET_CONVERSION":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              this.setState({
+                analysis:     true,
+                conversion_1: payload.conversion_1,
+                conversion_2: payload.conversion_2
+              });
+              console.log(payload.conversion_1, payload.conversion_2);
+              this.pip_margin();
+            }
+            break;
+            case "ANALYSIS":
+            if(payload.user == app.id() && payload.account == app.account() && payload.lots == this.state.volume) {
+              this.setState({
+                analysis: true,
+                pip_str: payload.pip.toFixed(2),
+                required_margin_str: payload.margin.toFixed(2)
+              });
+            }
+            break;
           }
-          break;
-          case "ANALYSIS":
-          if(payload.user == app.id() && payload.account == app.account() && payload.lots == this.state.volume) {
-            this.setState({
-              analysis: true,
-              pip_str: payload.pip.toFixed(2),
-              required_margin_str: payload.margin.toFixed(2)
-            });
-          }
-          break;
+        } catch (e) {
+          throw e;
         }
-      } catch (e) {
-        throw e;
-      }
+      });
     });
     this.initLoader();
   }

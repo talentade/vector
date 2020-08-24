@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Redirect  } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import OutterTopNav from '../../components/outterTopNav/index';
 import './index.scss';
 import OutterLeftNav from '../../components/outterLeft/index';
@@ -8,6 +8,25 @@ import { toggleSideNav, toggleOutterNav, toggleTransactionNav } from '../../redu
 import { saveUserProfile } from '../../redux/actions/index';
 import server from '../../services/server';
 import app from '../../services/app';
+import $ from 'jquery';
+
+const socketListener = () => {
+  window.WebSocketPlug = new WebSocket(app.hostURL("socket", 1));
+  window.WebSocketPlug.addEventListener('open', () => {
+    // console.log('socket is connected');
+    $(window).trigger("renewSocket");
+  });
+  window.WebSocketPlug.onclose = (e) => {
+    setTimeout(() => {
+      // console.log('socket closed trying again');
+      socketListener();
+    }, 1000);
+  }
+}
+
+
+
+socketListener();
 
 class Container extends Component {
   constructor(props) {

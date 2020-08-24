@@ -55,7 +55,6 @@ class TradeDashboard extends Component {
     this.retryCounter = 0;
 
     this.profile = app.profile();
-    this.socket = window.WebSocketPlug = new WebSocket(app.hostURL("socket", 1));
   }
 
   componentWillUnmount() {
@@ -65,41 +64,44 @@ class TradeDashboard extends Component {
   componentDidUpdate () {}
 
   async componentDidMount() {
-    this.socket.addEventListener('message', ({data}) => {
-      try {
-        let message = JSON.parse(`${data}`);
-        let payload = message.payload;
-        switch(message.event) {
-          case "PAIR_DATA":
-            this.fetchFavs();
-            this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
-          break;
-          case "TRADE_HISTORY":
-            if(payload.user == app.id() && payload.account == app.account()) {
-              this.setState({ all_trades: payload.history });
-              this.populateTrades(payload.history);
-            }
-          break;
-          case "GET_FAVOURITES":
-          if(payload.user == app.id() && payload.account == app.account()) {
-            let favs = [];
-            payload.favourites.forEach((fav) => {
-              if(fav) {
-                let fv = this.state.hotStocks.filter((pair) =>
-                          pair.pair.toLowerCase().match(fav.toLowerCase()),
-                        );
-                favs[favs.length] = fv[0];
+    $(window).on("renewSocket", () => {
+      this.socket = window.WebSocketPlug;
+      this.socket.addEventListener('message', ({data}) => {
+        try {
+          let message = JSON.parse(`${data}`);
+          let payload = message.payload;
+          switch(message.event) {
+            case "PAIR_DATA":
+              this.fetchFavs();
+              this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
+            break;
+            case "TRADE_HISTORY":
+              if(payload.user == app.id() && payload.account == app.account()) {
+                this.setState({ all_trades: payload.history });
+                this.populateTrades(payload.history);
               }
-            });
-            setTimeout(() => {
-              this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
-            }, 10);
+            break;
+            case "GET_FAVOURITES":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              let favs = [];
+              payload.favourites.forEach((fav) => {
+                if(fav) {
+                  let fv = this.state.hotStocks.filter((pair) =>
+                            pair.pair.toLowerCase().match(fav.toLowerCase()),
+                          );
+                  favs[favs.length] = fv[0];
+                }
+              });
+              setTimeout(() => {
+                this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
+              }, 10);
+            }
+            break;
           }
-          break;
+        } catch (e) {
+          throw e;
         }
-      } catch (e) {
-        throw e;
-      }
+      });
     });
 
     this.setState({ showNav: true });
@@ -115,7 +117,7 @@ class TradeDashboard extends Component {
     });
 
     setInterval(() => {
-      if(this.realTimeListener) {
+      if(this.realTimeListener && this.socket) {
         this.socket.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
           user:    app.id(),
           account: app.account(),

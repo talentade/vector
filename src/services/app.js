@@ -95,6 +95,9 @@ const app = {
   cleanDate: (d) => {
     return d.trim().replace(/,/g, "");
   },
+  cleanTime: (d) => {
+    return d.trim().replace(/,/g, "").split(" ")[1];
+  },
   floatFormat: (x, dp = 5, txt = false) => {
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
