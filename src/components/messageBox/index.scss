@@ -237,8 +237,9 @@
   display: block !important;
   width: 98%;
   right: 1% !important;
-  height: calc(100vh - 50px);
   top: 48px;
+  bottom: 2px;
+  position: fixed;
 }
 
 .message-dropdown.mobile {
