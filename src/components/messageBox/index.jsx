@@ -72,7 +72,7 @@ class MessageBox extends Component {
 
   newMessage = async () => {
     let message = $("#messageInput").val().trim();
-    if(message.length) {
+    if(message.length && this.socket) {
       $("#messageInput").val("");
       this.socket.send(JSON.stringify({"event": "SEND_MESSAGE", "payload": {
         user:      app.id(),
