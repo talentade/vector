@@ -122,7 +122,7 @@ const MarketSideBar = ({
                       <img src={starIcon} alt='' />
                      </button>)
                 }
-                  <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.buy, sell: pair.sell, act: "buy", type: pair.type}; showBsellModal2(e)}} />
+                <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type}; showBsellModal2(e)}} />
                 </span>
               </div>
               <div className='market-big-flex'>

@@ -271,9 +271,9 @@ class BuyandsellModal extends Component {
         "pip"             : this.state.pip_str,
         "lots"            : this.state.lot_str,
         "margin"          : this.state.required_margin_str,
-        "stop_loss"       : document.getElementById("stop_loss").checked ? this.state.stop_loss : null,
-        "take_profit"     : document.getElementById("take_profit").checked ? this.state.take_profit : null,
-        "trade_when"      : document.getElementById("only_buy_when").checked ? document.getElementById("only_buy_when_actual").value : null,
+        "stop_loss"       : document.getElementById("stop_loss").checked ? this.state.stop_loss : "",
+        "take_profit"     : document.getElementById("take_profit").checked ? this.state.take_profit : "",
+        "trade_when"      : document.getElementById("only_buy_when").checked ? document.getElementById("only_buy_when_actual").value : "",
         "time"            : new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
       }
 

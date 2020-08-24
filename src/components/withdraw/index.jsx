@@ -17,7 +17,7 @@ const Withdraw = ({
   // let bdet = app.profile()["banking_details"];
   return (
     <div className='deposit'>
-      <h2>Withdraw Funds</h2>
+      <h2 style={{marginTop: "10px"}}>Withdraw Funds</h2>
 
       <div className='transaction-message'>
         <img src={WarnIcon} alt='' />

@@ -129,7 +129,17 @@ export default {
   //       // }
   //     }
   //   });
+  // },  
+  // getTransactionHistory(email, id, page_size, page_no, account) {
+  //   return axios.request({
+  //     method: 'GET',
+  //     url:  `https://avariz-core.herokuapp.com/wallet/history?email=${email}&account=${app.account()}&tracker_code=transactions&pageSize=${page_size}&thisPage=${page_no}`,
+  //     headers: {
+  //       'Authorization': app.auth(),
+  //     }
+  //   })
   // },
+
 
 
 
@@ -258,7 +268,7 @@ export default {
       headers: {
         'Authorization': app.auth(),
       },
-      data : { currency, amount }
+      data : { currency, amount, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
     })
   },
   
@@ -269,10 +279,9 @@ export default {
       headers: {
         'Authorization': app.auth(),
       },
-      data : { currency, currency, account: to, amount: amount }
+      data : { currency, currency, account: to, amount: amount, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
     })
   },
-
 
   placeOrder (data) {
     let mode = data.mode;
@@ -286,6 +295,17 @@ export default {
       data: data
     });
   },
+
+  getTransactionHistory(page_size, page_no) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('history?page='+page_no+'&max='+page_size),
+      headers: {
+        'Authorization': app.auth(),
+      },
+    })
+  },
+
 
 
 
@@ -372,15 +392,6 @@ export default {
       url:  `https://avariz-core.herokuapp.com/trading/ticker/fetch?pair=${pair}`,
       headers: {
         'Authorization': app.auth()
-      }
-    })
-  },
-  getTransactionHistory(email, id, page_size, page_no, account) {
-    return axios.request({
-      method: 'GET',
-      url:  `https://avariz-core.herokuapp.com/wallet/history?email=${email}&account=${app.account()}&tracker_code=transactions&pageSize=${page_size}&thisPage=${page_no}`,
-      headers: {
-        'Authorization': app.auth(),
       }
     })
   },

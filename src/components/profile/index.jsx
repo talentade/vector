@@ -36,10 +36,10 @@ class Profile extends Component {
       confirmPasswordError: null,
       error: null,
       success: false,
-      verified: true,
+      verified: false,
       imageUrl: '',
       image: '',
-      banking_details: app.profile()["banking_details"],
+      banking_details: [], // app.profile()["banking_details"],
       showSmallSPinner: false,
       showAddCardModal: false,
     };
@@ -53,32 +53,32 @@ class Profile extends Component {
   async componentDidMount() {
     if (!this.id) this.props.history.push('/Login');
 
-    const { data: { data: { profile } } } = await server.getProfile();
-    localStorage.setItem('profile', JSON.stringify(profile));
+    const gp = await server.getProfile();
+    app.profile(gp.data.profile);
 
-    this.setState({banking_details: app.profile()["banking_details"]});
+    this.setState({banking_details: []}); // app.profile()["banking_details"]
     this.profile         = app.profile();
     this.selectedAccount = app.accountDetail();
 
     this.props.saveUserProfile(this.profile);
 
-    const {
-      address_verified,
-      cards,
-      deposit_verified,
-      email_verified,
-      identity_verified,
-    } = this.props.userProfile;
+    // const {
+    //   address_verified,
+    //   cards,
+    //   deposit_verified,
+    //   email_verified,
+    //   identity_verified,
+    // } = this.props.userProfile;
 
-    if (
-      !address_verified ||
-       cards.length < 0 ||
-      !deposit_verified ||
-      !email_verified   ||
-      !identity_verified
-    ) {
-      this.setState({ verified: false });
-    }
+    // if (
+    //   !address_verified ||
+    //    cards.length < 0 ||
+    //   !deposit_verified ||
+    //   !email_verified   ||
+    //   !identity_verified
+    // ) {
+    //   this.setState({ verified: false });
+    // }
   }
 
   handleInputChange = (e) => {
@@ -96,19 +96,12 @@ class Profile extends Component {
 
     this.setState({ showSmallSPinner: true });
     try {
-      const user_id = app.id();
-      const email = this.profile.email;
+      // await server.uploadImage(app.id(), fd);
 
-      await server.uploadImage(user_id, fd);
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
+      this.props.saveUserProfile(gp.data.profile);
 
-      const { data: { data: { profile } } } = await server.getProfile(user_id, email);
-
-      localStorage.setItem(
-        'profile',
-        JSON.stringify(profile),
-      );
-
-      this.props.saveUserProfile(profile);
       this.setState({ showSmallSPinner: false });
     } catch (error) {
       this.setState({ showSmallSPinner: false });

@@ -19,7 +19,7 @@ const Deposit = ({
 }) => {
   return (
     <div className='deposit'>
-      <h2>Deposit Funds</h2>
+      <h2 style={{marginTop: "10px"}}>Deposit Funds</h2>
       {error ? <p className='error'>{error}</p> : null}
 
       <form className='transaction-action' onSubmit={handleSubmit}>

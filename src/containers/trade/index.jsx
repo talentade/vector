@@ -69,16 +69,20 @@ class TradeDashboard extends Component {
       try {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
-        // console.log(payload);
         switch(message.event) {
           case "PAIR_DATA":
             this.fetchFavs();
             this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
           break;
+          case "TRADE_HISTORY":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              this.setState({ all_trades: payload.history });
+              this.populateTrades(payload.history);
+            }
+          break;
           case "GET_FAVOURITES":
           if(payload.user == app.id() && payload.account == app.account()) {
             let favs = [];
-            // console.log("--fetched [favs]");
             payload.favourites.forEach((fav) => {
               if(fav) {
                 let fv = this.state.hotStocks.filter((pair) =>
@@ -110,6 +114,15 @@ class TradeDashboard extends Component {
       this.profile = app.profile();
     });
 
+    setInterval(() => {
+      if(this.realTimeListener) {
+        this.socket.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
+          user:    app.id(),
+          account: app.account(),
+        }}));
+      }
+    }, 1000);
+
     // try {
     //   await this.fetchFavs();
     // } catch (e) {
@@ -139,19 +152,28 @@ class TradeDashboard extends Component {
     // }, t);
   }
 
-  populateTrades = () => {
+  populateTrades = (trades = false) => {
+    let all_trades = trades ? trades : this.state.all_trades;
     let open_trades = [];
     let closed_trades = [];
     let pending_trades = [];
-    this.state.all_trades.forEach((trade, i) => {
-      if(trade.status == "open") {
+    // console.log(all_trades);
+
+    all_trades.forEach((trade, i) => {
+      let rate = this.state.hotStocks.filter((pair) =>
+                pair.pair.toLowerCase().match(trade.instrument.toLowerCase()),
+              );
+      let brate = app.floatFormat(rate ? rate[0].ask : 0);
+      let srate = app.floatFormat(rate ? rate[0].bid : 0);
+      trade.current_rate = trade.mode == "buy" ? brate : srate;
+      if(trade.order_status == 0) {
         open_trades.push(trade);
       }
-      if(trade.status == "closed") {
-        closed_trades.push(trade);
-      }
-      if(trade.status == "pending") {
+      if(trade.status == 1) {
         pending_trades.push(trade);
+      }
+      if(trade.order_status == 3) {
+        closed_trades.push(trade);
       }
     });
     this.setState({open_trades: open_trades, pending_trades: pending_trades, closed_trades: closed_trades});

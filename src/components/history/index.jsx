@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TradeNotFound from '../tradeNotFound/index';
 import Pagination from '../Pagination/index';
+import app from '../../services/app';
 import './index.scss';
 
 class TransactionHistory extends Component {
@@ -21,7 +22,7 @@ class TransactionHistory extends Component {
   var cu_id;
   return (
     <div className='transaction-history'>
-      <h2>Transaction History</h2>
+      <h2 style={{marginTop: "10px"}}>Transaction History</h2>
       {transactions.length > 0 ? (
         <div className='t-history-container'>
           <ul className='transaction-history-header'>
@@ -41,8 +42,8 @@ class TransactionHistory extends Component {
               onClick={(e) => this.handleClick(e, 'transaction-history-record-'+idx)}>
               <div className="tab-sn"><div>{idx + (page_size * (page_no - 1)) + 1}</div></div>
               <li className="small-trans">{idx + (page_size * (page_no - 1)) + 1}</li>
-              <li className={`${transaction.type} trans-type`}><span className="th">Transaction type</span><span className="td"><button className={"brn ttype"+(transaction.type.toLowerCase() != "deposit" ? " "+transaction.type.toLowerCase() : " ")}>{transaction.type}</button></span></li>
-              <li className="trans-date"><span className="th">Date</span><span className="td">{transaction.date}</span></li>
+              <li className="trans-type"><span className="th">Transaction type</span><span className="td"><button className={"brn ttype"+(transaction.type.toLowerCase() != "deposit" ? " "+transaction.type.toLowerCase() : " ")}>{transaction.type.toUpperCase()}</button></span></li>
+              <li className="trans-date"><span className="th">Date</span><span className="td">{app.cleanDate(transaction.create_time)}</span></li>
               <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
               <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>
               <li className="small-trans"><span className="th">Amount</span><span className="td">{transaction.amount}</span></li>

@@ -92,13 +92,17 @@ const app = {
   isAdmin: () => {
     return false;
   },
+  cleanDate: (d) => {
+    return d.trim().replace(/,/g, "");
+  },
   floatFormat: (x, dp = 5, txt = false) => {
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   },
   guessTimate: (x, raw = false) => {
     let str = String(x).substr(0, 7);
-    if(!raw) {
+    let chill = Math.floor((Math.random() * 100) + 1);
+    if(!raw || chill <= 30) {
       return Number(str);
     }
     var y = Math.random();

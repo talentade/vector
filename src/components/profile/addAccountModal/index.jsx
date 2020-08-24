@@ -5,6 +5,7 @@ import MasterCard from '../../../themes/images/mastercard.svg';
 import server from '../../../services/server';
 import Spinner from '../../../components/spinner/index';
 import './index.scss';
+import app from '../../../services/app';
 import { saveUserProfile, toggleAddCardModal } from '../../../redux/actions';
 
 class AccountModal extends Component {
@@ -19,7 +20,7 @@ class AccountModal extends Component {
       showSpinner: false,
     };
 
-    this.profile = JSON.parse(localStorage.getItem('profile'));
+    this.profile = app.profile();
   }
 
   handleChange = (e) => {
@@ -42,10 +43,8 @@ class AccountModal extends Component {
     this.setState({ showSpinner: true });
 
     try {
-      const user_id = localStorage.getItem('id');
-
       await server.addNewCard({
-        user_id,
+        user_id: app.id(),
         card_PAN: number,
         card_info: {
           valid_thru: exp.toString().split('-').reverse().join('-'),
@@ -53,21 +52,10 @@ class AccountModal extends Component {
         },
       });
 
-      const email = this.profile.email;
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
 
-      const {
-        data: {
-          data: { profile },
-        },
-      } = await server.getProfile(user_id, email);
-
-
-      localStorage.setItem(
-        'profile',
-        JSON.stringify(profile),
-      );
-
-      this.props.saveUserProfile(profile);
+      this.props.saveUserProfile(gp.data.profile);
       this.props.toggleAddCardModal();
       this.setState({ showSpinner: false });
     } catch (error) {

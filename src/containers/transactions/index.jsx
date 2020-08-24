@@ -42,8 +42,7 @@ class Transactions extends Component {
       selectedTab: 'deposit',
       to: '',
       minimizeSideBar: false,
-      transactions: [],
-      transactionsObject: {},
+      transactions: []
     };
 
     this.profile = app.profile();
@@ -108,56 +107,11 @@ class Transactions extends Component {
   fetchTransactions = async () => {
     try {
       this.setState({ showSpinner: true });
-      const account = app.accountDetail();
-      let _deposits = [];
-      const {
-        data: {
-          data: {
-            results: { deposits },
-          },
-        },
-      } = _deposits = await server.getTransactionHistory(app.email(), this.id, this.state.page_size, this.state.page_no, account);
-      let arr = [];
-
-      for (let key in deposits) {
-        arr.push(deposits[`${key}`]);
-      }
-
-      // console.log(_deposits);
-
-      arr = arr.flat();
-
-      const info = arr.map((el) => {
-        const base = el.external_ref.split('|');
-        return {
-          type:
-            base[0].split('-')[0].toLowerCase() === 'tx'
-              ? 'transfer'
-              : base[0].split('-')[0].toLowerCase() === 'fa'
-              ? 'deposit'
-              : 'withdraw',
-          date: el.time.split('G')[0],
-          from: this.profile.email,
-          to: el.tx_type === 'Credit' ? el.internal_ref.payee : el.internal_ref.payer,
-          amount: el.detail.amount_equiv_USD,
-          reference: base[4].split(':')[1],
-        };
-      });
-
-      let max_rows = _deposits.data.data.max_rows;
-
-      let tr_h = _deposits.data.data.results;
-      let trans = [];
-      for (let tr = 0; tr < tr_h.length; tr++) {
-        trans[tr] = tr_h[tr];
-        trans[tr].date = trans[tr].date.split("-").join("/");
-      }
-
+      const transactions = await server.getTransactionHistory(this.state.page_size, this.state.page_no);
       this.setState({
-        transactions: trans,
-        max_rows: max_rows,
-        showSpinner: false,
-        transactionsObject: deposits,
+        transactions: transactions.data.result,
+        max_rows: transactions.data.max_rows,
+        showSpinner: false
       });
     } catch (error) {
       this.setState({ showSpinner: false });
@@ -166,8 +120,6 @@ class Transactions extends Component {
   };
 
   handleInputChange = (e) => {
-    // console.log(e.target.name, e.target.value);
-
     const {
       target: { name, value },
     } = e;
@@ -294,11 +246,9 @@ class Transactions extends Component {
       } else {
         this.setState({ showSpinner: true });
         if (selectedTab.toLowerCase().match('deposit')) {
-          // console.log(parseFloat(deposit), selectedCurrency, account);
           await server.fundAccount(parseFloat(deposit), selectedCurrency, account);
           this.setState({ deposit: parseFloat(0.0).toFixed(2) });
         } else if (selectedTab.toLowerCase().match('transfer')) {
-          // console.log(account, to, parseFloat(deposit), selectedCurrency);
           await server.transferFunds(account, to, parseFloat(deposit), selectedCurrency);
         }
 
@@ -306,7 +256,7 @@ class Transactions extends Component {
         let getProfile  = await server.getProfile();
         let profile     = getProfile.data.profile;
         app.profile(profile);
-
+        await this.fetchTransactions();
 
         if (selectedTab.toLowerCase().match('deposit')) {
           this.setState({ showDepositModal: true });
@@ -317,7 +267,6 @@ class Transactions extends Component {
           this.setAccount2({target: { value : to}});
         }
         this.setState({ showSpinner: false });
-        // await this.fetchTransactions();
       }
     } catch (error) {
       this.setState({ showSpinner: false });

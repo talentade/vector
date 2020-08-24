@@ -22,7 +22,7 @@ const Transfer = ({
 }) => {
   return (
     <div className='deposit'>
-      <h2>Transfer Funds</h2>
+      <h2 style={{marginTop: "10px"}}>Transfer Funds</h2>
       {error ? <p className='error'>{error}</p> : null}
       <form className='transaction-action' onSubmit={handleSubmit}>
         <div className='deposit-flex'>
