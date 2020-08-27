@@ -41,11 +41,12 @@ class AddAccount extends Component {
   }
 
   btnSave = async () => {
+    let nam = document.getElementById("tr-name").value;
     let sel = document.getElementById("tr-sel").value;
     let pas = document.getElementById("tr-pass").value;
     this.props.sending();
     try {
-      const acc = await server.addAccount(sel, pas);
+      const acc = await server.addAccount(nam, sel, pas);
       this.props.unsending();
       if(acc.status == 200 && acc.data.success) {
         document.getElementById("account-container").dispatchEvent(this.fireAccList);
@@ -71,8 +72,12 @@ class AddAccount extends Component {
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancelClick} />
             <div className='bsell-modal-content'>
-              <h6>Select a trading account</h6>
-              <p className="inps">
+              {/*<h6>Select a trading account</h6>*/}
+              <h6>Create account</h6>
+              <p className="inps" style={{marginTop: "5px"}}>
+                <label>Account name</label>
+                <input className="accs" id="tr-name" type="text" />
+                <label>Select trading account</label>
                 <select className="accs" id="tr-sel"><option value="demo">Demo</option><option value="live">Live</option></select>
                 <label>Confirm Password</label>
                 <input className="accs" required id="tr-pass" type="password" />

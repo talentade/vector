@@ -5,7 +5,7 @@ import server from '../../services/server';
 import app from '../../services/app';
 import $ from 'jquery';
 import Balance from '../../components/balance/index';
-import Demo from '../../components/demo/index';
+import Accounts from '../../components/accounts/index';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import Margin from '../../components/margin/index';
@@ -74,99 +74,100 @@ class Market extends Component {
   }
 
   async componentDidMount() {
-    $(window).on("renewSocket", () => {
-      this.socket = window.WebSocketPlug;
-      this.socket.addEventListener('message', ({data}) => {
-        try {
-          let message = JSON.parse(`${data}`);
-          let payload = message.payload;
-          // console.log(payload);
-          switch(message.event) {
-            case "PAIR_DATA":
-              this.fetchFavs();
-              this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
-            break;
-            case "GET_FAVOURITES":
-            if(payload.user == app.id() && payload.account == app.account()) {
-              let favs = [], _unfav = false;
-              // console.log("--fetched [favs]");
-              payload.favourites.forEach((fav) => {
-                if(fav) {
-                  let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
-                  favs[favs.length] = fv[0];
-                  if(this.state._favouritePairs.length) {
-                    let _fv = [];
-                    Object.values(this.state._favouritePairs).forEach((_pair) => {
-                      if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
-                        _unfav = true;
-                      }
-                    });
-                  }
-                }
-              });
-              setTimeout(() => {
-                if(_unfav) {
-                  this.setState({_favouritePairs: []});
-                }
-                this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
-              }, 10);
-            }
-            break;
-          }
-        } catch (e) {
-          throw e;
-        }
-      });
-    });
+    $(window).on("renewSocket", () => this.socketInit());
+    if(window.WebSocketPlugged) {
+      $(window).trigger("renewSocket");
+    }
 
     this.realTimeListener = true;
     this.setState({ selectedAccount: app.accountDetail(), accounts: app.accounts() });
 
     $(".balance").on("refresh", () => {
       this.setState({profile: app.profile(), selectedAccount: app.accountDetail(), accounts: app.accounts()});
-      // console.log(app.accountDetail().balance, "--trigger");
       this.profile = app.profile();
     });
+  }
 
-    // try {
-    //   await this.fetchStock();
-    // } catch (e) {
-    //   return e;
-    // }
+  socketInit = () => {
+    window.WebSocketPlug.addEventListener('message', ({data}) => {
+      try {
+        let message = JSON.parse(`${data}`);
+        let payload = message.payload;
+        // console.log(payload);
+        switch(message.event) {
+          case "PAIR_DATA":
+            this.fetchFavs();
+            this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
+          break;
+          case "GET_FAVOURITES":
+          if(payload.user == app.id() && payload.account == app.account()) {
+            let favs = [], _unfav = false;
+            // console.log("--fetched [favs]");
+            payload.favourites.forEach((fav) => {
+              if(fav) {
+                let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
+                favs[favs.length] = fv[0];
+                if(this.state._favouritePairs.length) {
+                  let _fv = [];
+                  Object.values(this.state._favouritePairs).forEach((_pair) => {
+                    if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
+                      _unfav = true;
+                    }
+                  });
+                }
+              }
+            });
+            setTimeout(() => {
+              if(_unfav) {
+                this.setState({_favouritePairs: []});
+              }
+              this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
+            }, 10);
+          }
+          break;
+        }
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 
   addToFav = async (pair) => {
-    this.setState({showSpinner: true});
+    if(window.WebSocketPlugged) {
+      this.setState({showSpinner: true});
 
-    let favs          = this.state._favouritePairs;
-    let fv            = this.state.hotStocks.filter((p) => p.pair.toLowerCase().match(pair.toLowerCase()));
-    favs[favs.length] = fv[0];
-    this.setState({_favouritePairs: favs });
+      let favs          = this.state._favouritePairs;
+      let fv            = this.state.hotStocks.filter((p) => p.pair.toLowerCase().match(pair.toLowerCase()));
+      favs[favs.length] = fv[0];
+      this.setState({_favouritePairs: favs });
 
-    // console.log("--addToFav");
+      // console.log("--addToFav");
 
-    this.socket.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
-      pair:    pair,
-      user:    app.id(),
-      account: app.account(),
-    }}));
+      window.WebSocketPlug.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
+        pair:    pair,
+        user:    app.id(),
+        account: app.account(),
+      }}));
+    }
   }
 
   remFav = async (pair) => {
-    this.setState({showSpinner: true});
-    // console.log("--reupdating favs");
-    this.socket.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
-      pair:    pair,
-      user:    app.id(),
-      account: app.account(),
-    }}));
+    if(window.WebSocketPlugged) {
+      this.setState({showSpinner: true});
+      // console.log("--reupdating favs");
+      window.WebSocketPlug.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
+        pair:    pair,
+        user:    app.id(),
+        account: app.account(),
+      }}));
+    }
   }
 
   fetchFavs = async () => {
-    if(this.realTimeListener) {
+    if(this.realTimeListener && window.WebSocketPlugged) {
       this.setState({showSpinner: true});
       // console.log("--fetching favs");
-      this.socket.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
+      window.WebSocketPlug.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
         user:    app.id(),
         account: app.account(),
       }}));
@@ -253,6 +254,7 @@ class Market extends Component {
           
           {this.state.buyandsellModal ? (
             <BuyandsellModal
+              info={window.buyAndSellData.info}
               pair={window.buyAndSellData.pair}
               buy={window.buyAndSellData.buy}
               sell={window.buyAndSellData.sell}
@@ -294,10 +296,10 @@ class Market extends Component {
                       balance={`$${this.state.selectedAccount.balance}`}
                       balanceItemData={balanceItems}
                     />
-                    <Demo
-                      demoOptions={this.state.accounts}
+                    <Accounts
+                      options={app.accountList()}
                       selectValue={this.state.selectedAccountVal}
-                      handleDemoChange={this.handleAccountChange}
+                      handleChange={this.handleAccountChange}
                     />
                   </div>
                   <div className='margin-stuff'>

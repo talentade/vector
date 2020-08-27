@@ -225,7 +225,7 @@ export default {
     });
   },
 
-  addAccount(account, pwd) {
+  addAccount(name, account, pwd) {
     return axios.request({
       method: 'POST',
       url: app.hostURL('account/new/'+app.userid()),
@@ -233,6 +233,7 @@ export default {
         'Authorization': app.auth(),
       },
       data: {
+        name: name,
         account: account,
         password: sha256(pwd)
       }

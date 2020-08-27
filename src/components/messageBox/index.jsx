@@ -28,32 +28,10 @@ class MessageBox extends Component {
   }
 
   async componentDidMount () {
-
-    $(window).on("renewSocket", () => {
-      this.socket = window.WebSocketPlug;
-      this.socket.addEventListener('message', ({data}) => {
-        if(this.state.messages.length == 0) {
-          this.socket.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
-        }
-        try {
-          let message = JSON.parse(`${data}`);
-          let payload = message.payload;
-          switch(message.event) {
-            case "MESSAGES":
-              if(payload.user == app.id() && payload.messages.length) {
-                this.setState({ messages: payload.messages });
-              }
-              setTimeout(() => {
-                let elem = document.getElementById("messageList");
-                elem.scrollTop = elem.scrollHeight - elem.clientHeight;
-              }, 0);
-            break;
-          }
-        } catch (e) {
-          return e;
-        }
-      });
-    });
+    $(window).on("renewSocket", () => this.socketInit());
+    if(window.WebSocketPlugged) {
+      $(window).trigger("renewSocket");
+    }
 
     if(window.innerWidth <= 670) {
       this.setState({ mobile: true });
@@ -70,15 +48,42 @@ class MessageBox extends Component {
     });
   }
 
+  socketInit = () => {
+    window.WebSocketPlug.addEventListener('message', ({data}) => {
+      if(this.state.messages.length == 0) {
+        window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
+      }
+      try {
+        let message = JSON.parse(`${data}`);
+        let payload = message.payload;
+        switch(message.event) {
+          case "MESSAGES":
+            if(payload.user == app.id() && payload.messages.length) {
+              this.setState({ messages: payload.messages });
+            }
+            setTimeout(() => {
+              let elem = document.getElementById("messageList");
+              elem.scrollTop = elem.scrollHeight - elem.clientHeight;
+            }, 0);
+          break;
+        }
+      } catch (e) {
+        return e;
+      }
+    });
+  }
+
   newMessage = async () => {
-    let message = $("#messageInput").val().trim();
-    if(message.length && this.socket) {
-      $("#messageInput").val("");
-      this.socket.send(JSON.stringify({"event": "SEND_MESSAGE", "payload": {
-        user:      app.id(),
-        message:   message,
-        time:      new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
-      }}));
+    if(window.WebSocketPlugged) {
+      let message = $("#messageInput").val().trim();
+      if(message.length) {
+        $("#messageInput").val("");
+        window.WebSocketPlug.send(JSON.stringify({"event": "SEND_MESSAGE", "payload": {
+          user:      app.id(),
+          message:   message,
+          time:      new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+        }}));
+      }
     }
   }
 

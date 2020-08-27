@@ -26,14 +26,14 @@ class TradeHistory extends Component {
 
   Profit = (p) => {
     let cl = p > 0 ? 'td txt-success' : 'td txt-danger';
-    let pr = p > 0 ? '$'+p.toFixed(4) : '-$'+(p * -1).toFixed(4);
+    let pr = p > 0 ? '$'+p.toFixed(2) : '-$'+(p * -1).toFixed(2);
     return (
       <span className={cl}>{pr}</span>
     )
   }
 
   closeTrade = async (no, instrument) => {
-    let clt = await server.closeTrade(no, instrument);
+    // let clt = await server.closeTrade(no, instrument);
   }
 
   render () {

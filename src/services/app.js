@@ -56,6 +56,11 @@ const app = {
     });
     return accounts;
   },
+  accountList: () => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.accounts;
+  },
   email: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";

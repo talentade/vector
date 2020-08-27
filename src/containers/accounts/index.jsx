@@ -98,7 +98,7 @@ class Accounts extends Component {
                 <img src={ins_down} className="ins_down" />
                 <img src={ins_up} className="ins_up" />
                 <span className="th">TRADING ACCOUNT</span>
-                <span className="td"><button className={"acc_type"+(acc.account_type.toLowerCase() == "live" ? " live" : "")}>{acc.account_type.toUpperCase()}</button>AV-{acc.account_id}<br /><small className="inf">{acc.account_id}</small></span></li>
+                <span className="td"><button className={"acc_type"+(acc.account_type.toLowerCase() == "live" ? " live" : "")}>{acc.account_type.toUpperCase()}</button>{acc.account_label.length ? acc.account_label : "AV-"+acc.account_id}<br /><small className="inf">{acc.account_id}</small></span></li>
                 <li className=""><span className="th">BALANCE</span><span className="td">{acc.balance} USD</span></li>
                 <li className=""><span className="th">CREDIT</span><span className="td">{acc.credit} USD</span></li>
                 <li className=""><span className="th">LEVERAGE</span><span className="td">{acc.leverage}</span></li>

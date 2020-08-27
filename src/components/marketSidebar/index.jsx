@@ -76,10 +76,13 @@ const MarketSideBar = ({
             <div
               className='market-pair'
               key={`${Math.random()}-${Math.random()}`}
-               id={"market-pair-"+pair.pair.replace(/[^\w]/g, "_")}
+              id={"market-pair-"+pair.pair.replace(/[^\w]/g, "_")}
+              disabled={
+                !(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto')
+              }
             >
               <div className='market-pair-flex'>
-                <h5>{pair.pair}</h5>{/*<small style={{color: "#fff"}}>{pair.timestamp}</small>*/}
+                <h5>{pair.pair}</h5>
                 <span>
                 { favouritePairs.length && Object.values(favouritePairs).indexOf(pair.pair) > -1 ||
                   _favouritePairs.length && Object.values(_favouritePairs).indexOf(pair.pair) > -1
@@ -90,13 +93,23 @@ const MarketSideBar = ({
                       <img src={starIcon} alt='' />
                      </button>)
                 }
-                <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type}; showBsellModal2(e)}} />
+                <img src={CommentIcon} alt='' onClick={(e) => {
+                  window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type};
+                    if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                      showBsellModal2(e)
+                    }
+                  }} />
                 </span>
               </div>
               <div className='market-big-flex'>
                 <p className='pair-percentage'>{pair._change}</p>
                 <div className='market-cta-section'>
-                  <div className='market-sell' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type}; showBsellModal(e)}}>
+                  <div className='market-sell' onClick={(e) => {
+                    window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type};
+                      if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                        showBsellModal(e)
+                      }
+                    }}>
                     <div className='market-sell-data'>
                       <div className='market-sell-info'>
                         <h6>SELL</h6>
@@ -112,7 +125,12 @@ const MarketSideBar = ({
                     </div>
                     <p>{app.floatFormat(pair.high - pair.low)}</p>
                   </div>
-                  <div className='market-buy' onClick={(e) => {window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy"}; showBsellModal(e)}}>
+                  <div className='market-buy' onClick={(e) => {
+                    window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type};
+                      if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                        showBsellModal(e)
+                      }
+                    }}>
                     <div className='market-buy-data'>
                       {pair.ask_up > 0 ? <img className={"direction up"} src={Up} /> : <img className={"direction down"} src={Down} />}
                       <div className='market-buy-info'>

@@ -7,7 +7,7 @@ import OpenTrade from '../../components/openTrade/index';
 import ClosedTrade from '../../components/closedTrade/index';
 import PendingTrade from '../../components/pendingTrade/index';
 import Balance from '../../components/balance/index';
-import Demo from '../../components/demo/index';
+import Accounts from '../../components/accounts/index';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import con_buysell from '../../themes/images/con_buysell.png';
@@ -64,45 +64,10 @@ class TradeDashboard extends Component {
   componentDidUpdate () {}
 
   async componentDidMount() {
-    $(window).on("renewSocket", () => {
-      this.socket = window.WebSocketPlug;
-      this.socket.addEventListener('message', ({data}) => {
-        try {
-          let message = JSON.parse(`${data}`);
-          let payload = message.payload;
-          switch(message.event) {
-            case "PAIR_DATA":
-              this.fetchFavs();
-              this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
-            break;
-            case "TRADE_HISTORY":
-              if(payload.user == app.id() && payload.account == app.account()) {
-                this.setState({ all_trades: payload.history });
-                this.populateTrades(payload.history);
-              }
-            break;
-            case "GET_FAVOURITES":
-            if(payload.user == app.id() && payload.account == app.account()) {
-              let favs = [];
-              payload.favourites.forEach((fav) => {
-                if(fav) {
-                  let fv = this.state.hotStocks.filter((pair) =>
-                            pair.pair.toLowerCase().match(fav.toLowerCase()),
-                          );
-                  favs[favs.length] = fv[0];
-                }
-              });
-              setTimeout(() => {
-                this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
-              }, 10);
-            }
-            break;
-          }
-        } catch (e) {
-          throw e;
-        }
-      });
-    });
+    $(window).on("renewSocket", () => this.socketInit());
+    if(window.WebSocketPlugged) {
+      $(window).trigger("renewSocket");
+    }
 
     this.setState({ showNav: true });
     this.realTimeListener = true;
@@ -117,19 +82,52 @@ class TradeDashboard extends Component {
     });
 
     setInterval(() => {
-      if(this.realTimeListener && this.socket) {
-        this.socket.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
+      if(this.realTimeListener && window.WebSocketPlugged) {
+        window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
           user:    app.id(),
           account: app.account(),
         }}));
       }
     }, 1000);
+  }
 
-    // try {
-    //   await this.fetchFavs();
-    // } catch (e) {
-    //   return e;
-    // }
+  socketInit = () => {
+    window.WebSocketPlug.addEventListener('message', ({data}) => {
+      try {
+        let message = JSON.parse(`${data}`);
+        let payload = message.payload;
+        switch(message.event) {
+          case "PAIR_DATA":
+            this.fetchFavs();
+            this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
+          break;
+          case "TRADE_HISTORY":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              this.setState({ all_trades: payload.history });
+              this.populateTrades(payload.history);
+            }
+          break;
+          case "GET_FAVOURITES":
+          if(payload.user == app.id() && payload.account == app.account()) {
+            let favs = [];
+            payload.favourites.forEach((fav) => {
+              if(fav) {
+                let fv = this.state.hotStocks.filter((pair) =>
+                          pair.pair.toLowerCase().match(fav.toLowerCase()),
+                        );
+                favs[favs.length] = fv[0];
+              }
+            });
+            setTimeout(() => {
+              this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
+            }, 10);
+          }
+          break;
+        }
+      } catch (e) {
+        throw e;
+      }
+    });
   }
 
   getHistory = async (type, t = 3000) => {
@@ -162,9 +160,11 @@ class TradeDashboard extends Component {
     // console.log(all_trades);
 
     all_trades.forEach((trade, i) => {
-      let rate = this.state.hotStocks.filter((pair) =>
-                pair.pair.toLowerCase().match(trade.instrument.toLowerCase()),
-              );
+      let rate = this.state.hotStocks.filter((pair) => {
+        if(pair.pair) {
+          return pair.pair.toLowerCase().match(trade.instrument.toLowerCase()) || trade.instrument.toLowerCase() == pair.pair.toLowerCase();
+        }
+      });
       let brate = app.floatFormat(rate ? rate[0].ask : 0);
       let srate = app.floatFormat(rate ? rate[0].bid : 0);
       trade.current_rate = trade.mode == "buy" ? brate : srate;
@@ -190,30 +190,31 @@ class TradeDashboard extends Component {
 
 
   addToFav = async (pair) => {
-    this.setState({showSpinner: true});
-    // console.log("--updating favs");
-    this.socket.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
-      pair:    pair,
-      user:    app.id(),
-      account: app.account(),
-    }}));
+    if(window.WebSocketPlugged) {
+      this.setState({showSpinner: true});
+      window.WebSocketPlug.send(JSON.stringify({"event": "ADD_FAVOURITE", "payload": {
+        pair:    pair,
+        user:    app.id(),
+        account: app.account(),
+      }}));
+    }
   }
 
   remFav = async (pair) => {
-    this.setState({showSpinner: true});
-    // console.log("--reupdating favs");
-    this.socket.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
-      pair:    pair,
-      user:    app.id(),
-      account: app.account(),
-    }}));
+    if(window.WebSocketPlugged) {
+      this.setState({showSpinner: true});
+      window.WebSocketPlug.send(JSON.stringify({"event": "REMOVE_FAVOURITE", "payload": {
+        pair:    pair,
+        user:    app.id(),
+        account: app.account(),
+      }}));
+    }
   }
 
   fetchFavs = async () => {
-    if(this.realTimeListener) {
+    if(this.realTimeListener && window.WebSocketPlugged) {
       this.setState({showSpinner: true});
-      // console.log("--fetching favs");
-      this.socket.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
+      window.WebSocketPlug.send(JSON.stringify({"event": "GET_FAVOURITES", "payload": {
         user:    app.id(),
         account: app.account(),
       }}));
@@ -358,10 +359,10 @@ class TradeDashboard extends Component {
                       balanceItemData={balanceItems}
                     />
                     {currentTab !== 'Balance' ? (
-                      <Demo
-                        demoOptions={this.state.accounts}
+                      <Accounts
+                        options={app.accountList()}
                         selectValue={this.state.selectedAccountVal}
-                        handleDemoChange={this.handleAccountChange}
+                        handleChange={this.handleAccountChange}
                       />
                     ) : null}
                   </div>

@@ -13,6 +13,7 @@ const Deposit = ({
   selectHandler,
   account,
   accounts,
+  accountList,
   handleCurrencySelect,
   handleSubmit,
   error,
@@ -27,8 +28,8 @@ const Deposit = ({
           <div className='deposit-flex-item-1'>
             <label>Select Trading Account</label>
             <select id="dep-acc-sel" value={account} onChange={selectHandler}>
-              {accounts.map((acc) => (
-                <option value={acc} key={`${Math.random()}-${Math.random()}`}>{acc}</option>
+              {accountList.map(({account_name, account_label}) => (
+                <option key={`${Math.random() * 1000000}`} value={account_name}>{account_label.length ? account_label : account_name.charAt(0).toUpperCase()+account_name.slice(1)}</option>
               ))}
             </select>
           </div>

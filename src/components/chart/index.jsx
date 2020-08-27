@@ -214,11 +214,7 @@ class Chart extends Component {
                             this.historySeries.push(plot);
                           }
                         } catch (error) {
-                          // alert();
                           return null;
-                          // return (setTimeout(async () => {
-                          //   return check_for_update(pair);
-                          // }, 3000));
                         }
 
                         if(this.historySeries.length) {
@@ -386,10 +382,11 @@ class Chart extends Component {
   }
 
   componentWillUpdate() {
-
-    const stockToDisplay = this.props.hotStocks.filter((pair) =>
-      pair.pair.toLowerCase().match(this.pair.toLowerCase()),
-    );
+    const stockToDisplay = this.props.hotStocks.filter((pair) => {
+      if(pair.pair) {
+        return pair.pair.toLowerCase().match(this.pair.toLowerCase()) || this.pair.toLowerCase() == pair.pair.toLowerCase();
+      }
+    });
 
     if(stockToDisplay.length) {
       if(stockToDisplay[0] != this.state.currentPairData) {
@@ -669,6 +666,7 @@ class Chart extends Component {
   render() {
 
     const _currentPairData = {
+      info:   this.currentPairData ? this.currentPairData        : {},
       buy:    this.currentPairData ? this.currentPairData.ask    : this.state.buy,
       sell:   this.currentPairData ? this.currentPairData.bid    : this.state.sell,
       high:   this.currentPairData ? this.currentPairData.high   : this.state.high,
@@ -679,11 +677,14 @@ class Chart extends Component {
       spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
     }
 
+    let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto');
+
     return (
       <div className='trade-comp-container'>
 
           {this.state.buyandsellModal ? (
             <BuyandsellModal
+              info={_currentPairData.info}
               pair={this.state.selectedPair}
               buy={_currentPairData.buy}
               sell={_currentPairData.sell}
@@ -769,33 +770,42 @@ class Chart extends Component {
               <div className='loader'></div>
             </div>
           </div>
-          <div className='chart-cta-section'>
-            <div className='chart-sell' onClick={(e) => this.showBsellModal(e, "sell")}>
+          <div className='chart-cta-section' disabled={
+            _currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable
+          }>
+            <div className='chart-sell' onClick={(e) => {
+              if(_currentPairData.sell !== 0 && _currentPairData.buy !== 0 && buyable) {
+                this.showBsellModal(e, "sell")
+              }
+            }}>
               <div className='sell' align="center">
                 <div className='sell-info' style={{minWidth: "50%"}}>
                   <p>SELL</p>
-                  <p>{app.floatFormat(_currentPairData.sell)}</p>
+                  <p>{_currentPairData.sell > 0 ? app.floatFormat(_currentPairData.sell) : '-'}</p>
                 </div>
-                {/*<img src={WhiteDir} alt='' />*/}
                 {_currentPairData.bid_up > 0 ? <img className={"directionSell up"} src={Up} /> : <img className={"directionSell down"} src={Down} />}
               </div>
-              <p className='sell-left'>L: {app.floatFormat(_currentPairData.low)}</p>
+              <p className='sell-left'>{_currentPairData.low > 0 ? "L: "+app.floatFormat(_currentPairData.low) : ''}</p>
             </div>
             <div className='chart-map'>
               <div className='map'>
                 <img src={MapIcon} alt='' />
               </div>
-              <p className='map-center'>S: {app.floatFormat(_currentPairData.spread)}</p>
+              <p className='map-center'>{_currentPairData.high > 0 ? "S: "+app.floatFormat(_currentPairData.spread) : ''}</p>
             </div>
-            <div className='chart-buy' onClick={(e) => this.showBsellModal(e, "buy")}>
+            <div className='chart-buy' onClick={(e) => {
+              if(_currentPairData.sell !== 0 && _currentPairData.buy !== 0 && buyable) {
+                this.showBsellModal(e, "buy")
+              }
+            }}>
               <div className='buy' align="center">
                 {_currentPairData.ask_up > 0 ? <img className={"direction up"} src={Up} /> : <img className={"direction down"} src={Down} />}
                 <div className='buy-info' style={{minWidth: "50%"}}>
                   <p>BUY</p>
-                  <p>{app.floatFormat(_currentPairData.buy)}</p>
+                  <p>{_currentPairData.buy > 0 ? app.floatFormat(_currentPairData.buy) : '-'}</p>
                 </div>
               </div>
-              <p className='buy-right'>H: {app.floatFormat(_currentPairData.high)}</p>
+              <p className='buy-right'>{_currentPairData.high > 0 ? "H: "+app.floatFormat(_currentPairData.high) : ''}</p>
             </div>
           </div>
         </div>

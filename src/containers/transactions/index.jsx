@@ -372,6 +372,7 @@ class Transactions extends Component {
             {selectedTab.match('deposit') ? (
               <Deposit
                 accounts={accounts}
+                accountList={app.accountList()}
                 currencies={currencies}
                 selectedCurrency={selectedCurrency}
                 email={email}
@@ -391,6 +392,7 @@ class Transactions extends Component {
             {selectedTab.match('transfer') ? (
               <Transfer
                 accounts={accounts}
+                accountList={app.accountList()}
                 currencies={currencies}
                 selectedCurrency={selectedCurrency}
                 account={account}
@@ -413,6 +415,7 @@ class Transactions extends Component {
             {selectedTab.match('withdraw') ? (
               <Withdraw
                 accounts={accounts}
+                accountList={app.accountList()}
                 currencies={currencies}
                 selectedCurrency={selectedCurrency}
                 account={account}
