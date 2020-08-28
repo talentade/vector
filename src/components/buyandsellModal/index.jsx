@@ -336,7 +336,7 @@ class BuyandsellModal extends Component {
                 <li className="mt1"><span>Stops Level:</span><span>0.0</span></li>
                 <li className="mt1"><span className="text-success">Swaps Long:</span><span className="text-success">4.266</span></li>
                 <li><span className="text-success">Swaps Short:</span><span className="text-success">-13.244</span></li>
-                <li className="mt1"><span>Leverage</span><span>1:{app.Leverage()}</span></li>
+                <li className="mt1"><span>Leverage</span><span>1:{app.leverage()}</span></li>
               </ul>
               <p align="center">
                 <span className="buy-pos"><img src={arrowBuyIcon} />BUY Positions<span>0</span></span>

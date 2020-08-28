@@ -4,7 +4,10 @@
 }
 
 [disabled] {
-  filter: grayscale(0.5);
+  filter: grayscale(1);
+  .sell, .market-sell-data {
+    background: #03cf9e !important;
+  }
 }
 
 .market-search {

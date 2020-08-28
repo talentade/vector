@@ -33,6 +33,9 @@ class TradeDashboard extends Component {
       showSpinner: false,
       showNav: true,
       hideNav: false,
+      open_pl: 0,
+      equity: 0,
+      margin: 0,
       accounts: [],
       all_trades: [],
       open_trades: [],
@@ -157,7 +160,8 @@ class TradeDashboard extends Component {
     let open_trades = [];
     let closed_trades = [];
     let pending_trades = [];
-    // console.log(all_trades);
+    let open_pl = 0;
+    let margin = 0;
 
     all_trades.forEach((trade, i) => {
       let rate = this.state.hotStocks.filter((pair) => {
@@ -165,20 +169,32 @@ class TradeDashboard extends Component {
           return pair.pair.toLowerCase().match(trade.instrument.toLowerCase()) || trade.instrument.toLowerCase() == pair.pair.toLowerCase();
         }
       });
-      let brate = app.floatFormat(rate ? rate[0].ask : 0);
-      let srate = app.floatFormat(rate ? rate[0].bid : 0);
-      trade.current_rate = trade.mode == "buy" ? brate : srate;
-      if(trade.order_status == 0) {
-        open_trades.push(trade);
-      }
-      if(trade.status == 1) {
-        pending_trades.push(trade);
-      }
-      if(trade.order_status == 3) {
-        closed_trades.push(trade);
+      if(rate.length) {
+        let brate = app.floatFormat(rate ? rate[0].ask : 0);
+        let srate = app.floatFormat(rate ? rate[0].bid : 0);
+        trade.current_rate = trade.mode == "buy" ? brate : srate;
+        if(trade.order_status == 0) {
+          open_pl += Number(trade.profit);
+          margin += Number(trade.required_margin);
+          open_trades.push(trade);
+        }
+        if(trade.status == 1) {
+          pending_trades.push(trade);
+        }
+        if(trade.order_status == 3) {
+          closed_trades.push(trade);
+        }
       }
     });
-    this.setState({open_trades: open_trades, pending_trades: pending_trades, closed_trades: closed_trades});
+
+    this.setState({
+      open_trades:       open_trades,
+      pending_trades:    pending_trades,
+      closed_trades:     closed_trades,
+      open_pl:           open_pl.toFixed(2),
+      margin:            Number(margin).toFixed(2),
+      equity:            all_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
+    });
   }
 
   updateDimensions = () => {
@@ -266,7 +282,19 @@ class TradeDashboard extends Component {
   handleAccountChange = (e) => {
     let val = e.target.value;
     app.account(e.target.value);
-    this.setState({ selectedAccountVal: e.target.value, selectedAccount: app.accountDetail() });
+    this.setState({
+      selectedAccountVal: e.target.value,
+      selectedAccount: app.accountDetail(),
+      favouritePairs: [],
+      favourites: [],
+      all_trades: [],
+      open_trades: [],
+      closed_trades: [],
+      pending_trades: [],
+      open_pl: 0,
+      equity: 0,
+      margin: 0
+    });
     // window.location.href = "";
   };
 
@@ -283,27 +311,27 @@ class TradeDashboard extends Component {
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: '$'+(this.state.selectedAccount.open_p_l || 0),
+        figure: '$'+this.state.open_pl,
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: `$${this.state.selectedAccount.equity}`,
+        figure: '$'+this.state.equity
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: `$${this.state.selectedAccount.margin}`,
+        price: '$'+this.state.margin,
       },
       {
         margin: 'Free Margin',
-        price: '$'+(this.state.selectedAccount.free_margin || 0),
+        price: '$'+(this.state.equity - this.state.margin),
       },
       {
         margin: 'M. Level',
-        price: '$'+(this.state.selectedAccount.margin_level || 0),
+        price: ((Number(this.state.equity) / Number(this.state.margin) * 100) || 0).toFixed(2)+"%",
       },
     ];
 

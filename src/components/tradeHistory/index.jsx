@@ -25,10 +25,20 @@ class TradeHistory extends Component {
   }
 
   Profit = (p) => {
-    let cl = p > 0 ? 'td txt-success' : 'td txt-danger';
-    let pr = p > 0 ? '$'+p.toFixed(2) : '-$'+(p * -1).toFixed(2);
+    let cl, pr;
+    if(p > 0) {
+      pr = '$';
+      cl = 'td txt-success';
+    } else if(p < 0) {
+      pr = '-$';
+      cl = 'td txt-danger';
+    } else {
+      pr = '$';
+      cl = 'td txt-default';
+    }
+    let profit = p < 0 ? -1 * Number(p) : Number(p);
     return (
-      <span className={cl}>{pr}</span>
+      <span className={cl}>{pr+profit.toFixed(2)}</span>
     )
   }
 
@@ -113,9 +123,9 @@ class TradeHistory extends Component {
                   ) : null}
                 </ul>
               )) }
-              { !history.length ? (
-                <center><h4 className="empty">No {type} trade</h4></center>
-              ) : (null) }
+              {!history.length ? (
+                <TradeNotFound text={"No "+type+" trade"} />
+              ) : (null)}
             <Pagination length="4" max_rows="4" page_no="1" paginationChange={() => {}}/>
           </div>
       </div>
