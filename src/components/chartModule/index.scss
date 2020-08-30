@@ -22,6 +22,7 @@
   .chart-section-top-left {
     display: flex;
     .blue-select {
+      outline: none !important;
       width: 200px;
       height: 30px;
       background: #33b4fd;
@@ -71,6 +72,7 @@
         position: relative;
         width: 40px;
         height: 30px;
+        padding-right: 3px;
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -79,12 +81,13 @@
         border-radius: 3px;
         margin-left: 3px;
         color: #03cf9e;
+        color: #fff !important;
         cursor: pointer;
         font-family: Poppins, sans-serif;
 
         .icon {
-          width: 24px;
-          height: 24px;
+          width: 14px !important;
+          height: 14px !important;
         }
 
         .t-arrow {
@@ -177,47 +180,8 @@
   color: #ff3939;
 }
 
-.col-md-12 {
-  width: 100%;
-  display: block;
-  height: auto;
-}
-
-.col-md-6 {
-  width: 48% !important;
-  margin-left: 1% !important;
-  display: inline-block;
-  float: left;
-
-  .blue-select {
-    width: 100px !important;
-  }
-
-  .green-select {
-    width: 150px !important;
-  }
-
-  .chart-section-top .chart-section-top-right {
-    margin-left: 0px !important;
-    margin-right: 0px !important;
-    padding-left: 0px !important;
-  }
-  
-  .chart-section-top .chart-section-top-left button {
-    margin-left: 5px !important;
-    padding-left: 0px !important;
-  }
-
-  .green-select,
-  .chart-section-top .chart-section-top-right ul {
-    margin-left: 2px !important;
-    padding-left: 2px !important;
-  }
-}
-
 .chart-cta-section {
   width: 40%;
-  margin-top: 2em !important;
   margin: 0 auto;
   display: flex;
   font-family: Poppins, sans-serif;
@@ -328,11 +292,11 @@ p.sell-left, p.buy-right, p.map-center {
   margin-right: 1em;
 }
 
-li#switch-graph-type._active .gr-dropdown {
+.instrument-icons li.one._active .gr-dropdown {
   display: block;
 }
 
-li#switch-history._active .gr-dropdown {
+.instrument-icons li.two._active .gr-dropdown {
   display: block;
   width: 80px;
 }
@@ -368,6 +332,7 @@ li#switch-history._active .gr-dropdown {
     .chart-section-top-left {
       flex-direction: column;
       .blue-select {
+        outline: none !important;
         width: 200px;
       }
 

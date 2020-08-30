@@ -149,6 +149,14 @@ export default {
   //     }
   //   });
   // },
+  // closeTrade (id, instrument) {
+  //   return axios.request({
+  //     method: 'GET',
+  //     url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=open&mode2=closed&username='+app.email(),
+  //     headers: {'Authorization': '__AVARIZ_ROBOTIC_CONTROLLER__'}
+  //   })
+  // }
+
 
 
 
@@ -335,6 +343,20 @@ export default {
       }
     });
   },
+
+  closeTrade (id, account) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('closetrade/'+account),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        use: id
+      }
+    });
+  },
+
 
 
 
@@ -560,15 +582,6 @@ export default {
       data: {update: details}
     });
   },
-
-  closeTrade (id, instrument) {
-    return axios.request({
-      method: 'GET',
-      url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=open&mode2=closed&username='+app.email(),
-      headers: {'Authorization': '__AVARIZ_ROBOTIC_CONTROLLER__'}
-    })
-  }
-
 
 
 };

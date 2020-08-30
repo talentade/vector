@@ -32,7 +32,14 @@ class Market extends Component {
       hotStocks: [],
       favouritePairs: [],
       _favouritePairs: [],
+      open_pl: 0,
+      equity: 0,
+      margin: 0,
       favourites: [],
+      all_trades: [],
+      open_trades: [],
+      closed_trades: [],
+      pending_trades: [],
       showLoader: true,
       showSpinner: false,
       favPopup: false,
@@ -54,21 +61,6 @@ class Market extends Component {
     });
   }
 
-  fetchStock = async () => {
-    // try {
-    //   const market = await server.getMarketAndNewsData();
-    //   let hot_stocks = market.data.pair_data;
-    //   if(hot_stocks.length) {
-    //     this.setState({ hotStocks: hot_stocks, showLoader: false });
-    //   }
-    // } catch (error) {
-    //   this.setState({ showLoader: false });
-    //   if (!error.response) {
-    //     return error.message;
-    //   }
-    // }
-  }
-
   componentWillUnmount() {
     this.realTimeListener = false;
   }
@@ -86,6 +78,15 @@ class Market extends Component {
       this.setState({profile: app.profile(), selectedAccount: app.accountDetail(), accounts: app.accounts()});
       this.profile = app.profile();
     });
+
+    setInterval(() => {
+      if(this.realTimeListener && window.WebSocketPlugged) {
+        window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
+          user:    app.id(),
+          account: app.account(),
+        }}));
+      }
+    }, 1000);
   }
 
   socketInit = () => {
@@ -99,10 +100,15 @@ class Market extends Component {
             this.fetchFavs();
             this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
           break;
+          case "TRADE_HISTORY":
+            if(payload.user == app.id() && payload.account == app.account()) {
+              this.setState({ all_trades: payload.history });
+              this.populateTrades(payload.history);
+            }
+          break;
           case "GET_FAVOURITES":
           if(payload.user == app.id() && payload.account == app.account()) {
             let favs = [], _unfav = false;
-            // console.log("--fetched [favs]");
             payload.favourites.forEach((fav) => {
               if(fav) {
                 let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
@@ -129,6 +135,48 @@ class Market extends Component {
       } catch (e) {
         throw e;
       }
+    });
+  }
+
+  populateTrades = (trades = false) => {
+    let all_trades = trades ? trades : this.state.all_trades;
+    let open_trades = [];
+    let closed_trades = [];
+    let pending_trades = [];
+    let open_pl = 0;
+    let margin = 0;
+
+    all_trades.forEach((trade, i) => {
+      let rate = this.state.hotStocks.filter((pair) => {
+        if(pair.pair) {
+          return pair.pair.toLowerCase().match(trade.instrument.toLowerCase()) || trade.instrument.toLowerCase() == pair.pair.toLowerCase();
+        }
+      });
+      if(rate.length) {
+        let brate = app.floatFormat(rate ? rate[0].ask : 0);
+        let srate = app.floatFormat(rate ? rate[0].bid : 0);
+        trade.current_rate = trade.mode == "buy" ? brate : srate;
+        if(trade.order_status == 0) {
+          open_pl += Number(trade.profit);
+          margin += Number(trade.required_margin);
+          open_trades.push(trade);
+        }
+        if(trade.status == 1) {
+          pending_trades.push(trade);
+        }
+        if(trade.order_status == 2) {
+          closed_trades.push(trade);
+        }
+      }
+    });
+
+    this.setState({
+      open_trades:       open_trades,
+      pending_trades:    pending_trades,
+      closed_trades:     closed_trades,
+      open_pl:           open_pl.toFixed(2),
+      margin:            Number(margin).toFixed(2),
+      equity:            all_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
     });
   }
 
@@ -203,8 +251,39 @@ class Market extends Component {
   handleAccountChange = (e) => {
     let val = e.target.value;
     app.account(e.target.value);
-    this.setState({ selectedAccountVal: e.target.value, selectedAccount: app.accountDetail(), accounts: app.accounts() });
-  };
+    this.setState({
+      accounts: app.accounts(),
+      selectedAccountVal: e.target.value,
+      selectedAccount: app.accountDetail(),
+      favouritePairs: [],
+      favourites: [],
+      all_trades: [],
+      open_trades: [],
+      closed_trades: [],
+      pending_trades: [],
+      open_pl: 0,
+      equity: 0,
+      margin: 0
+    });
+  }
+
+  showPrice = (p) => {
+    let cl, pr;
+    if(p > 0) {
+      pr = '$';
+      cl = 'txt-success';
+    } else if(p < 0) {
+      pr = '-$';
+      cl = 'txt-danger';
+    } else {
+      pr = '$';
+      cl = 'txt-light';
+    }
+    let price = p < 0 ? -1 * Number(p) : Number(p);
+    return (
+      <span className={cl}>{pr+price.toFixed(2).toLocaleString()}</span>
+    )
+  }
 
   render() {
     const { hotStocks, showLoader } = this.state;
@@ -213,36 +292,45 @@ class Market extends Component {
       pair.pair.toLowerCase().match(this.props.filter.toLowerCase()),
     ) : hotStocks;
 
+    let open_pl = Number(this.state.selectedAccount.credit);
+    let equity = Number(this.state.open_pl);
+    let margin = Number(this.state.equity);
+    let fmargin = Number(this.state.margin);
+    let mlevel = Number(this.state.equity - this.state.margin);
+
     const balanceItems = [
       {
         className: 'credit',
         heading: 'Credit',
-        figure: `$${this.state.selectedAccount.credit}`,
+        figure: this.showPrice(open_pl)
       },
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: '$'+(this.state.selectedAccount.open_p_l || 0),
+        figure: this.showPrice(equity)
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: `$${this.state.selectedAccount.equity}`,
+        figure: this.showPrice(margin)
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: `$${this.state.selectedAccount.margin}`,
+        price: this.showPrice(fmargin),
       },
       {
         margin: 'Free Margin',
-        price: '$'+(this.state.selectedAccount.free_margin || 0),
+        price: this.showPrice(mlevel),
       },
       {
         margin: 'M. Level',
-        price: '$'+(this.state.selectedAccount.margin_level || 0),
+        price: (
+          (Number(this.state.equity) + Number(this.state.margin) === 0) ? 0 :
+          ((Number(this.state.equity) / Number(this.state.margin) * 100) || 0)
+        ).toFixed(2)+"%",
       },
     ];
 

@@ -46,6 +46,7 @@ class TradeDashboard extends Component {
       selectedAccountVal: app.account(),
       hotStocks: [],
       favouritePairs: [],
+      _favouritePairs: [],
       favourites: [],
 
       buyandsellAct: 'buy',
@@ -74,7 +75,6 @@ class TradeDashboard extends Component {
 
     this.setState({ showNav: true });
     this.realTimeListener = true;
-    this.getHistory("all");
     this.setState({ selectedAccount: app.accountDetail(), accounts: app.accounts() });
 
     window.addEventListener('resize', this.updateDimensions);
@@ -94,11 +94,13 @@ class TradeDashboard extends Component {
     }, 1000);
   }
 
+
   socketInit = () => {
     window.WebSocketPlug.addEventListener('message', ({data}) => {
       try {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
+        // console.log(payload);
         switch(message.event) {
           case "PAIR_DATA":
             this.fetchFavs();
@@ -112,16 +114,25 @@ class TradeDashboard extends Component {
           break;
           case "GET_FAVOURITES":
           if(payload.user == app.id() && payload.account == app.account()) {
-            let favs = [];
+            let favs = [], _unfav = false;
             payload.favourites.forEach((fav) => {
               if(fav) {
-                let fv = this.state.hotStocks.filter((pair) =>
-                          pair.pair.toLowerCase().match(fav.toLowerCase()),
-                        );
+                let fv = this.state.hotStocks.filter((pair) => pair.pair.toLowerCase().match(fav.toLowerCase()));
                 favs[favs.length] = fv[0];
+                if(this.state._favouritePairs.length) {
+                  let _fv = [];
+                  Object.values(this.state._favouritePairs).forEach((_pair) => {
+                    if(fav.toLowerCase() == _pair.pair.toLowerCase()) {
+                      _unfav = true;
+                    }
+                  });
+                }
               }
             });
             setTimeout(() => {
+              if(_unfav) {
+                this.setState({_favouritePairs: []});
+              }
               this.setState({ favourites: favs, favouritePairs: payload.favourites, showSpinner: false });
             }, 10);
           }
@@ -131,28 +142,6 @@ class TradeDashboard extends Component {
         throw e;
       }
     });
-  }
-
-  getHistory = async (type, t = 3000) => {
-    // if(this.realTimeListener) {
-    //   try {
-    //     const { data : { data: { results, profile } } } = await server.tradeHistory(type, 10, 1);
-    //     if(results) {
-    //       this.setState({all_trades: results});
-    //       this.populateTrades();
-    //     }
-    //     if(profile) {
-    //       this.setState({profile: app.profile(profile), selectedAccount: app.accountDetail()});
-    //       console.log(app.accountDetail().balance, "--auto");
-    //       this.profile = profile;
-    //     }
-    //   } catch (error) {
-    //     console.warn(error);
-    //   }
-    // }
-    // setTimeout(async () => {
-    //   this.getHistory(type);
-    // }, t);
   }
 
   populateTrades = (trades = false) => {
@@ -181,7 +170,7 @@ class TradeDashboard extends Component {
         if(trade.status == 1) {
           pending_trades.push(trade);
         }
-        if(trade.order_status == 3) {
+        if(trade.order_status == 2) {
           closed_trades.push(trade);
         }
       }
@@ -202,8 +191,6 @@ class TradeDashboard extends Component {
       this.setState({ currentTab: 'Trade' });
     }
   }
-
-
 
   addToFav = async (pair) => {
     if(window.WebSocketPlugged) {
@@ -283,6 +270,7 @@ class TradeDashboard extends Component {
     let val = e.target.value;
     app.account(e.target.value);
     this.setState({
+      accounts: app.accounts(),
       selectedAccountVal: e.target.value,
       selectedAccount: app.accountDetail(),
       favouritePairs: [],
@@ -295,43 +283,69 @@ class TradeDashboard extends Component {
       equity: 0,
       margin: 0
     });
-    // window.location.href = "";
-  };
+  }
+
+  showPrice = (p) => {
+    let cl, pr;
+    if(p > 0) {
+      pr = '$';
+      cl = 'txt-success';
+    } else if(p < 0) {
+      pr = '-$';
+      cl = 'txt-danger';
+    } else {
+      pr = '$';
+      cl = 'txt-light';
+    }
+    let price = p < 0 ? -1 * Number(p) : Number(p);
+    return (
+      <span className={cl}>{pr+price.toFixed(2).toLocaleString()}</span>
+    )
+  }
 
   render() {
 
     const { currentTab, hotStocks, showSpinner } = this.state;
 
+    let open_pl = Number(this.state.selectedAccount.credit);
+    let equity = Number(this.state.open_pl);
+    let margin = Number(this.state.equity);
+    let fmargin = Number(this.state.margin);
+    let mlevel = Number(this.state.equity - this.state.margin);
+
     const balanceItems = [
       {
         className: 'credit',
         heading: 'Credit',
-        figure: `$${this.state.selectedAccount.credit}`,
+        figure: this.showPrice(open_pl)
       },
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: '$'+this.state.open_pl,
+        figure: this.showPrice(equity)
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: '$'+this.state.equity
+        figure: this.showPrice(margin)
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: '$'+this.state.margin,
+        price: this.showPrice(fmargin),
       },
       {
         margin: 'Free Margin',
-        price: '$'+(this.state.equity - this.state.margin),
+        price: this.showPrice(mlevel),
       },
       {
         margin: 'M. Level',
-        price: ((Number(this.state.equity) / Number(this.state.margin) * 100) || 0).toFixed(2)+"%",
+        price: (
+          (Number(this.state.equity) + Number(this.state.margin) === 0) ? 0 :
+          ((Number(this.state.equity) / Number(this.state.margin) * 100) || 0)
+        ).toFixed(2)+"%",
       },
     ];
 
@@ -383,7 +397,7 @@ class TradeDashboard extends Component {
                 <div className='balance-margin'>
                   <div className='balance-demo'>
                     <Balance
-                      balance={`$${this.state.selectedAccount.balance}`}
+                      balance={`$${Number(this.state.selectedAccount.balance).toLocaleString()}`}
                       balanceItemData={balanceItems}
                     />
                     {currentTab !== 'Balance' ? (

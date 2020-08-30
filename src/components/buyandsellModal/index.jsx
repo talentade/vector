@@ -339,8 +339,8 @@ class BuyandsellModal extends Component {
                 <li className="mt1"><span>Leverage</span><span>1:{app.leverage()}</span></li>
               </ul>
               <p align="center">
-                <span className="buy-pos"><img src={arrowBuyIcon} />BUY Positions<span>0</span></span>
-                <span className="sell-pos"><img src={arrowSellIcon} />SELL Positions<span>0</span></span>
+                <span className="buy-pos"><img src={arrowBuyIcon} />SELL Positions<span>{app.floatFormat(sell)}</span></span>
+                <span className="sell-pos"><img src={arrowSellIcon} />BUY Positions<span>{app.floatFormat(buy)}</span></span>
               </p>
             </div> : null }
 

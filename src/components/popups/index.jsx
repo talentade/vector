@@ -7,6 +7,7 @@ import err from '../../themes/popup/err.PNG';
 import bc from '../../themes/popup/booked.PNG';
 import logout from "../../themes/images/tradeDashboard/t_nav4.svg";
 import CancelIcon from '../../themes/images/cancel.svg';
+import con_buysell from '../../themes/images/con_buysell.png';
 
 const popupOut = (e) => {
   if($(e.target).hasClass("overlay") && $(e.target).hasClass("popups")) {
@@ -53,6 +54,30 @@ class Booked extends React.Component {
               <div className='lower-modal-content'>
                 <h6>Call Booked</h6>
                 <p>You have successfully scheduled a call with us after which your account will be activated </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
+class Closed extends React.Component {
+   render() {
+    const { text, show, cancel } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='deposit-modal-section'>
+            <div className='upper-modal'>
+              <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+              <img src={con_buysell} alt='' className='modal-main-img' />
+            </div>
+            <div className='lower-modal'>
+              <div className='lower-modal-content'>
+                <h6>Order Closed</h6>
+                <p>You have successfully closed an order</p>
               </div>
             </div>
           </div>
@@ -137,4 +162,7 @@ class Logout extends React.Component {
     );
   }
 }
-export {FavPopup, Booked, Created, Insufficient, Logout}
+
+
+
+export {FavPopup, Booked, Created, Closed, Insufficient, Logout}

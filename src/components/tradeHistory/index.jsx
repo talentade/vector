@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import TradeNotFound from '../tradeNotFound/index';
+import Spinner from '../../components/spinner/index';
 import Search from "../search/index";
 import Filter from "../filter/index";
 import Table from "../table/index";
@@ -9,12 +11,17 @@ import ins_down from '../../themes/images/ins-down.png';
 import ai_n from '../../themes/images/ai-normal.png';
 import server from '../../services/server';
 import app from '../../services/app';
+import { Closed } from '../../components/popups/index';
 import ai_b from '../../themes/images/ai-bookmark.png';
 import './index.scss';
 
 class TradeHistory extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showSpinner: false,
+      showClosed: false
+    }
   }
 
   handleClick = (e, i) => {
@@ -42,14 +49,30 @@ class TradeHistory extends Component {
     )
   }
 
-  closeTrade = async (no, instrument) => {
-    // let clt = await server.closeTrade(no, instrument);
+  closeTrade = async (id, account) => {
+    this.setState({showSpinner: true});
+    try{
+      let close = await server.closeTrade(id, account);
+      if(close.status == 200) {
+        const gp = await server.getProfile();
+        app.profile(gp.data.profile);
+        $(".balance").trigger("refresh");
+        this.setState({showSpinner: false, showClosed: true});
+      } else {
+        this.setState({showSpinner: false, showClosed: false});
+      }
+    } catch(e) {
+      this.setState({showSpinner: false, showClosed: false});
+      return e;
+    }
   }
 
   render () {
   const { type, filterOptions, history } = this.props;
   return (
     <div className="open-trades-container">
+    <Spinner showSpinner={this.state.showSpinner} />
+    <Closed show={this.state.showClosed} cancel={(e) => this.setState({showClosed: false})} />
       <div className="open-trades-container-top">
         <Search name="keyword" placeholder="Search here" />
         <Filter selectOptions={filterOptions} />
@@ -104,7 +127,7 @@ class TradeHistory extends Component {
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
                       <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode.toUpperCase()}</span></li>
-                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.order_number, order.instrument)}>Close</button></span></li>
+                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.id, order.account)}>Close</button></span></li>
                     </>
                   ) : null}
                   {type == 'closed' ? (
@@ -118,7 +141,7 @@ class TradeHistory extends Component {
                     <>
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
                       <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
-                      <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
+                      <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode.toUpperCase()}</span></li>
                     </>
                   ) : null}
                 </ul>
