@@ -49,10 +49,10 @@ class TradeHistory extends Component {
     )
   }
 
-  closeTrade = async (id, account) => {
+  closeTrade = async (id, account, cr) => {
     this.setState({showSpinner: true});
     try{
-      let close = await server.closeTrade(id, account);
+      let close = await server.closeTrade(id, account, cr);
       if(close.status == 200) {
         const gp = await server.getProfile();
         app.profile(gp.data.profile);
@@ -119,7 +119,7 @@ class TradeHistory extends Component {
                   <li><span className="th">TYPE</span><span className="td">{order.type.toUpperCase()}</span></li>
                   <li><span className="th">TIME</span><span className="td">{order.create_time.split(", ")[0]}<br /><small className="time">{order.create_time.split(", ")[1]}</small></span></li>
                   <li className="o-price"><span className="th">ORDER PRICE</span><span className="td">${order.order_price}</span></li>
-                  <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">{order.order_rate}</span></li>
+                  <li className="o-rate"><span className="th">ORDER RATE</span><span className="td">{type == 'pending' ? order.trade_when : order.order_rate}</span></li>
                   <li><span className="th">S/L</span><span className="td">{order.stop_loss.trim().length ? order.stop_loss : '-'}</span></li>
                   <li><span className="th">T/P</span><span className="td">{order.take_profit.trim().length ? order.take_profit : '-'}</span></li>
                   {type == 'open' ? (
@@ -127,12 +127,12 @@ class TradeHistory extends Component {
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
                       <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode.toUpperCase()}</span></li>
-                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.id, order.account)}>Close</button></span></li>
+                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.id, order.account, order.current_rate)}>Close</button></span></li>
                     </>
                   ) : null}
                   {type == 'closed' ? (
                     <>
-                      <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">{order.current_rate}</span></li>
+                      <li className="c-rate"><span className="th">CLOSE RATE</span><span className="td">{order.close_rate}</span></li>
                       <li className="profit"><span className="th">CLOSE PRICE</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode}</span></li>
                     </>

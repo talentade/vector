@@ -161,7 +161,7 @@ class Market extends Component {
           margin += Number(trade.required_margin);
           open_trades.push(trade);
         }
-        if(trade.status == 1) {
+        if(trade.order_status == 1) {
           pending_trades.push(trade);
         }
         if(trade.order_status == 2) {
@@ -176,7 +176,7 @@ class Market extends Component {
       closed_trades:     closed_trades,
       open_pl:           open_pl.toFixed(2),
       margin:            Number(margin).toFixed(2),
-      equity:            all_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
+      equity:            open_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
     });
   }
 
@@ -233,6 +233,7 @@ class Market extends Component {
 
   // BSELL
   cancelBsellModal = (e) => {
+    window.BuyandsellModalPopup = false;
     this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: false });
   }
 
@@ -245,6 +246,7 @@ class Market extends Component {
   }
 
   confirmBsellModal = (txt = "") => {
+    window.BuyandsellModalPopup = false;
     this.setState({ buyandsellModal: false, buyandsellModalInfo: false, buyandsellConfirmed: true, showLoader: false, confirmtext: txt });
   }
 
@@ -292,43 +294,43 @@ class Market extends Component {
       pair.pair.toLowerCase().match(this.props.filter.toLowerCase()),
     ) : hotStocks;
 
-    let open_pl = Number(this.state.selectedAccount.credit);
-    let equity = Number(this.state.open_pl);
-    let margin = Number(this.state.equity);
-    let fmargin = Number(this.state.margin);
-    let mlevel = Number(this.state.equity - this.state.margin);
+    let credit = Number(this.state.selectedAccount.credit);
+    let open_pl = Number(this.state.open_pl);
+    let equity = Number(this.state.equity);
+    let margin = Number(this.state.margin);
+    let fmargin = Number(this.state.equity - this.state.margin);
 
     const balanceItems = [
       {
         className: 'credit',
         heading: 'Credit',
-        figure: this.showPrice(open_pl)
+        figure: this.showPrice(credit)
       },
       {
         className: 'open',
         heading: 'Open P/L',
-        figure: this.showPrice(equity)
+        figure: this.showPrice(open_pl)
       },
       {
         className: 'equity',
         heading: 'Equity',
-        figure: this.showPrice(margin)
+        figure: this.showPrice(equity)
       },
     ];
 
     const marginItems = [
       {
         margin: 'Margin',
-        price: this.showPrice(fmargin),
+        price: this.showPrice(margin),
       },
       {
         margin: 'Free Margin',
-        price: this.showPrice(mlevel),
+        price: this.showPrice(fmargin),
       },
       {
         margin: 'M. Level',
         price: (
-          (Number(this.state.equity) + Number(this.state.margin) === 0) ? 0 :
+          (Number(this.state.equity) + Number(this.state.margin) == 0) ? 0 :
           ((Number(this.state.equity) / Number(this.state.margin) * 100) || 0)
         ).toFixed(2)+"%",
       },

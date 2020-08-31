@@ -65,11 +65,16 @@ class BuyandsellModal extends Component {
   }
 
   async componentDidMount() {
+    window.BuyandsellModalPopup = true;
     $(window).on("renewSocket", () => this.socketInit());
     if(window.WebSocketPlugged) {
       $(window).trigger("renewSocket");
     }
     this.initLoader();
+  }
+
+  componentWillUnmount () {
+    window.BuyandsellModalPopup = false;
   }
 
   socketInit = () => {
@@ -270,7 +275,7 @@ class BuyandsellModal extends Component {
         "margin"          : this.state.required_margin_str,
         "stop_loss"       : document.getElementById("stop_loss").checked ? this.state.stop_loss : "",
         "take_profit"     : document.getElementById("take_profit").checked ? this.state.take_profit : "",
-        "trade_when"      : document.getElementById("only_buy_when").checked ? document.getElementById("only_buy_when_actual").value : "",
+        "trade_when"      : document.getElementById("only_buy_when").checked ? Number($(".only_buy_when_actual.for-"+this.state.mode).val()) : "",
         "time"            : new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
       }
 

@@ -344,7 +344,7 @@ export default {
     });
   },
 
-  closeTrade (id, account) {
+  closeTrade (id, account, cr) {
     return axios.request({
       method: 'POST',
       url: app.hostURL('closetrade/'+account),
@@ -352,7 +352,8 @@ export default {
         'Authorization': app.auth()
       },
       data: {
-        use: id
+        use: id,
+        rate: cr
       }
     });
   },

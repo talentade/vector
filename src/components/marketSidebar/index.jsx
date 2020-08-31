@@ -79,6 +79,7 @@ const MarketSideBar = ({
               id={"market-pair-"+pair.pair.replace(/[^\w]/g, "_")}
               disabled={
                 !(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto')
+                || pair.closed
               }
             >
               <div className='market-pair-flex'>
@@ -95,7 +96,7 @@ const MarketSideBar = ({
                 }
                 <img src={CommentIcon} alt='' onClick={(e) => {
                   window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type};
-                    if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                    if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') && !pair.closed) {
                       showBsellModal2(e)
                     }
                   }} />
@@ -106,7 +107,7 @@ const MarketSideBar = ({
                 <div className='market-cta-section'>
                   <div className='market-sell' onClick={(e) => {
                     window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type};
-                      if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                      if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') && !pair.closed) {
                         showBsellModal(e)
                       }
                     }}>
@@ -127,7 +128,7 @@ const MarketSideBar = ({
                   </div>
                   <div className='market-buy' onClick={(e) => {
                     window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type};
-                      if(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') {
+                      if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') && !pair.closed) {
                         showBsellModal(e)
                       }
                     }}>

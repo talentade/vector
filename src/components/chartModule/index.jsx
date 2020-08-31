@@ -47,10 +47,12 @@ class ChartModule extends Component {
     this.currentPairData = null;
     this.lastFetch = null;
     this.destroyGraph = false;
+    this.col = this.props.ki > 1 ? '6' : this.props.col;
 
     this.historyLevel = this.props.historyLevel;
 
     this.state = {
+      selectedOption: this.props.selectedOption,
       allPairs: app.allPairs(),
       currentPairs: app.allPairs().forex,
       pair: '',
@@ -342,6 +344,10 @@ class ChartModule extends Component {
     if(this.props.historyLevel != this.historyLevel) {
       this.destroyGraph = true;
     }
+    if(this.props.ki == 1 && this.col != this.props.col) {
+      this.col = this.props.col;
+      this.chart.current.timeScale().fitContent();
+    }
   }
 
   async componentDidMount() {
@@ -413,11 +419,11 @@ class ChartModule extends Component {
   }
 
   handleOptionsChange = (e) => {
-    this.props.changePair(this.state.allPairs[e.target.value.toLowerCase()][0]);
+    this.props.changePair(this.state.allPairs[e.target.value.toLowerCase()][0], e.target.value);
   };
 
   setNewPairData = (e) => {
-    this.props.changePair(e.target.value);
+    this.props.changePair(e.target.value, this.state.selectedOption);
   }
 
   graphData2 = (data, pair) => {
@@ -454,14 +460,6 @@ class ChartModule extends Component {
   }
 
   render() {
-    let col = this.props.ki > 1 ? '6' : '12';
-    if(this.props.ki == 1) {
-      setTimeout(() => {
-        if($(".multiple-chart-section").length > 1) {
-          col = 6;
-        }
-      }, 100);
-    }
     return this.destroyGraph ? null : (
       <div className={'col-md-'+(this.props.ki > 1 ? '6' : this.props.col)+' chart-section multiple-chart-section chart-section-'+this.props.ki} uniqueId={this.props.chartKey}>
         <div className='chart-section-top'>
@@ -478,7 +476,7 @@ class ChartModule extends Component {
             }
           </div>
           <div className='chart-section-top-right'>
-            <select className='green-select' onChange={this.handleOptionsChange}>
+            <select className='green-select' onChange={this.handleOptionsChange} value={this.state.selectedOption}>
               {this.state.instruments.map((instr, key) => (
                 <option key={key}>{instr.toUpperCase()}</option>
               ))}

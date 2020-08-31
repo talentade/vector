@@ -56,7 +56,7 @@ class OutterTopNav extends Component {
                 {this.state.mbox && (
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
                 )}
-                <img src={liveChat} alt='' onMouseEnter={() => this.setState({mbox: true})} onClick={() => this.setState({mbox: true})}/>
+                <img src={liveChat} alt='' onMouseEnter={() => (!window.BuyandsellModalPopup) && this.setState({mbox: true})} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true}) }} />
                 <MessageBox
                   name={`${firstName} ${lastName}`}
                   show={this.state.mbox}
@@ -67,12 +67,11 @@ class OutterTopNav extends Component {
             </ul>
           ) : (
           <ul className='top-nav-list'>
-            {/*<li><img src={Tnav1} alt='' /></li>style={{marginLeft: "2em"}} */}
             <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')}>
               {this.state.mbox && (
                 <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
               )}
-              <img src={liveChat} alt='' onMouseEnter={() => this.setState({mbox: true})} onClick={() => this.setState({mbox: true})}/>
+              <img src={liveChat} alt='' onMouseEnter={() => (!window.BuyandsellModalPopup) && this.setState({mbox: true})} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true}) }}/>
               <MessageBox
                 name={`${firstName} ${lastName}`}
                 show={this.state.mbox}

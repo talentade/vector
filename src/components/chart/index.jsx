@@ -87,6 +87,13 @@ class Chart extends Component {
       graphType5: "candle",
       graphType6: "candle",
 
+      selectedOption1: 'forex',
+      selectedOption2: 'forex',
+      selectedOption3: 'forex',
+      selectedOption4: 'forex',
+      selectedOption5: 'forex',
+      selectedOption6: 'forex',
+
       pair1: "",
       pair2: "",
       pair3: "",
@@ -450,8 +457,10 @@ class Chart extends Component {
 
     $(document).delegate(".instrument-icons li", "click", function () {
       if($(this).hasClass("_active")) {
+        console.log("removeClass");
         $(this).removeClass("_active");
       } else {
+        console.log("addClass");
         $(this).addClass("_active");
       }
     });
@@ -732,6 +741,7 @@ class Chart extends Component {
 
     const _currentPairData = {
       info:   this.currentPairData ? this.currentPairData        : {},
+      closed: this.currentPairData ? this.currentPairData.closed : true,
       buy:    this.currentPairData ? this.currentPairData.ask    : this.state.buy,
       sell:   this.currentPairData ? this.currentPairData.bid    : this.state.sell,
       high:   this.currentPairData ? this.currentPairData.high   : this.state.high,
@@ -742,7 +752,7 @@ class Chart extends Component {
       spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
     }
 
-    let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto');
+    let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto') && !_currentPairData.closed;
 
     // $(".multiple-chart-section").each(function () {
     //   console.log($(this).attr("class"), $(this).attr("uniqueId"));
@@ -775,11 +785,12 @@ class Chart extends Component {
           <ChartModule
             col={this.state.col}
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair1: p, selectedOption1: s})}
             key={this.state.historyLevel1+"-"+this.state.pair1+"-1"}
             chartKey={this.state.historyLevel1+"-"+this.state.pair1}
             changeLevel={(l) => this.setState({historyLevel1: l})}
             changeGraph={(g) => this.setState({graphType1: g})}
-            changePair={(p) => this.setState({pair1: p})}
+            selectedOption={this.state.selectedOption1}
             historyLevel={this.state.historyLevel1}
             addComparism={this.addComparism}
             graph={this.state.graphType1}
@@ -791,11 +802,12 @@ class Chart extends Component {
         {this.state.pair2.length ?
           <ChartModule
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair2: p, selectedOption2: s})}
             key={this.state.historyLevel2+"-"+this.state.pair2+"-2"}
             chartKey={this.state.historyLevel2+"-"+this.state.pair2}
             changeLevel={(l) => this.setState({historyLevel2: l})}
             changeGraph={(g) => this.setState({graphType2: g})}
-            changePair={(p) => this.setState({pair2: p})}
+            selectedOption={this.state.selectedOption2}
             historyLevel={this.state.historyLevel2}
             closeComparism={this.closeComparism}
             graph={this.state.graphType2}
@@ -807,11 +819,12 @@ class Chart extends Component {
         {this.state.pair3.length ?
           <ChartModule
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair3: p, selectedOption3: s})}
             key={this.state.historyLevel3+"-"+this.state.pair3+"-3"}
             chartKey={this.state.historyLevel3+"-"+this.state.pair3}
             changeLevel={(l) => this.setState({historyLevel3: l})}
             changeGraph={(g) => this.setState({graphType3: g})}
-            changePair={(p) => this.setState({pair3: p})}
+            selectedOption={this.state.selectedOption3}
             historyLevel={this.state.historyLevel3}
             closeComparism={this.closeComparism}
             graph={this.state.graphType3}
@@ -823,11 +836,12 @@ class Chart extends Component {
         {this.state.pair4.length ?
           <ChartModule
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair4: p, selectedOption4: s})}
             key={this.state.historyLevel4+"-"+this.state.pair4+"-4"}
             chartKey={this.state.historyLevel4+"-"+this.state.pair4}
             changeLevel={(l) => this.setState({historyLevel4: l})}
             changeGraph={(g) => this.setState({graphType4: g})}
-            changePair={(p) => this.setState({pair4: p})}
+            selectedOption={this.state.selectedOption4}
             historyLevel={this.state.historyLevel4}
             closeComparism={this.closeComparism}
             graph={this.state.graphType4}
@@ -839,11 +853,12 @@ class Chart extends Component {
         {this.state.pair5.length ?
           <ChartModule
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair5: p, selectedOption5: s})}
             key={this.state.historyLevel5+"-"+this.state.pair5+"-5"}
             chartKey={this.state.historyLevel5+"-"+this.state.pair5}
             changeLevel={(l) => this.setState({historyLevel5: l})}
             changeGraph={(g) => this.setState({graphType5: g})}
-            changePair={(p) => this.setState({pair5: p})}
+            selectedOption={this.state.selectedOption5}
             historyLevel={this.state.historyLevel5}
             closeComparism={this.closeComparism}
             graph={this.state.graphType5}
@@ -855,11 +870,12 @@ class Chart extends Component {
         {this.state.pair6.length ?
           <ChartModule
             instruments={this.state.instruments}
+            changePair={(p, s) => this.setState({pair6: p, selectedOption6: s})}
             key={this.state.historyLevel6+"-"+this.state.pair6+"-6"}
             chartKey={this.state.historyLevel6+"-"+this.state.pair6}
             changeLevel={(l) => this.setState({historyLevel6: l})}
             changeGraph={(g) => this.setState({graphType6: g})}
-            changePair={(p) => this.setState({pair6: p})}
+            selectedOption={this.state.selectedOption6}
             historyLevel={this.state.historyLevel6}
             closeComparism={this.closeComparism}
             graph={this.state.graphType6}
@@ -873,7 +889,7 @@ class Chart extends Component {
 
 
         <div className='chart-cta-section' disabled={
-          _currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable
+          (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable)
         }>
           <div className='chart-sell' onClick={(e) => {
             if(_currentPairData.sell !== 0 && _currentPairData.buy !== 0 && buyable) {
