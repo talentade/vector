@@ -419,7 +419,7 @@ class ChartModule extends Component {
   }
 
   handleOptionsChange = (e) => {
-    this.props.changePair(this.state.allPairs[e.target.value.toLowerCase()][0], e.target.value);
+    this.props.changePair(this.state.allPairs[e.target.value.toLowerCase()][0], e.target.value.toLowerCase());
   };
 
   setNewPairData = (e) => {
@@ -460,12 +460,14 @@ class ChartModule extends Component {
   }
 
   render() {
+    let sop = this.props.selectedOption;
+
     return this.destroyGraph ? null : (
       <div className={'col-md-'+(this.props.ki > 1 ? '6' : this.props.col)+' chart-section multiple-chart-section chart-section-'+this.props.ki} uniqueId={this.props.chartKey}>
         <div className='chart-section-top'>
           <div className='chart-section-top-left'>
             <select className='blue-select' onChange={this.setNewPairData} value={this.state.selectedPair}>
-              {this.state.currentPairs.map((data, key) => (<option key={key}>{data}</option>))}
+              {this.state.allPairs[sop].map((data, key) => (<option key={key}>{data}</option>))}
             </select>
             {this.props.ki === 1 ?
               <button onClick={this.props.addComparism}>Add Comparison</button> :
@@ -476,7 +478,7 @@ class ChartModule extends Component {
             }
           </div>
           <div className='chart-section-top-right'>
-            <select className='green-select' onChange={this.handleOptionsChange} value={this.state.selectedOption}>
+            <select className='green-select' onChange={this.handleOptionsChange} value={sop.toUpperCase()}>
               {this.state.instruments.map((instr, key) => (
                 <option key={key}>{instr.toUpperCase()}</option>
               ))}
