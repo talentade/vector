@@ -452,7 +452,6 @@ class Chart extends Component {
 
     if(stockToDisplay.length) {
       this.currentPairData = stockToDisplay[0];
-      // this.setState({ currentPairData: stockToDisplay[0] });
     }
 
     $(document).delegate(".instrument-icons li", "click", function () {
@@ -738,6 +737,16 @@ class Chart extends Component {
   }
 
   render() {
+    if(this.state.pair1.length) {
+      const stockToDisplay = this.props.hotStocks.filter((pair) => {
+        if(pair.pair) {
+          return pair.pair.toLowerCase().match(this.state.pair1.toLowerCase()) || this.state.pair1.toLowerCase() == pair.pair.toLowerCase();
+        }
+      });
+      if(stockToDisplay.length) {
+        this.currentPairData = stockToDisplay[0];
+      }
+    }
 
     const _currentPairData = {
       info:   this.currentPairData ? this.currentPairData        : {},
