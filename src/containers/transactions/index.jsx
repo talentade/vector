@@ -334,7 +334,10 @@ class Transactions extends Component {
     return (
       <Container>
         <div className='transactions-section'>
-          <Spinner showSpinner={showSpinner} />
+          {/*<Spinner showSpinner={showSpinner} />*/}
+          <div className='loader-container' style={{ display: this.state.showSpinner ? 'block' : 'none' }}>
+            <div className='loader'></div>
+          </div>
           {showDepositModal ? (
             <TransactionModal
               imageUrl={CardsIcon}

@@ -69,14 +69,18 @@ class Accounts extends Component {
         <AddAccount
           sending={() => this.setState({showSpinner : true})}
           unsending={() => this.setState({showSpinner : false})}
-          sent={() => this.setState({showSpinner : false})}
+          sent={() => { this.accountList(); this.setState({showSpinner : false}) }}
           showCreated={(i, t) => this.setState({showSpinner: false, showCreated: true, cid: i, ctype: t})}
           confirmClick={(e) => this.setState({addAcc: false})}
           cancelClick={(e) => this.setState({addAcc: false})}
         /> : null }
         <Created show={this.state.showCreated} type={this.state.ctype} id={this.state.cid} cancel={(e) => this.setState({showCreated: false})} />
-        <Spinner showSpinner={this.state.showSpinner} />
+        {/*<Spinner showSpinner={this.state.showSpinner} />*/}
         <div className="col-12" id="account-container">
+
+          <div className='loader-container' style={{ display: this.state.showSpinner ? 'block' : 'none' }}>
+            <div className='loader'></div>
+          </div>
 
           <h1 className="page-title">Accounts
             <div className="btn-list">

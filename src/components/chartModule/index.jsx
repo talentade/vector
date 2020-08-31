@@ -347,7 +347,11 @@ class ChartModule extends Component {
     }
     if(this.props.ki == 1 && this.col != this.props.col) {
       this.col = this.props.col;
-      this.chart.current.timeScale().fitContent();
+      setTimeout(() => {
+        this.chart.current.timeScale().fitContent();
+        this.chart.current.timeScale().scrollToPosition(1);
+        $(window).trigger("resize");
+      }, 100);
     }
   }
 

@@ -104,6 +104,11 @@ const app = {
     return d.trim().replace(/,/g, "").split(" ")[1];
   },
   floatFormat: (x, dp = 5, txt = false) => {
+    if(dp < 0) {
+      let rst = String(x);
+      alert(rst+" "+(rst.length+dp));
+      return Number(rst.substr(0, rst.length+dp));
+    }
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   },

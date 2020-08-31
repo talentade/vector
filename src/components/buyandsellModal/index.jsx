@@ -166,8 +166,8 @@ class BuyandsellModal extends Component {
     this.vlvChange();
   }
 
-  vlvChange = (u = "") => {
-    let lots = parseFloat($("#vlv").val());
+  _vlvChange = (u = "", i) => {
+    let lots = Number(i > 0 ? this.state.take_profit : this.state.stop_loss); // Number($("#vlv_"+i).val());
 
     if(u.length) {
       if(u === "up") {
@@ -178,7 +178,30 @@ class BuyandsellModal extends Component {
     }
 
     lots = lots.toFixed(2);
-    // $("#vlv").val(lots);
+    // $("#vlv_"+i).val(lots);
+
+    if(i > 0) {
+      this.setState({ take_profit : lots });
+    } else {
+      this.setState({ stop_loss : lots });
+    }
+    // alert(lots);
+    // this.pip_margin(lots);
+  }
+
+  vlvChange = (u = "") => {
+    let lots = Number($("#vlv").val());
+
+    if(u.length) {
+      if(u === "up") {
+        lots += 0.01;
+      } else {
+        lots -= 0.01;
+      }
+    }
+
+    lots = lots.toFixed(2);
+    $("#vlv").val(lots);
 
     this.setState({ volume : lots });
     this.pip_margin(lots);
@@ -383,11 +406,11 @@ class BuyandsellModal extends Component {
                     <small>Pips</small>
                     <p className="stop_loss">
                       <input type="number" placeholder="0.01" value={this.state.stop_loss} />
-                      <img src={upVlv} className="uvlv" onClick={(e) => { this.setState({stop_loss: 0.01 * this.state.counter2, counter2: this.state.counter2 + 1}); setTimeout(() => { this.estimate(); }, 10); }} />
-                      <img src={downVlv} className="dvlv" onClick={(e) => { this.setState({stop_loss: 0.01 * this.state.counter2, counter2: this.state.counter2 - 1}); setTimeout(() => { this.estimate(); }, 10); }} />
+                      <img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />
+                      <img src={downVlv} className="dvlv" id="vlv_0" onClick={(e) => { this._vlvChange("down", 0); }} />
                     </p>
-                    <small>Estimated Price</small>
-                    <input type="number" placeholder="" value={this.state.estimated_price1} />
+                    <small className="hide">Estimated Price</small>
+                    <input className="hide" type="number" placeholder="" value={this.state.estimated_price1} />
                   </span>
                 </span>
                 <span>
@@ -404,11 +427,11 @@ class BuyandsellModal extends Component {
                     <small>Pips</small>
                     <p className="take_profit">
                       <input type="number" placeholder="0.01" value={this.state.take_profit} />
-                      <img src={upVlv} className="uvlv" onClick={(e) => { this.setState({take_profit: 0.01 * this.state.counter3, counter3: this.state.counter3 + 1}); setTimeout(() => { this.estimate(); }, 10);  }} />
-                      <img src={downVlv} className="dvlv" onClick={(e) => { this.setState({take_profit: 0.01 * this.state.counter3, counter3: this.state.counter3 - 1}); setTimeout(() => { this.estimate(); }, 10);  }} />
+                      <img src={upVlv} className="uvlv" id="vlv_1" onClick={(e) => { this._vlvChange("up", 1); }} />
+                      <img src={downVlv} className="dvlv" id="vlv_1" onClick={(e) => { this._vlvChange("down", 1); }} />
                     </p>
-                    <small>Estimated Price</small>
-                    <input type="number" placeholder="" value={this.state.estimated_price2} />
+                    <small className="hide">Estimated Price</small>
+                    <input className="hide" type="number" placeholder="" value={this.state.estimated_price2} />
                   </span>
                 </span>
               </div>

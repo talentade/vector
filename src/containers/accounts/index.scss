@@ -7,6 +7,12 @@
 	flex-direction: column;
 	font-family: Poppins, sans-serif;
 
+    .loader-container {
+    	position: absolute;
+	    top: 30%;
+	    z-index: 100000000;
+	    left: 46.5%;
+    }
   h2 {
     color: #ffffff;
     font-size: 15px;
