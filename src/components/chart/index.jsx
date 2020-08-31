@@ -773,7 +773,7 @@ class Chart extends Component {
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               info={_currentPairData.info}
-              pair={this.state.selectedPair}
+              pair={this.state.pair1}
               buy={_currentPairData.buy}
               sell={_currentPairData.sell}
               type={_currentPairData.type}
