@@ -11,7 +11,7 @@ import app from '../../services/app';
 import $ from 'jquery';
 
 const socketListener = () => {
-  if(!app.id().length) return null;
+  // if(!app.id().length) return null;
   window.WebSocketPlug = window.WebSocketPlugged ? window.WebSocketPlug : new WebSocket(app.hostURL("socket", 1));
   window.WebSocketPlug.addEventListener('open', () => {
     window.WebSocketPlugged = true;
