@@ -179,7 +179,7 @@ class ChartModule extends Component {
             console.log("Update overuled");
             return true;
           }
-          if(this.historySeriesPair == pair) {
+          if(this.historySeriesPair == pair && this.realTimeListener && !this.destroyGraph) {
             setTimeout(async () => {
               console.log("-- checking_for_update for", pair);
               if(this.historySeriesPair == pair) {
@@ -253,14 +253,15 @@ class ChartModule extends Component {
                     _plotHistory();
                     if(!this.historySeries.length) {
                       console.log("No data for", pair, "oo");
+                    } else {
+                      setTimeout(() => {
+                        if(this.historySeriesPair == pair) {
+                          _plotHistory();
+                        }
+                      }, 2.65 * 1000);
                     }
-                    setTimeout(() => {
-                      if(this.historySeriesPair == pair) {
-                        _plotHistory();
-                      }
-                    }, 2.65 * 1000);
-                  check_for_update(pair);
-                }
+                    check_for_update(pair);
+                  }
                 } catch (e) {
                   check_for_update(pair);
                   console.log("-- Update ERR");
@@ -384,7 +385,7 @@ class ChartModule extends Component {
       },
     });
 
-    $(".outter-ham, .filter-img").click(() => {
+    $(".outter-ham, .a-comp, .filter-img").click(() => {
       if(this.realTimeListener && !this.destroyGraph) {
         setTimeout(() => {
           let w = this.chartContainerRef.current.clientWidth;
@@ -470,7 +471,7 @@ class ChartModule extends Component {
               {this.state.allPairs[sop].map((data, key) => (<option key={key}>{data}</option>))}
             </select>
             {this.props.ki === 1 ?
-              <button onClick={this.props.addComparism}>Add Comparison</button> :
+              <button onClick={this.props.addComparism} className="a-comp">Add Comparison</button> :
               <button
                 onClick={() => this.props.closeComparism(this.props.ki)}
                 style={{border: "1px solid rgb(197 0 0)", color: "#fff", background: "rgb(255, 30, 30)", width: "100px"}}
