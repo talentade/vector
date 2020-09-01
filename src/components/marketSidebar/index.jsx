@@ -38,7 +38,7 @@ const MarketSideBar = ({
         width: hideText ? '50px' : null,
         overflow: 'hidden',
       }}
-      className={`left ${sideNav ? 'display-l-nav' : ''} big-left`}
+      className={`left${sideNav ? ' display-l-nav' : ''} big-left`}
     >
       <img
         src={FilterIcon}

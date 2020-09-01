@@ -897,6 +897,7 @@ class Chart extends Component {
     </div>
 
 
+      {this.state.pair1.length ? (
         <div className='chart-cta-section' disabled={
           (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable)
         }>
@@ -935,6 +936,7 @@ class Chart extends Component {
             <p className='buy-right'>{_currentPairData.high > 0 ? "H: "+app.floatFormat(_currentPairData.high) : ''}</p>
           </div>
         </div>
+      ): null}
 
         <div className='chart-section hide'>
           <div className='chart-section-top'>

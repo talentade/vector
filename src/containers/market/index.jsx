@@ -87,6 +87,14 @@ class Market extends Component {
         }}));
       }
     }, 1000);
+
+    var w = $(window).innerHeight();
+    $(".market-pairs").attr("style", "height: "+(Number(w) - 180)+"px !important; min-height: "+(Number(w) - 180)+"px !important;");
+
+    $(window).resize(() => {
+      w = $(window).innerHeight();
+      $(".market-pairs").attr("style", "height: "+(Number(w) - 180)+"px !important; min-height: "+(Number(w) - 180)+"px !important;");
+    });
   }
 
   socketInit = () => {
