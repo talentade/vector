@@ -51,6 +51,8 @@ class OutterLeftNav extends Component {
               style={{width: nClicked ? '35px' : null}}
               className={'link-icons '+nav.name}
             >
+            {nav.name === 'trade' || nav.name === 'market' ? (
+
               <NavLink
                 to={nav.path}
                 activeStyle={activeStyle}
@@ -64,6 +66,21 @@ class OutterLeftNav extends Component {
                   <p className='outter-lnav-text'>{nav.text}</p>
                 ) : null}
               </NavLink>
+            ) : (
+              <a
+                href={nav.path}
+                activeStyle={activeStyle}
+                className={nav.className}
+                style={
+                  nClicked ? this.props.listStyles : null
+                }
+              >
+                <img src={nav.imageUrl} alt='nav-logo' />
+                {!nClicked ? (
+                  <p className='outter-lnav-text'>{nav.text}</p>
+                ) : null}
+              </a>
+            )}
             </li>
           ))}
         </ul>

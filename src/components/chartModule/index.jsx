@@ -464,6 +464,15 @@ class ChartModule extends Component {
     }
   }
 
+  showDropdown = function (_d) {
+    let d = "#"+_d;
+    if($(d).hasClass("_active")) {
+      $(d).removeClass("_active");
+    } else {
+      $(d).addClass("_active");
+    }
+  }
+
   render() {
     let sop = this.props.selectedOption;
 
@@ -489,7 +498,7 @@ class ChartModule extends Component {
               ))}
             </select>
             <ul className="instrument-icons">
-              <li className="one">
+              <li className="one" id={"gr-one-"+this.props.ki} onClick={() => this.showDropdown("gr-one-"+this.props.ki)}>
                 <img style={{opacity: this.currentGrpahType == "candle" ? "1" : "1"}} src={
                   this.currentGrpahType == "candle" ? candleGrf:
                   this.currentGrpahType == "line" ? lineGrf:
@@ -506,7 +515,7 @@ class ChartModule extends Component {
                   <span onClick={(e) => this.switchGraphTypeTo("hist")} className={"cgt"+(this.currentGrpahType == "hist" ? " _active" : "")}><img src={histGrf} /> Histogram</span>
                 </div>
               </li>
-              <li className="two">
+              <li className="two" id={"gr-two-"+this.props.ki} onClick={() => this.showDropdown("gr-two-"+this.props.ki)}>
                 <img src={Tarrow} alt='' className='t-arrow' /> {this.state.historyLevel}
                 <div className="gr-dropdown">
                   {this.props.ki == 1 ?

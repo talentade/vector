@@ -454,15 +454,15 @@ class Chart extends Component {
       this.currentPairData = stockToDisplay[0];
     }
 
-    $(document).delegate(".instrument-icons li", "click", function () {
-      if($(this).hasClass("_active")) {
-        console.log("removeClass");
-        $(this).removeClass("_active");
-      } else {
-        console.log("addClass");
-        $(this).addClass("_active");
-      }
-    });
+    // $(document).delegate(".instrument-icons li", "click", function () {
+    //   if($(this).hasClass("_active")) {
+    //     console.log("removeClass");
+    //     $(this).removeClass("_active");
+    //   } else {
+    //     console.log("addClass");
+    //     $(this).addClass("_active");
+    //   }
+    // });
 
     $(document).mouseup(function (e) {
       if($(".instrument-icons li").hasClass("_active")) {

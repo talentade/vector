@@ -112,6 +112,9 @@ const app = {
     let currency = parseFloat(parseFloat(x).toFixed(dp));
     return txt ? currency.toLocaleString('en-US', {minimumFractionDigits: dp}) : currency;
   },
+  noCache: (x = "/") => {
+    return (x != "/" ? x+'nocache=' : '')+(new Date().getTime());
+  },
   guessTimate: (x, raw = false) => {
     let str = String(x).substr(0, 7);
     let chill = Math.floor((Math.random() * 100) + 1);

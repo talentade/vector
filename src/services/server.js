@@ -223,10 +223,20 @@ export default {
     });
   },
 
+  resetQue () {
+    if(window.source) {
+      window.source.cancel("Component got unmounted");
+    }
+  },
+
   getProfile() {
+    if(window.source) {
+      window.source.cancel("Component got unmounted");
+    } window.source = axios.CancelToken.source();
     return axios.request({
       method: 'GET',
-      url: app.hostURL('profile/'+app.userid()),
+      cancelToken: window.source.token,
+      url: app.hostURL('profile/'+app.noCache()),
       headers: {
         'Authorization': app.auth()
       }
@@ -272,7 +282,7 @@ export default {
   getMarketAndNewsData() {
     return axios.request({
       method: 'GET',
-      url: app.hostURL('pairdata/'+app.account()),
+      url: app.hostURL('pairdata/'+app.account()+app.noCache("?")),
       headers: {
         'Authorization': app.auth()
       }
@@ -315,9 +325,13 @@ export default {
   },
 
   getTransactionHistory(page_size, page_no) {
+    if(window.source) {
+      window.source.cancel("Component got unmounted");
+    } window.source = axios.CancelToken.source();
     return axios.request({
       method: 'GET',
-      url: app.hostURL('history?page='+page_no+'&max='+page_size),
+      cancelToken: window.source.token,
+      url: app.hostURL('history?page='+page_no+'&max='+page_size+app.noCache("&")),
       headers: {
         'Authorization': app.auth(),
       },

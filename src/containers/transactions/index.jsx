@@ -14,6 +14,7 @@ import Transfer from '../../components/transfer/index';
 import TransactionHistory from '../../components/history/index';
 import app from '../../services/app';
 import server from '../../services/server';
+import currencies from '../../services/currencies';
 import './index.scss';
 
 class Transactions extends Component {
@@ -24,7 +25,7 @@ class Transactions extends Component {
       accounts: app.accounts(),
       accounts2: [],
       account: app.account(),
-      currencies: [],
+      currencies: Object.keys(currencies),
       selectedCurrency: 'USD',
       cards: ['VISA- 5322 2489 2479 4823'],
       email: app.email(),
@@ -82,15 +83,7 @@ class Transactions extends Component {
     }));
 
     try {
-      const { data } = await axios.get(
-        'https://openexchangerates.org/api/currencies.json',
-      );
-
       await this.fetchTransactions();
-
-      const currencies = Object.keys(data);
-
-      this.setState({ currencies });
     } catch (error) {
       return error.message;
     }

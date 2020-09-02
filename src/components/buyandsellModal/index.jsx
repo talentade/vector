@@ -296,8 +296,8 @@ class BuyandsellModal extends Component {
         "lots"            : this.state.lot_str,
         "volume"          : this.state.volume,
         "margin"          : this.state.required_margin_str,
-        "stop_loss"       : document.getElementById("stop_loss").checked ? this.state.stop_loss : "",
-        "take_profit"     : document.getElementById("take_profit").checked ? this.state.take_profit : "",
+        "stop_loss"       : document.getElementById("stop_loss").checked ? Number($("#stl_val").val().trim()) : "",
+        "take_profit"     : document.getElementById("take_profit").checked ? Number($("#tkp_val").val().trim()) : "",
         "trade_when"      : document.getElementById("only_buy_when").checked ? Number($(".only_buy_when_actual.for-"+this.state.mode).val()) : "",
         "time"            : new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
       }
@@ -341,6 +341,21 @@ class BuyandsellModal extends Component {
   render () {
     const { cancelClick, confirmClick, pair, buy, sell, act } = this.props;
     const { information, analysis } = this.state;
+
+    let tkp, stl, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
+
+        tkp = (110 / 100) * Number(crate);
+        stl = (90 / 100) * Number(crate);
+
+        tkp = Number(String(tkp).substr(0, String(crate).length));
+        stl = Number(String(stl).substr(0, String(crate).length));
+
+        sell_when = (95 / 100) * Number(crate);
+        buy_when = (105 / 100) * Number(crate);
+
+        sell_when = Number(String(sell_when).substr(0, String(crate).length));
+        buy_when = Number(String(buy_when).substr(0, String(crate).length));
+
     return (
       <>
       <div className='overlay bs' onClick={this.popupOut}>
@@ -403,11 +418,11 @@ class BuyandsellModal extends Component {
                   Set stop loss
                   <label className="switch"><input type="checkbox" id="stop_loss" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    <small>Pips</small>
+                    {/*<small>Rate</small>*/}
                     <p className="stop_loss">
-                      <input type="number" placeholder="0.01" value={this.state.stop_loss} />
-                      <img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />
-                      <img src={downVlv} className="dvlv" id="vlv_0" onClick={(e) => { this._vlvChange("down", 0); }} />
+                      <input type="number" placeholder="0.01" id="stl_val" defaultValue={stl} />
+                      {/*<img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />
+                      <img src={downVlv} className="dvlv" id="vlv_0" onClick={(e) => { this._vlvChange("down", 0); }} />*/}
                     </p>
                     <small className="hide">Estimated Price</small>
                     <input className="hide" type="number" placeholder="" value={this.state.estimated_price1} />
@@ -416,19 +431,21 @@ class BuyandsellModal extends Component {
                 <span>
                   Only buy/sell when <label className="switch"><input type="checkbox" id="only_buy_when" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    <small>Rate</small>
-                    <input type="number" className={"only_buy_when_actual for-sell"+(this.state.mode == "sell" ? "" : " hide")} defaultValue={app.floatFormat(sell*1.05)} />
-                    <input type="number" className={"only_buy_when_actual for-buy"+(this.state.mode == "buy" ? "" : " hide")} defaultValue={app.floatFormat(buy*0.95)} />
+                    {/*<small>Rate</small>*/}
+                    <p className="trade_when">
+                      <input type="number" className={"only_buy_when_actual for-sell"+(this.state.mode == "sell" ? "" : " hide")} defaultValue={sell_when} />
+                      <input type="number" className={"only_buy_when_actual for-buy"+(this.state.mode == "buy" ? "" : " hide")} defaultValue={buy_when} />
+                    </p>
                   </span>
                 </span>
                 <span>
                   Set take profit <label className="switch"><input type="checkbox"id="take_profit" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    <small>Pips</small>
+                    {/*<small>Rate</small>*/}
                     <p className="take_profit">
-                      <input type="number" placeholder="0.01" value={this.state.take_profit} />
-                      <img src={upVlv} className="uvlv" id="vlv_1" onClick={(e) => { this._vlvChange("up", 1); }} />
-                      <img src={downVlv} className="dvlv" id="vlv_1" onClick={(e) => { this._vlvChange("down", 1); }} />
+                      <input type="number" placeholder="0.01" id="tkp_val" defaultValue={tkp} />
+                      {/*<img src={upVlv} className="uvlv" id="vlv_1" onClick={(e) => { this._vlvChange("up", 1); }} />
+                      <img src={downVlv} className="dvlv" id="vlv_1" onClick={(e) => { this._vlvChange("down", 1); }} />*/}
                     </p>
                     <small className="hide">Estimated Price</small>
                     <input className="hide" type="number" placeholder="" value={this.state.estimated_price2} />

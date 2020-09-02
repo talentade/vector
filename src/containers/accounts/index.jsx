@@ -43,16 +43,15 @@ class Accounts extends Component {
   accountList = async () => {
     try {
       this.setState({showSpinner: true});
-      const gp = await server.getProfile();
-      app.profile(gp.data.profile);
+      await server.getProfile().then((gp) => {
+        app.profile(gp.data.profile);
+        this.setState({accounts: gp.data.profile.accounts})
+      });
       this.setState({showSpinner: false});
     } catch(e) {
       this.setState({showSpinner: false});
       return e;
     }
-    setTimeout(() => {
-      this.setState({accounts: app.profile().accounts});
-    }, 50);
   }
 
   handleClick = (e, i) => {
