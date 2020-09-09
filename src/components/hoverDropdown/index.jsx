@@ -1,4 +1,5 @@
 import React from "react";
+import $ from 'jquery';
 import { NavLink } from 'react-router-dom';
 import deposit from "../../themes/images/deposit.png";
 import transfer from "../../themes/images/transfer.png";
@@ -34,7 +35,8 @@ const HoverDropdown = ({ name, email, balance }) => {
         <p>PROFILE</p>
         <ul>
           <li><img src={profile} /><NavLink to="/Profile">View Profile</NavLink></li>
-          <li><img src={key} />Change Password</li>
+          <li onClick={() => { $(window).trigger("changePassword"); window.changePassword = true; }}><img src={key} /><NavLink to="/Profile">Change Password</NavLink></li>
+          {/*if(window.location.pathname.replace("/", "").toLowerCase() === "profile") { $(window).trigger("changePassword"); } else { window.changePassword = true; }*/}
         </ul>
       </div>
     </div>

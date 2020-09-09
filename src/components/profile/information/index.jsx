@@ -23,12 +23,12 @@ export default class UserInfo extends Component {
 	handleChange = (e) => {
 		this.setState({value : e.target.value});
 	 	if(this.props["alt"]) {
-			this.props.handleChange(this.props.index, this.props.field, e.target.value);
+			this.props.handleChange(this.props.name, e.target.value);
 		}
 	}
 
 	render () {
-	  const { dataKey, alt } = this.props;
+	  const { dataKey, alt, fixed } = this.props;
 	  let editable = !!this.state.editable;
 	  let value = this.state.value;
 
@@ -37,7 +37,7 @@ export default class UserInfo extends Component {
 	      <p className="key">{dataKey}</p>
 	      <div>
 	        <p className="value">{!editable ? <input className="data-value" spellcheck="false" onChange={this.handleChange} defaultValue={value} /> : value}</p>
-	        <img src={EditLogo} alt="" style={{cursor: "pointer", opacity: editable ? '1' : '0.3'}} onClick={(e) => this.toggleEdit()} />
+	        <img src={EditLogo} alt="" style={{cursor: "pointer", opacity: editable ? '1' : '0.3'}} onClick={(e) => !fixed&&this.toggleEdit()} />
 	      </div>
 	    </div>
 	  );

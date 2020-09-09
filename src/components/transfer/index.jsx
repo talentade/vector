@@ -111,11 +111,14 @@ const Transfer = ({
             1000.00
           </button>
         </div>
-        <input
-          type='submit'
-          value='MAKE TRANSFER'
-          className='transaction-submit-btn'
-        />
+        {
+          toValue.split("-")[0].toLowerCase() == account.split("-")[0].toLowerCase() ? 
+          <input
+            type='submit'
+            value='MAKE TRANSFER'
+            className='transaction-submit-btn'
+          /> : null
+        }
       </form>
     </div>
   );

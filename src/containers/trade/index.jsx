@@ -36,6 +36,7 @@ class TradeDashboard extends Component {
       open_pl: 0,
       equity: 0,
       margin: 0,
+      filterOptions: ['ALL TYPES'],
       accounts: [],
       all_trades: [],
       open_trades: [],
@@ -91,6 +92,15 @@ class TradeDashboard extends Component {
           account: app.account(),
         }}));
       }
+    }, 1000);
+
+    setTimeout(() => {
+      let filterOptions = Object.keys(app.allPairs());
+      let f = [];
+      for (var i = 0; i <= filterOptions.length; i++) {
+        f[i] = (i == 0 ? "ALL TYPES" : filterOptions[i - 1]).toUpperCase();
+      }
+      this.setState({filterOptions : f});
     }, 1000);
   }
 
@@ -374,11 +384,12 @@ class TradeDashboard extends Component {
 
             {this.state.buyandsellModal ? (
               <BuyandsellModal
-                text={``}
+                info={window.buyAndSellData.info}
                 pair={window.buyAndSellData.pair}
                 buy={window.buyAndSellData.buy}
                 sell={window.buyAndSellData.sell}
                 act={window.buyAndSellData.act}
+                type={window.buyAndSellData.type}
                 cancelClick={this.cancelBsellModal}
                 confirmClick={this.confirmBsellModal}
                 information={this.state.buyandsellModalInfo}
@@ -421,11 +432,11 @@ class TradeDashboard extends Component {
               {currentTab === 'Trade' ? (
                 <Chart hotStocks={hotStocks} />
               ) : currentTab === 'Open Trades' ? (
-                <OpenTrade filterOptions={['All Types']} history={this.state.open_trades} />
+                <OpenTrade filterOptions={this.state.filterOptions} history={this.state.open_trades} />
               ) : currentTab === 'Closed Trades' ? (
-                <ClosedTrade filterOptions={['All Types']} history={this.state.closed_trades} />
+                <ClosedTrade filterOptions={this.state.filterOptions} history={this.state.closed_trades} />
               ) : currentTab === 'Pending Trades' ? (
-                <PendingTrade filterOptions={['All Types']} history={this.state.pending_trades} />
+                <PendingTrade filterOptions={this.state.filterOptions} history={this.state.pending_trades} />
               ) : (
                 <MobileBalance
                   demoOptions={this.state.accounts}

@@ -2,7 +2,7 @@ import React from "react";
 import "./index.scss";
 import CardBottomImg from "../../../themes/images/tradeDashboard/cardBottom.svg";
 
-const DebitCard = ({ PAN, info, deleteCard }) => {
+const DebitCard = ({ PAN, valid_thru, card_name, deleteCard }) => {
   const colors = ["#03CF9E", "#C624FF"]
   return (
     <div className="debit-card" style={{ background: colors[Math.floor(Math.random()) * 2] }}>
@@ -16,7 +16,7 @@ const DebitCard = ({ PAN, info, deleteCard }) => {
           <p>VALID</p>
           <p>THRU</p>
         </div>
-        <p className="expiry-date">{info.valid_thru}</p>
+        <p className="expiry-date">{valid_thru}</p>
       </div>
     </div>
   );

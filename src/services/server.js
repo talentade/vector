@@ -155,7 +155,66 @@ export default {
   //     url: 'https://avariz-core.herokuapp.com/admin/trades/TI/migrate?trading_account='+app.account()+'&instrument='+instrument+'&TI_id='+id+'&mode1=open&mode2=closed&username='+app.email(),
   //     headers: {'Authorization': '__AVARIZ_ROBOTIC_CONTROLLER__'}
   //   })
-  // }
+  // },
+  // uploadImage(id, credentials) {
+  //   return axios.request({
+  //     method: 'POST',
+  //     url: 'https://avariz-core.herokuapp.com/utils/upload/profile_image/'+app.id(),
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: credentials
+  //   });
+  // },
+  // changePassword(credentials, Authorization, email) {
+  //   return axios.request({
+  //     method: 'PUT',
+  //     url: `https://avariz-core.herokuapp.com/profile/changePassword/${email}`,
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: credentials,
+  //   });
+  // },
+  // addNewCard(credentials) {
+  //   return axios.request({
+  //     method: 'POST',
+  //     url: 'https://avariz-core.herokuapp.com/profile/addCard',
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: credentials
+  //   });
+  // },
+  // deleteCard(id, PAN) {
+  //   return axios.request({
+  //     method: 'PUT',
+  //     url: 'https://avariz-core.herokuapp.com/profile/removeCard/'+id+'/'+PAN,
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     }
+  //   });
+  // },
+  // addBankingDetails (details) {
+  //   return axios.request({
+  //     method: 'POST',
+  //     url: 'https://avariz-core.herokuapp.com/utils/data/banking/add/'+app.email()+'/'+app.auth(),
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: details
+  //   });
+  // },
+  // setBankingDetails (id, details) {
+  //   return axios.request({
+  //     method: 'PUT',
+  //     url: 'https://avariz-core.herokuapp.com/utils/data/banking/edit/'+app.email()+'/'+app.auth()+'/'+id,
+  //     headers: {
+  //       'Authorization': app.auth()
+  //     },
+  //     data: {update: details}
+  //   });
+  // },
 
 
 
@@ -299,6 +358,17 @@ export default {
       data : { currency, amount, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
     })
   },
+
+  withdrawFunds(amount, currency, account, to) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('withdraw/'+account),
+      headers: {
+        'Authorization': app.auth(),
+      },
+      data : { amount, currency, to, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
+    })
+  },
   
   transferFunds(from, to, amount, currency) {
     return axios.request({
@@ -372,35 +442,81 @@ export default {
     });
   },
 
+  uploadImage(fd) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('profile-img'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: fd
+    });
+  },
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  changePassword(credentials, Authorization, email) {
+  changePassword(credentials) {
+    credentials.old_password = sha256(credentials.old_password);
+    credentials.new_password = sha256(credentials.new_password);
     return axios.request({
       method: 'PUT',
-      url: `https://avariz-core.herokuapp.com/profile/changePassword/${email}`,
+      url: app.hostURL('changePassword'),
       headers: {
         'Authorization': app.auth()
       },
       data: credentials,
     });
   },
+
+  addNewCard(card) {
+    card.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('addCard'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: card
+    });
+  },
+
+  deleteCard(id, PAN) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('removeCard/'+PAN+'/'+id),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
+  setBankingDetails (data) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('bankingDetails'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data
+    });
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   getId(email) {
     return Api().get(`/utils/inspect/${email}/user_id`);
   },
@@ -411,35 +527,6 @@ export default {
       url: 'https://avariz-core.herokuapp.com/trading/data/historical?pair='+pair+'&timecode='+hr+'H&email='+localStorage.getItem("email"),
       headers: {'Authorization': app.auth()}
     })
-  },
-  uploadImage(id, credentials) {
-    return axios.request({
-      method: 'POST',
-      url: 'https://avariz-core.herokuapp.com/utils/upload/profile_image/'+app.id(),
-      headers: {
-        'Authorization': app.auth()
-      },
-      data: credentials
-    });
-  },
-  addNewCard(credentials) {
-    return axios.request({
-      method: 'POST',
-      url: 'https://avariz-core.herokuapp.com/profile/addCard',
-      headers: {
-        'Authorization': app.auth()
-      },
-      data: credentials
-    });
-  },
-  deleteCard(id, PAN) {
-    return axios.request({
-      method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/profile/removeCard/'+id+'/'+PAN,
-      headers: {
-        'Authorization': app.auth()
-      }
-    });
   },
   getMyProfile(email) {
     return Api().get(`/utils/inspect/${email}/userdata`);
@@ -574,28 +661,6 @@ export default {
       url: 'https://avariz-core.herokuapp.com/utils/chart/series?pair='+pair+'&interval='+interval,
       headers: {'Authorization': app.auth()}
     })
-  },
-
-  addBankingDetails (details) {
-    return axios.request({
-      method: 'POST',
-      url: 'https://avariz-core.herokuapp.com/utils/data/banking/add/'+app.email()+'/'+app.auth(),
-      headers: {
-        'Authorization': app.auth()
-      },
-      data: details
-    });
-  },
-
-  setBankingDetails (id, details) {
-    return axios.request({
-      method: 'PUT',
-      url: 'https://avariz-core.herokuapp.com/utils/data/banking/edit/'+app.email()+'/'+app.auth()+'/'+id,
-      headers: {
-        'Authorization': app.auth()
-      },
-      data: {update: details}
-    });
   },
 
 

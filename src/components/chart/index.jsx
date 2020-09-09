@@ -600,37 +600,6 @@ class Chart extends Component {
     if (typeof data === 'object' && this.treatPair(data.pair) === this.treatPair(this.pair)) {
       let plot_data = data;
       let not_raw   = Object.keys(plot_data).indexOf("time") > -1;
-      // if(not_raw) {
-      //   this.dataPlotSeries.push(plot_data);
-      //   if(this.currentGrpahType == "candle") {
-      //     // default
-      //   } else if(this.currentGrpahType == "line") {
-      //     plot_data = {time: data.time, value: data.open};
-      //   } else if(this.currentGrpahType == "area") {
-      //     plot_data = {time: data.time, value: data.open};
-      //   } else if(this.currentGrpahType == "bar") {
-      //     // default
-      //   } else if(this.currentGrpahType == "hist") {
-      //     plot_data = {time: data.time, value: data.open, color: "#03cf9e"};
-      //   }
-
-      //   if(this.seriesIterator > 0) {
-      //     this.chartSeries.update(plot_data);
-      //   } else {
-      //     this.seriesIterator += 1;
-      //     this.chartSeries.setData([plot_data]);
-      //   }
-
-      //   this.setState({
-      //     showLoader: false,
-      //     buy: data.bid,
-      //     sell: data.ask,
-      //     low: data.low,
-      //     high: data.high,
-      //     spread: data.spread,
-      //   });
-      //   this.chart.current.timeScale().fitContent();
-      // } else {
 
         if(this.currentGrpahType == "candle" || this.currentGrpahType == "bar") {
           this.seriesIterator += 1;
@@ -644,8 +613,6 @@ class Chart extends Component {
           this.seriesIterator += 1;
           this.chartSeries.setData(plots);
         }
-
-      // }
       
     }
   }

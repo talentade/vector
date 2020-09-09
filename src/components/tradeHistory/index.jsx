@@ -20,7 +20,11 @@ class TradeHistory extends Component {
     super(props);
     this.state = {
       showSpinner: false,
-      showClosed: false
+      showClosed: false,
+      page_no: 1,
+      page_size: 5,
+      filterPair: '',
+      filterType: ''
     }
   }
 
@@ -67,15 +71,49 @@ class TradeHistory extends Component {
     }
   }
 
+  handleChange = (e) => {
+    this.setState({filterPair: e.target.value.trim().toLowerCase(), page_no: 1});
+  }
+
+  onChange = (e) => {
+    this.setState({filterType: e.target.value.split(" ")[0].trim().toLowerCase(), page_no: 1});
+  }
+
   render () {
-  const { type, filterOptions, history } = this.props;
+  let { type, filterOptions, history } = this.props;
+
+  if(this.state.filterType.length && this.state.filterType != "all") {
+    history = history.filter((pair) => {
+      if(pair.type) {
+        return pair.type.toLowerCase().match(this.state.filterType) || this.state.filterType == pair.type.toLowerCase();
+      }
+    });
+  } else if(this.state.filterPair.length) {
+    history = history.filter((pair) => {
+      if(pair.type && pair.instrument && pair.mode) {
+        return (
+          pair.type.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.type.toLowerCase() ||
+          pair.instrument.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.instrument.toLowerCase() ||
+          pair.mode.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.mode.toLowerCase()
+        );
+      }
+    });
+  }
+
+  let max_rows = history.length;
+  const { page_no, page_size } = this.state;
+  let stt = (page_no-1)*page_size;
+  let max = stt+page_size;
+      max = max > max_rows ? max_rows : max;
+  let _history = history.slice(stt, max > max_rows ? max_rows : max);
+
   return (
     <div className="open-trades-container">
     <Spinner showSpinner={this.state.showSpinner} />
     <Closed show={this.state.showClosed} cancel={(e) => this.setState({showClosed: false})} />
       <div className="open-trades-container-top">
-        <Search name="keyword" placeholder="Search here" />
-        <Filter selectOptions={filterOptions} />
+        <Search name="keyword" handleChange={this.handleChange} placeholder="Search here" />
+        <Filter selectOptions={filterOptions} onChange={this.onChange} />
       </div>
       <div className='trade-history'>
           <div className='t-history-container'>
@@ -110,7 +148,7 @@ class TradeHistory extends Component {
                 </>
               ) : null}
             </ul>
-            { history.map((order, key) => (
+            {_history.map((order, key) => (
                 <ul className={'t-history-record'+(key == 0 ? " _active" : "")} id={"t-history-record-"+key} onClick={(e) => this.handleClick(e, 't-history-record-'+key)}>
                   <li className="ins-name">
                   <img src={ins_down} className="ins_down" />
@@ -145,11 +183,10 @@ class TradeHistory extends Component {
                     </>
                   ) : null}
                 </ul>
-              )) }
-              {!history.length ? (
-                <TradeNotFound text={"No "+type+" trade"} />
-              ) : (null)}
-            <Pagination length="4" max_rows="4" page_no="1" paginationChange={() => {}}/>
+              ))}
+              {history.length ?
+                <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
+              : <TradeNotFound text={"No "+type+" trade"} /> }
           </div>
       </div>
   </div>

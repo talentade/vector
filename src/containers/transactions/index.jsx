@@ -240,10 +240,12 @@ class Transactions extends Component {
         this.setState({ showSpinner: true });
         if (selectedTab.toLowerCase().match('deposit')) {
           await server.fundAccount(parseFloat(deposit), selectedCurrency, account);
-          this.setState({ deposit: parseFloat(0.0).toFixed(2) });
+        } else if (selectedTab.toLowerCase().match('withdraw')) {
+          await server.withdrawFunds(parseFloat(deposit), selectedCurrency, account, document.getElementById("sel_account_number").value);
         } else if (selectedTab.toLowerCase().match('transfer')) {
           await server.transferFunds(account, to, parseFloat(deposit), selectedCurrency);
         }
+        this.setState({ deposit: parseFloat(0.0).toFixed(2) });
 
 
         let getProfile  = await server.getProfile();

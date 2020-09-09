@@ -20,6 +20,10 @@ class OutterLeftNav extends Component {
     };
   }
 
+  urlName (p = null) {
+    return (p == null ? window.location.pathname : p).replace("/", "").toLowerCase();
+  }
+
   render() {
     const activeStyle = {
       backgroundColor: '#00A880',
@@ -29,6 +33,7 @@ class OutterLeftNav extends Component {
     const isAdmin  = this.props.isAdmin;
     const navData  = isAdmin ? adminLeftNavData : leftNavData;
     let nClicked   = this.props.outterNavClicked;
+
     return (
       <div
         className='outter-left'
@@ -51,7 +56,11 @@ class OutterLeftNav extends Component {
               style={{width: nClicked ? '35px' : null}}
               className={'link-icons '+nav.name}
             >
-            {nav.name === 'trade' || nav.name === 'market' ? (
+            {
+              nav.name === 'trade' || nav.name === 'market' || (
+                this.urlName() === 'transactions' &&
+                this.urlName(nav.path) === 'transactions'
+              ) ? (
 
               <NavLink
                 to={nav.path}

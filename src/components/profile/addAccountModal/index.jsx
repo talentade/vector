@@ -44,12 +44,9 @@ class AccountModal extends Component {
 
     try {
       await server.addNewCard({
-        user_id: app.id(),
-        card_PAN: number,
-        card_info: {
-          valid_thru: exp.toString().split('-').reverse().join('-'),
-          card_name: name,
-        },
+        PAN: number,
+        valid_thru: exp.toString().split('-').reverse().join('-'),
+        card_name: name
       });
 
       const gp = await server.getProfile();

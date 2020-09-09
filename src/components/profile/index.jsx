@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import $ from 'jquery';
 import UserAvatar from './userAvatar/index';
 import { withRouter, Redirect } from 'react-router-dom';
 import HorizontalBar from './passwordBar/index';
@@ -39,7 +40,7 @@ class Profile extends Component {
       verified: false,
       imageUrl: '',
       image: '',
-      banking_details: [], // app.profile()["banking_details"],
+      profile_image: '',
       showSmallSPinner: false,
       showAddCardModal: false,
     };
@@ -51,12 +52,20 @@ class Profile extends Component {
   }
 
   async componentDidMount() {
-    if (!this.id) this.props.history.push('/Login');
+    if (!app.id().length) this.props.history.push('/Login');
+
+    if(window.changePassword) {
+      this.setState({showBoxes: true});
+      window.changePassword = false;
+    }
+
+    $(window).on("changePassword", () => {
+      this.setState({showBoxes: true});
+      window.changePassword = false;
+    });
 
     const gp = await server.getProfile();
     app.profile(gp.data.profile);
-
-    this.setState({banking_details: []}); // app.profile()["banking_details"]
     this.profile         = app.profile();
     this.selectedAccount = app.accountDetail();
 
@@ -96,13 +105,12 @@ class Profile extends Component {
 
     this.setState({ showSmallSPinner: true });
     try {
-      // await server.uploadImage(app.id(), fd);
-
-      const gp = await server.getProfile();
-      app.profile(gp.data.profile);
-      this.props.saveUserProfile(gp.data.profile);
-
-      this.setState({ showSmallSPinner: false });
+      let pi = await server.uploadImage(fd);
+      window.location.href = "";
+      // const gp = await server.getProfile();
+      // app.profile(gp.data.profile);
+      // this.props.saveUserProfile(gp.data.profile);
+      // this.setState({ showSmallSPinner: false, profile_image: gp.data.profile.profile_image });
     } catch (error) {
       this.setState({ showSmallSPinner: false });
       return error.message;
@@ -149,14 +157,7 @@ class Profile extends Component {
         const user_id = app.id();
         const email   = this.profile.email;
 
-        await server.changePassword(
-          {
-            password: oldPassword,
-            new_password: newPassword,
-          },
-          user_id,
-          email
-        );
+        await server.changePassword({old_password: oldPassword, new_password: newPassword});
 
         this.setState({
           showSpinner: false,
@@ -165,6 +166,7 @@ class Profile extends Component {
           oldPassword: '',
           confirmPassword: '',
         });
+        $("[name=newPassword], [name=oldPassword], [name=confirmPassword]").val("");
       } catch (error) {
         if (!error.response) {
           return error.message;
@@ -179,23 +181,15 @@ class Profile extends Component {
     this.props.toggleAddCardModal();
   };
 
-  deleteCard = async (cardPAN) => {
+  deleteCard = async (id, cardPAN) => {
     try {
       this.setState({ showSpinner: true });
-      const user_id = app.id();
-      const email   = this.profile.email;
 
-      await server.deleteCard(user_id, cardPAN);
+      await server.deleteCard(id, cardPAN);
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
+      this.props.saveUserProfile(gp.data.profile);
 
-      const {
-        data: {
-          data: { profile },
-        },
-      } = await server.getProfile(user_id, email);
-
-      localStorage.setItem('profile', JSON.stringify(profile));
-
-      this.props.saveUserProfile(profile);
       this.setState({ showSpinner: false });
     } catch (error) {
       this.setState({ showSpinner: false });
@@ -228,30 +222,39 @@ class Profile extends Component {
 
     let balance   = this.selectedAccount.balance;
     let id        = app.id();
-    let accountId = app.accountDetail().account_id;
+    let accountId = app.accountDetail().account_name;
+    let uid       = app.userid().split("-");
 
     const userData = [
       {
         dataKey: 'Name',
         value: `${first_name} ${last_name}`,
+        editable: true,
+        fixed: true,
       },
       {
         dataKey: 'User ID',
-        value: accountId,
+        value: uid[uid.length - 1].toUpperCase(),
+        editable: true,
+        fixed: true,
       },
       {
         dataKey: 'Email',
         value: email,
-        // editable: true,
+        editable: true,
+        fixed: true,
       },
       {
         dataKey: 'Phone',
         value: phone_number,
-        // editable: true,
+        editable: true,
+        fixed: true,
       },
       {
         dataKey: 'Country',
         value: country,
+        editable: true,
+        fixed: true,
       },
     ];
 
@@ -283,29 +286,34 @@ class Profile extends Component {
         itemContent: 'Upload ID Card or Passport',
         buttonText: 'Upload',
         verified: identity_verified,
+        name: "doc_poi"
       },
       {
         itemHead: 'Upload Proof of Residence',
         itemContent: 'Utility Bill or Bank statement',
         buttonText: 'Upload',
         verified: address_verified,
+        name: "doc_por"
       },
       {
         itemHead: 'Upload Declaration of Deposit',
         itemContent: 'Document declaring deposit in account',
         buttonText: 'Upload',
         verified: deposit_verified,
+        name: "doc_dod"
       },
       {
         itemHead: 'Upload Credit and Debit Card',
         itemContent: 'Upload front and back image of debit and credit card',
         buttonText: 'Upload',
         verified: cards && cards.length > 0,
+        name: "doc_card"
       },
       {
         itemHead: 'Email Verification',
         itemContent: `Verify ${email}`,
         buttonText: 'Request Verification',
+        name: "email_verified"
       },
     ];
 
@@ -321,7 +329,7 @@ class Profile extends Component {
 
         <div className='profile-left-section'>
           <UserAvatar
-            imageUrl={profile_image}
+            imageUrl={this.state.profile_image.length ? this.state.profile_image : profile_image}
             handleChange={this.handleFileChange}
             showSpinner={this.state.showSmallSPinner}
           />
@@ -396,16 +404,18 @@ class Profile extends Component {
               {cards
                 ? cards.map((data) => (
                     <DebitCard
-                      key={`${Math.random()}1-${Math.random()}-${Math.random()}`}
                       {...data}
-                      deleteCard={() => this.deleteCard(data.PAN)}
+                      deleteCard={() => this.deleteCard(data.id, data.PAN)}
+                      key={`${Math.random()}1-${Math.random()}-${Math.random()}`}
                     />
                   ))
                 : null}
             </div>
+          </div>
+
+          <div className='account-details-section profile-bg'>
             <AccountDetails
               balance={`$${balance}`}
-              details={this.state.banking_details}
               handleClick={this.toggleModalButtonClick}
               showSpinner={(e) => this.setState({showSpinner: !this.state.showSpinner})}
             />

@@ -11,10 +11,12 @@ const Withdraw = ({
   handleInputChange,
   balance,
   selectedCurrency,
+  handleCurrencySelect,
   currencies,
+  handleSubmit,
   cards,
 }) => {
-  // let bdet = app.profile()["banking_details"];
+  let accn = app.profile()["account_number"];
   return (
     <div className='deposit'>
       <h2 style={{marginTop: "10px"}}>Withdraw Funds</h2>
@@ -23,7 +25,7 @@ const Withdraw = ({
         <img src={WarnIcon} alt='' />
         <p>Withdrawal requests will be reviewed by your operator in 24hrs</p>
       </div>
-      <form className='transaction-action'>
+      <form className='transaction-action' onSubmit={handleSubmit}>
         <div className='deposit-flex'>
           <div className='deposit-flex-item-1'>
             <label>Select Trading Account</label>
@@ -61,7 +63,7 @@ const Withdraw = ({
               />
             </div>
             <div className='deposit-amount-item-2'>
-              <select value={selectedCurrency}>
+              <select value={selectedCurrency} onChange={handleCurrencySelect}>
                 {currencies.map((currency) => (
                   <option key={`${Math.random()}-${Math.random()}`}>
                     {currency}
@@ -73,14 +75,12 @@ const Withdraw = ({
         </div>
 
         <div className='withdraw-card-select'>
-          <label>Select Account Number:</label>
-          <select>
-            {/*bdet.map((acc) => (
-              <option key={`${Math.random()}-${Math.random()}`}>{acc.account_number}</option>
-            ))*/}
+          <label>Account Number:</label>
+          <select id="sel_account_number">
+          {accn.length ? <option>{accn}</option> : null}
           </select>
         </div>
-        {account.split("-")[0].toLowerCase() == "live" ? (
+        {account.split("-")[0].toLowerCase() == "live" && accn.length ? (
           <input
             type='submit'
             value='MAKE REQUEST'
