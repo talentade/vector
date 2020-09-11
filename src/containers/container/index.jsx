@@ -37,7 +37,7 @@ class Container extends Component {
 
     this.profile   = app.profile();
     this.id        = app.id();
-    this.isAdmin   = false;
+    this.isAdmin   = app.isAdmin();
   }
 
   componentDidMount() {

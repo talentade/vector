@@ -222,7 +222,7 @@ class Register extends Component {
         this.props.saveUserProfile(user);
         this.props.setAccountType(accounts[0]);
         this.props.setAccounts(accounts);
-        
+
         this.setState({ showSpinner: !this.state.showSpinner });
 
         this.props.history.push('/VerifyEmail');

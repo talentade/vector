@@ -507,6 +507,24 @@ export default {
 
 
 
+  getAllUsers() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/users'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
+
+
+
+
+
+
+
+
 
 
 

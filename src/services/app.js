@@ -1,4 +1,8 @@
 const app = {
+  uid: (u) => {
+    u = u.split("-");
+    return u[u.length - 1].toUpperCase();
+  },
   id: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
@@ -95,7 +99,7 @@ const app = {
     }
   },
   isAdmin: () => {
-    return false;
+    return true;
   },
   cleanDate: (d) => {
     return d.trim().replace(/,/g, "");

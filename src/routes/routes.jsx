@@ -16,21 +16,60 @@ import BookCall from '../containers/book/index';
 import Restrictions from '../containers/restrictions/index';
 import Transactions from '../containers/transactions/index';
 
+import Users from '../containers/users/index';
+import Admins from '../containers/admins/index';
+import Forms from '../containers/forms/index';
+import UsersProfileList from '../containers/usersprofile/index';
+import Lists from '../containers/lists/index';
+import MailAccounts from '../containers/mailaccounts/index';
+import Unsubscribers from '../containers/unsubscribers/index';
+import TeamSettings from '../containers/teamsettings/index';
+import Campaigns from '../containers/campaigns/index';
+import Instruments from '../containers/instruments/index';
+import Documents from '../containers/documents/index';
+import app from '../services/app';
+
 export default props => (
-  <Switch>
-    <Route exact path='/' component={Login} />
-    <Route exact path='/Login' component={Login} />
-    <Route exact path='/Register' component={Register} />
-    <Route exact path='/VerifyEmail' component={VerifyEmail} />
-    <Route exact path='/VerifyPhone' component={VerifyPhone} />
-    <Route path='/Book' exact component={BookCall} />
-    <Route path='/Trade' exact component={Trade} />
-    <Route path='/Accounts' exact component={Accounts} />
-    <Route path='/Profile' exact component={Profile} />
-    <Route path='/ForgotPassword' exact component={ForgotPassword} />
-    <Route path='/ChangePassword' exact component={ChangePassword} />
-    <Route path='/Market' exact component={Market} />
-    <Route path='/News' exact component={News} />
-    <Route path='/Transactions' exact component={Transactions} />
-  </Switch>
+    app.isAdmin() ? (
+      <Switch>
+        <Route exact path='/' component={Login} />
+        <Route exact path='/Login' component={Login} />
+        <Route path='/Accounts' exact component={Accounts} />
+        <Route path='/Profile' exact component={Profile} />
+        <Route path='/News' exact component={News} />
+        <Route path='/PostNews' exact component={PostNews} />
+
+        <Route path='/Restrictions' exact component={Restrictions} />
+        <Route path='/Transactions' exact component={Transactions} />
+        <Route path='/MailAccounts' exact component={MailAccounts} />
+        <Route path='/Unsubscribers' exact component={Unsubscribers} />
+
+        <Route path='/Users' exact component={Users} />
+        <Route path='/Admins' exact component={Admins} />
+        <Route path='/TeamSettings' exact component={TeamSettings} />
+        <Route path='/Forms' exact component={Forms} />
+        <Route path='/UsersProfile' exact component={UsersProfileList} />
+        <Route path='/Lists' exact component={Lists} />
+        <Route path='/Campaigns' exact component={Campaigns} />
+        <Route path='/Instruments' exact component={Instruments} />
+        <Route path='/Documents' exact component={Documents} />
+      </Switch>
+    ) : (
+        <Switch>
+            <Route exact path='/' component={Login} />
+            <Route exact path='/Login' component={Login} />
+            <Route exact path='/Register' component={Register} />
+            <Route exact path='/VerifyEmail' component={VerifyEmail} />
+            <Route exact path='/VerifyPhone' component={VerifyPhone} />
+            <Route path='/Book' exact component={BookCall} />
+            <Route path='/Trade' exact component={Trade} />
+            <Route path='/Accounts' exact component={Accounts} />
+            <Route path='/Profile' exact component={Profile} />
+            <Route path='/ForgotPassword' exact component={ForgotPassword} />
+            <Route path='/ChangePassword' exact component={ChangePassword} />
+            <Route path='/Market' exact component={Market} />
+            <Route path='/News' exact component={News} />
+            <Route path='/Transactions' exact component={Transactions} />
+        </Switch>
+    )
 )
