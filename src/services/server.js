@@ -517,6 +517,16 @@ export default {
     })
   },
 
+  getAllInstrument() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/instruments'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
 
 
 

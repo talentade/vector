@@ -119,10 +119,10 @@ class TableFilters extends Component {
       {this.props.table === "instruments" ? (
         <div className="table-filters" style={{marginTop: "2em", marginBottom: "2em"}}>
           <ul className="borderad-menu">
-            <li className="_active" onClick={(e) => this.toggleActive(e, '.borderad-menu')}>Forex</li>
-            <li onClick={(e) => this.toggleActive(e, '.borderad-menu')}>Crypto</li>
-            <li onClick={(e) => this.toggleActive(e, '.borderad-menu')}>Commodity</li>
-            <li onClick={(e) => this.toggleActive(e, '.borderad-menu')}>Stock</li>
+            <li className="_active" onClick={(e) => { this.props.switchTo("forex"); this.toggleActive(e, '.borderad-menu')}}>Forex</li>
+            <li onClick={(e) => { this.props.switchTo("crypto"); this.toggleActive(e, '.borderad-menu')}}>Crypto</li>
+            <li onClick={(e) => { this.props.switchTo("commodities"); this.toggleActive(e, '.borderad-menu')}}>Commodity</li>
+            <li onClick={(e) => { this.props.switchTo("stock"); this.toggleActive(e, '.borderad-menu')}}>Stock</li>
           </ul>
 
           <div className="filter-actions">

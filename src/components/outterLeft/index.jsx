@@ -33,6 +33,7 @@ class OutterLeftNav extends Component {
     const isAdmin  = this.props.isAdmin;
     const navData  = isAdmin ? adminLeftNavData : leftNavData;
     let nClicked   = this.props.outterNavClicked;
+    let page = window.location.pathname.replace("/", "").toLowerCase();
 
     return (
       <div
@@ -54,7 +55,7 @@ class OutterLeftNav extends Component {
                   : null
               }
               style={{width: nClicked ? '35px' : null}}
-              className={'link-icons '+nav.name}
+              className={'link-icons '+nav.name+(page == nav.name ? ' active' : '')}
             >
             {
               nav.name === 'trade' || nav.name === 'market' || (

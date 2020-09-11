@@ -4,10 +4,39 @@ import Pagination2 from '../../components/pagination2/index';
 import '../../components/standard/table.scss';
 import us from '../../themes/images/flags/us.png';
 import sa from '../../themes/images/flags/sa.png';
+import server from '../../services/server';
+import app from '../../services/app';
 
 class InstrumentsTable extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      instruments: {forex: [], crypto: [], stock: [], commodities: [], indices: []}
+    }
+  }
+
+  async componentDidMount() {
+    this.getAllInstrument();
+  }
+
+  getAllInstrument = async () => {
+    try {
+      let data = await server.getAllInstrument();
+      let keys = Object.keys(data.data);
+      let rows = data.data;
+
+      let pairs = [];
+      let instruments = this.state.instruments;
+      for(var i = 0; i < rows.length; i++) {
+        let type = rows[i]["type"];
+        instruments[type].push(rows[i]);
+      }
+      this.setState({instruments: instruments});
+    } catch(e) {
+      return e;
+    }
+
   }
 
   render () {
@@ -27,7 +56,22 @@ class InstrumentsTable extends Component {
                 </tr>
               </thead>
               <tbody>
-                <tr>
+              {this.state.instruments[this.props.active].map(({pair, ask, bid, high, low, price}) => (
+                <tr key={`${Math.random()} ${Math.random()}`}>
+                  <td className="ins-td">
+                    {/*<img src={us} className="flag"/>*/}
+                    <span className="td-ins">{pair}</span>
+                    {/*<img src={sa} className="flag"/>*/}
+                  </td>
+                  <td><span className="td-buy">{ask}</span></td>
+                  <td><span className="td-sell">{bid}</span></td>
+                  <td><span className="td-rate">{price}</span></td>
+                  <td><span className="td-high">{high}</span></td>
+                  <td><span className="td-low">{low}</span></td>
+                  <td></td>
+                </tr>
+              ))}
+                {/*<tr>
                   <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
                   <td><span className="td-buy">1.3748</span></td>
                   <td><span className="td-sell">1.3748</span></td>
@@ -107,16 +151,7 @@ class InstrumentsTable extends Component {
                   <td><span className="td-high">1.0654</span></td>
                   <td><span className="td-low">1.0654</span></td>
                   <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
+                </tr>*/}
               </tbody>
             </table>
             <Pagination2 />

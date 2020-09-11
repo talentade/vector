@@ -15,20 +15,21 @@ class Instruments extends Component {
     super(props);
 
     this.state = {
+      active: 'forex'
     }
 
   }
 
   render() {
-    const { navi } = this.state;
+    const { active } = this.state;
     return (
       <Container>
       <div className="col-12" id="instrument-container">
         <div className="users-section-right">
           <Breadcrumbs breads="Home, Instruments" />
           <h1 className="page-title">Instruments</h1>
-          <TableFilters table="instruments" />
-          <InstrumentsTable />
+          <TableFilters table="instruments" switchTo={(v) => this.setState({active: v.toLowerCase()})}/>
+          <InstrumentsTable active={active}/>
         </div>
       </div>
       </Container>

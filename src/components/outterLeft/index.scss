@@ -39,6 +39,12 @@
     display: flex;
     border-radius: 5px;
 
+    &.active {
+      background: #00A880;
+      border-radius: 5px;
+      height: 38px;
+    }
+
     .l-nav-link {
       width: 100%;
       border-radius: 5px;

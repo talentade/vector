@@ -298,12 +298,12 @@ export const leftNavData = [
 const appNavClass = 'l-nav-link';
 
 export const adminLeftNavData = [
-  {path: '/Forms', className: appNavClass, imageUrl: Menu1, name: 'forms', text: 'Forms'},
+  // {path: '/Forms', className: appNavClass, imageUrl: Menu1, name: 'forms', text: 'Forms'},
   {path: '/Lists', className: appNavClass, imageUrl: Menu2, name: 'lists', text: 'Lists'},
   {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
   {path: '/TeamSettings', className: appNavClass, imageUrl: Menu4, name: 'teamsettings', text: 'Team Settings'},
-  {path: '/Unsubscribers', className: appNavClass, imageUrl: Menu5, name: 'unsubscribers', text: 'Unsubscribers'},
-  {path: '/Campaigns', className: appNavClass, imageUrl: Menu6, name: 'campaigns', text: 'Campaigns'},
+  // {path: '/Unsubscribers', className: appNavClass, imageUrl: Menu5, name: 'unsubscribers', text: 'Unsubscribers'},
+  // {path: '/Campaigns', className: appNavClass, imageUrl: Menu6, name: 'campaigns', text: 'Campaigns'},
   {path: '/Instruments', className: appNavClass, imageUrl: Menu7, name: 'instruments', text: 'Instruments'},
   {path: '/Documents', className: appNavClass, imageUrl: Menu8, name: 'documents', text: 'Documents'},
   {path: '/News', className: appNavClass, imageUrl: Menu9, name: 'news', text: 'News'},
