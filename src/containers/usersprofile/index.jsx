@@ -15,8 +15,9 @@ import ProfileMeetings from './profilemeetings.jsx';
 import UserTasks from './usertasks.jsx';
 import UserCalls from './usercalls.jsx';
 import UserEmails from './useremails.jsx';
-
 import UsersProfile from  './userprofile.jsx';
+import server from '../../services/server';
+import app from '../../services/app';
 
 import '../../components/standard/standard.scss';
 import './index.scss';
@@ -27,9 +28,17 @@ class UsersProfileList extends Component {
 
     this.state = {
       navi: 1,
+      profile: null,
+      showLoader: true,
       userTab: "Profile"
     }
 
+  }
+
+  async componentDidMount () {
+    let u = this.props.match.params.user_id;
+    let profile = await server.getUser(u);
+    this.setState({profile: profile.data.profile, showLoader: false});
   }
 
   selectActiveTab = (e) => {
@@ -38,28 +47,32 @@ class UsersProfileList extends Component {
   }
 
   render() {
-    const { navi } = this.state;
+    const { navi, profile } = this.state;
     return (
       <Container>
-      <UsersProfile />
-      <div className="col-12" id="users-container">
-        <div className="users-section-right shared">
-          <Breadcrumbs breads={"Home, Lists, Users, "+(this.state.userTab)} />
-          <Ptab tabs="Profile, Accounts, Payments, Trading Activity, Files, Notes, Calls, Emails, Tasks, Meeting" handleClick={this.selectActiveTab} active={this.state.userTab} />
-
-          {this.state.userTab.toLowerCase() === "profile"             ? <ProfileDetails active="1" />    : null}
-          {this.state.userTab.toLowerCase() === "accounts"            ? <ProfileAccounts active="1" />   : null}
-          {this.state.userTab.toLowerCase() === "payments"            ? <ProfilePayments active="1" />   : null}
-          {this.state.userTab.toLowerCase() === "trading activity"    ? <TradingActivities active="1" /> : null}
-          {this.state.userTab.toLowerCase() === "files"               ? <UserFiles active="1" />         : null}
-          {this.state.userTab.toLowerCase() === "notes"               ? <UserNotes active="1" />         : null}
-          {this.state.userTab.toLowerCase() === "calls"               ? <UserCalls active="1" />         : null}
-          {this.state.userTab.toLowerCase() === "emails"              ? <UserEmails active="1" />        : null}
-          {this.state.userTab.toLowerCase() === "meeting"             ? <ProfileMeetings active="1" />   : null}
-          {this.state.userTab.toLowerCase() === "tasks"               ? <UserTasks active="1" />         : null}
-
+        <div className='loader-container' style={{ display: this.state.showLoader ? 'block' : 'none' }}>
+          <div className='loader'></div>
         </div>
-        </div>
+      {profile ? <UsersProfile profile={profile} /> : null}
+      {profile ?
+        <div className="col-12" id="users-container">
+          <div className="users-section-right shared">
+            <Breadcrumbs breads={"Home, Lists, Users, "+(this.state.userTab)} />
+            <Ptab tabs="Profile, Accounts, Transaction History, Trading Activity, Files, Notes, Calls, Emails, Tasks, Meeting" handleClick={this.selectActiveTab} active={this.state.userTab} />
+
+            {this.state.userTab.toLowerCase() === "profile" && profile  ? <ProfileDetails active="1" profile={profile} />              : null}
+            {this.state.userTab.toLowerCase() === "accounts"            ? <ProfileAccounts active="1" accounts={profile.accounts} />   : null}
+            {this.state.userTab.toLowerCase() === "transaction history" ? <ProfilePayments active="1" history={profile.history} />   : null}
+            {this.state.userTab.toLowerCase() === "trading activity"    ? <TradingActivities active="1" trade={profile.trade} /> : null}
+            {this.state.userTab.toLowerCase() === "files"               ? <UserFiles active="1" />         : null}
+            {this.state.userTab.toLowerCase() === "notes"               ? <UserNotes active="1" />         : null}
+            {this.state.userTab.toLowerCase() === "calls"               ? <UserCalls active="1" />         : null}
+            {this.state.userTab.toLowerCase() === "emails"              ? <UserEmails active="1" />        : null}
+            {this.state.userTab.toLowerCase() === "meeting"             ? <ProfileMeetings active="1" meetings={profile.meetings} />   : null}
+            {this.state.userTab.toLowerCase() === "tasks"               ? <UserTasks active="1" />         : null}
+
+          </div>
+        </div> : null}
       </Container>
     );
   }

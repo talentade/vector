@@ -102,7 +102,7 @@ const app = {
     return true;
   },
   cleanDate: (d) => {
-    return d.trim().replace(/,/g, "");
+    return d.trim().replace(/-/g, "/").replace(/,/g, "");
   },
   cleanTime: (d) => {
     return d.trim().replace(/,/g, "").split(" ")[1];

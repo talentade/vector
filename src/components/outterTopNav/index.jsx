@@ -37,17 +37,17 @@ class OutterTopNav extends Component {
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
                 )}
                 <img src={profileImage ? userDp : userDp} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
-                <HoverDropdown
+                {/*<HoverDropdown
                   name={`${firstName} ${lastName}`}
                   email={email}
                   balance={`$${balance}`}
-                />
+                />*/}
               </li>
-              <li className='hide-mobile nav-aname'><span className="fl">{`${firstName} ${lastName}`}</span><span className="em">{email}</span></li>
-              <li><button className="save-changes">Save All Changes</button></li>
-              <li className="admin-search-input">
+              <li style={{opacity: 0}} className='hide-mobile nav-aname'><span className="fl">{`${firstName} ${lastName}`}</span><span className="em">{email}</span></li>
+              <li style={{opacity: 0}}><button className="save-changes">Save All Changes</button></li>
+              <li style={{opacity: 0}} className="admin-search-input">
               <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" /></li>
-              <li className="admin-nav-plus">
+              <li style={{opacity: 0}} className="admin-nav-plus">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6.73074 0.369998V6.88H0.370742V9.19H6.73074V15.67H9.28074V9.19H15.6707V6.88H9.28074V0.369998H6.73074Z" fill="white"/>
                 </svg>

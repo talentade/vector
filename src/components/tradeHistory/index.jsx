@@ -21,8 +21,8 @@ class TradeHistory extends Component {
     this.state = {
       showSpinner: false,
       showClosed: false,
-      page_no: 1,
       page_size: 5,
+      page_no: 1,
       filterPair: '',
       filterType: ''
     }
@@ -81,27 +81,38 @@ class TradeHistory extends Component {
 
   render () {
   let { type, filterOptions, history } = this.props;
+  let { page_no, page_size } = this.state;
 
-  if(this.state.filterType.length && this.state.filterType != "all") {
+  let ft = this.state.filterType;
+  let fp = this.state.filterPair;
+
+  let fil = this.props.userprofile || false;
+
+  if(fil) {
+    ft = this.props.filterType;
+    fp = this.props.filterPair;
+    page_no = this.props.page_no;
+  }
+
+  if(ft.length && ft != "all") {
     history = history.filter((pair) => {
       if(pair.type) {
-        return pair.type.toLowerCase().match(this.state.filterType) || this.state.filterType == pair.type.toLowerCase();
+        return pair.type.toLowerCase().match(ft) || ft == pair.type.toLowerCase();
       }
     });
-  } else if(this.state.filterPair.length) {
+  } else if(fp.length) {
     history = history.filter((pair) => {
       if(pair.type && pair.instrument && pair.mode) {
         return (
-          pair.type.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.type.toLowerCase() ||
-          pair.instrument.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.instrument.toLowerCase() ||
-          pair.mode.toLowerCase().match(this.state.filterPair) || this.state.filterPair == pair.mode.toLowerCase()
+          pair.type.toLowerCase().match(fp) || fp == pair.type.toLowerCase() ||
+          pair.instrument.toLowerCase().match(fp) || fp == pair.instrument.toLowerCase() ||
+          pair.mode.toLowerCase().match(fp) || fp == pair.mode.toLowerCase()
         );
       }
     });
   }
 
   let max_rows = history.length;
-  const { page_no, page_size } = this.state;
   let stt = (page_no-1)*page_size;
   let max = stt+page_size;
       max = max > max_rows ? max_rows : max;
@@ -109,12 +120,15 @@ class TradeHistory extends Component {
 
   return (
     <div className="open-trades-container">
-    <Spinner showSpinner={this.state.showSpinner} />
-    <Closed show={this.state.showClosed} cancel={(e) => this.setState({showClosed: false})} />
-      <div className="open-trades-container-top">
-        <Search name="keyword" handleChange={this.handleChange} placeholder="Search here" />
-        <Filter selectOptions={filterOptions} onChange={this.onChange} />
-      </div>
+      <Spinner showSpinner={this.state.showSpinner} />
+      <Closed show={this.state.showClosed} cancel={(e) => this.setState({showClosed: false})} />
+      {
+        fil ? null :
+        <div className="open-trades-container-top">
+          <Search name="keyword" handleChange={this.handleChange} placeholder="Search here" />
+          <Filter selectOptions={filterOptions} onChange={this.onChange} />
+        </div>
+      }
       <div className='trade-history'>
           <div className='t-history-container'>
             <ul className='t-history-header'>

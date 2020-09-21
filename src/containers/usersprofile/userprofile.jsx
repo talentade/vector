@@ -7,25 +7,27 @@ import email from '../../themes/images/profile/email.png';
 import calls from '../../themes/images/profile/calls.png';
 import down from '../../themes/images/profile/down.svg';
 import meetings from '../../themes/images/profile/meetings.png';
+import app from '../../services/app';
 
 class UsersProfile extends Component {
   constructor(props) {
     super(props);
+    this.state = this.props.profile;
   }
 
   render () {
     return (
       <div className="user-profile-body">
-        <img src={userDp} className="udp" />
-        <h2 className="proflle-name">Adeoye Talent A.</h2>
-        <h6 className="user-id">T480248</h6>
+        <img src={this.state.profile_image.length ? this.state.profile_image : userDp} className="udp" />
+        <h2 className="proflle-name">{this.state.first_name+" "+this.state.last_name}</h2>
+        <h6 className="user-id">{app.uid(this.state.user_id)}</h6>
 
         <ul className="profile-actions">
           <li><img src={notes} /><span>Notes</span></li>
-          <li><img src={tasks} /><span>Notes</span></li>
-          <li><img src={email} /><span>Notes</span></li>
-          <li><img src={calls} /><span>Notes</span></li>
-          <li><img src={meetings} /><span>Notes</span></li>
+          <li><img src={tasks} /><span>Tasks</span></li>
+          <li><img src={email} /><span>Emails</span></li>
+          <li><img src={calls} /><span>Calls</span></li>
+          <li><img src={meetings} /><span>Meetings</span></li>
         </ul>
 
         <div className="user-info">
@@ -37,12 +39,12 @@ class UsersProfile extends Component {
 
           <ul>
             <li><span>Account type :</span> Basic</li>
-            <li><span>Date of Birth :</span> 08.04.200</li>
-            <li><span>Gender :</span> Male</li>
-            <li><span>Phone :</span> +2348167443081</li>
-            <li><span>Email :</span> adeoyetalent@gmail.com</li>
-            <li><span>Country :</span> Ukraine</li>
-            <li><span>City :</span> Kyiv</li>
+            <li><span>Date of Birth :</span> {this.state.dob}</li>
+            <li><span>Gender :</span> {this.state.gender}</li>
+            <li><span>Phone :</span> {this.state.phone_number}</li>
+            <li><span>Email :</span> {this.state.email}</li>
+            <li><span>Country :</span> {this.state.country}</li>
+            <li><span>City :</span> {this.state.city}</li>
           </ul>
 
           <table>
@@ -53,7 +55,7 @@ class UsersProfile extends Component {
               </td>
               <td>
                 <span className="txt-default">Total Balance</span>
-                <span className="td-b">USD 3,075.43</span>
+                <span className="td-b">USD {this.state.balance}</span>
               </td>
             </tr>
             <tr>
@@ -67,7 +69,7 @@ class UsersProfile extends Component {
             <tr>
               <td className="full">
                 <span className="txt-default">ACCOUNT MANAGER</span>
-                <span className="td-b">Adekoya Seun</span>
+                <span className="td-b">Admin</span>
                 <span className="txt-default">A47392740</span>
               </td>
             </tr>

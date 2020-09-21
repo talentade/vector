@@ -11,7 +11,6 @@ import app from '../../services/app';
 import $ from 'jquery';
 
 const socketListener = () => {
-  // if(!app.id().length) return null;
   window.WebSocketPlug = window.WebSocketPlugged ? window.WebSocketPlug : new WebSocket(app.hostURL("socket", 1));
   window.WebSocketPlug.addEventListener('open', () => {
     window.WebSocketPlugged = true;
@@ -47,6 +46,8 @@ class Container extends Component {
         this.props.toggleOutterNav();
         window.__toggleOutterNav = true;
       }
+      $("body").attr("style", 'min-width: 1200px;');
+      $("html").attr("style", 'background: #004044');
     }
   }
 

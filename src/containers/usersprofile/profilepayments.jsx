@@ -1,59 +1,61 @@
 import React, { Component } from 'react';
 import TableFilters from '../../components/tablefilters/index';
+import app from '../../services/app';
 import './profilepayments.scss';
 import '../../components/standard/table.scss';
+import '../../components/history/index.scss';
 
 class ProfilePayments extends Component {
   constructor(props) {
     super(props);
   }
 
+  handleClick = (e, i) => {
+    document.querySelectorAll(".transaction-history-record").forEach(function(el) {
+      el.classList.remove("_active");
+    });
+    document.getElementById(i).classList.add("_active");
+  }
+
   render () {
     let active = parseInt(this.props.active);
   	return (
-      <div className={"tab-row profile-payments"+(active ? ' _active' : '')} id="tab-row-payments">
+      <div className={"transaction-history"+(active ? ' _active' : '')} id="tab-row-payments">
 
         <TableFilters table="payments" />
 
-        <ul className="table-header for-payment">
-          <li className="small-trans">S/N</li>
-          <li className="trans-type">Transaction type</li>
-          <li className="trans-date">Date</li>
-          <li className='t-from'>Account(From)</li>
-          <li className='t-to'>Account(To)</li>
-          <li className="small-trans">Amount</li>
-          <li>Status</li>
-        </ul>
+        <div className='t-history-container'>
+          <ul className='transaction-history-header' style={{marginTop: "2em", marginBottom: "1em", background: "#006066", borderRadius: "10px"}}>
+            <li className="small-trans">S/N</li>
+            <li className="trans-type">Transaction type</li>
+            <li className="trans-date">Date</li>
+            <li className='t-from'>Account(From)</li>
+            <li className='t-to'>Account(To)</li>
+            <li className="small-trans">Amount</li>
+            <li>Reference No</li>
+          </ul>
 
-        <ul className="table-body for-payment">
-          <li className="small-trans">1</li>
-          <li className="trans-type"><span className="td"><button className="brn ttype">DEPOSIT</button></span></li>
-          <li className="trans-date"><span className="td">24-03-2020</span></li>
-          <li className='t-from'><div><span className="td">---</span></div></li>
-          <li className='t-to'><span className="td">77899-ID1437843</span></li>
-          <li className="small-trans"><span className="td">100, 000 USD</span></li>
-          <li><span className="td txt-success">Completed</span></li>
-        </ul>
+        {
+          this.props.history.map((transaction, idx) => (
+            <ul
+              className={'transaction-history-record '+(idx == 0 ? ' _active' : '')}
+              id={'transaction-history-record-'+idx}
+              key={`${Math.random()}-${Math.random()}`}
+              onClick={(e) => this.handleClick(e, 'transaction-history-record-'+idx)}>
+              <div className="tab-sn"><div>{idx + 1}</div></div>
+              <li className="small-trans">{idx + 1}</li>
+              <li className="trans-type"><span className="th">Transaction type</span><span className="td"><button className={"brn ttype"+(transaction.type.toLowerCase() != "deposit" ? " "+transaction.type.toLowerCase() : " ")}>{transaction.type.toUpperCase()}</button></span></li>
+              <li className="trans-date"><span className="th">Date</span><span className="td">{app.cleanDate(transaction.create_time)}</span></li>
+              <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
+              <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>
+              <li className="small-trans"><span className="th">Amount</span><span className="td">{transaction.amount}</span></li>
+              <li><span className="th">Reference No</span><span className="td">{transaction.reference}</span></li>
+            </ul>
 
-        <ul className="table-body for-payment">
-          <li className="small-trans">2</li>
-          <li className="trans-type"><span className="td"><button className="brn ttype withdrawal">WITHDRAWAL</button></span></li>
-          <li className="trans-date"><span className="td">24-03-2020</span></li>
-          <li className='t-from'><div><span className="td">---</span></div></li>
-          <li className='t-to'><span className="td">77899-ID1437843</span></li>
-          <li className="small-trans"><span className="td">100, 000 USD</span></li>
-          <li><span className="td txt-success">Completed</span></li>
-        </ul>
+          ))
+        }
 
-        <ul className="table-body for-payment">
-          <li className="small-trans">3</li>
-          <li className="trans-type"><span className="td"><button className="brn ttype transfer">TRANSFER</button></span></li>
-          <li className="trans-date"><span className="td">24-03-2020</span></li>
-          <li className='t-from'><div><span className="td">---</span></div></li>
-          <li className='t-to'><span className="td">77899-ID1437843</span></li>
-          <li className="small-trans"><span className="td">100, 000 USD</span></li>
-          <li><span className="td txt-success">Completed</span></li>
-        </ul>
+        </div>
       </div>
 	 )
 	}

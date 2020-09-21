@@ -27,6 +27,7 @@ class UserEmails extends Component {
 
         <TableFilters table="emails" />
 
+        {/*
         <ul className="table-header for-email">
           <li className="e-act">
             <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
@@ -116,7 +117,7 @@ class UserEmails extends Component {
           <li className="e-name">Adeoye Talent</li>
           <li className="e-mail">Hello, you made a request for a deposit of $300k and...</li>
           <li className="e-time">3:44 PM</li>
-        </ul>
+        </ul>*/}
 
       </div>
 	 )

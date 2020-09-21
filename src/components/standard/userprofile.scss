@@ -50,6 +50,10 @@
 	    padding-left: 0;
 	    margin-left: 2em;
 	    margin-right: 2em;
+
+		& > li > img {
+		  cursor: pointer;
+		}
     }
 
     .user-info {
@@ -220,21 +224,17 @@
 	background: #004044;
 
 	&._active {
-		display: flex;
-		height: calc(100% - 219px);
-	}
-
-	&._active.profile-accounts {
-		display: flex;
-		height: calc(100% - 175px;);
-	}
-
-	&._active.profile-files, &._active.profile-notes {
-		display: flex;
-		height: calc(100% - 16px);
-	}
-	&._active.profile-email {
 	    display: flex;
-	    height: calc(100% - 19px);
+	    height: calc(100vh - 90px);
+	    height: auto;
 	}
+	// &._active.profile-accounts {
+	// 	height: calc(100vh - 175px);
+	// }
+	// &._active.profile-files, &._active.profile-notes {
+	// 	height: calc(100vh - 16px);
+	// }
+	// &._active.profile-email {
+	//     height: calc(100vh - 19px);
+	// }
 }

@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import TableFilters from '../../components/tablefilters/index';
 import meeting from '../../themes/images/meeting.png';
 import eye from '../../themes/images/eye.png';
+import { Task } from '../../components/popups/index';
 import './usertasks.scss';
 import '../../components/standard/table.scss';
 
 class UserTasks extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showTask: false,
+    }
   }
 
   TaskAction = () => {
@@ -32,7 +36,9 @@ class UserTasks extends Component {
   	return (
       <div className={"tab-row profile-tasks"+(active ? ' _active' : '')} id="tab-row-tasks">
 
-        <TableFilters table="tasks" />
+        <TableFilters table="tasks" addTask={() => this.setState({showTask: true})} />
+
+        <Task show={this.state.showTask} cancel={(e) => this.setState({showTask: false})} />
 
         <ul className="table-header for-tasks">
           <li>TITLES</li>

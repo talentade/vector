@@ -35,7 +35,6 @@ export default props => (
         <Route exact path='/' component={Login} />
         <Route exact path='/Login' component={Login} />
         <Route path='/Accounts' exact component={Accounts} />
-        <Route path='/Profile' exact component={Profile} />
         <Route path='/News' exact component={News} />
         <Route path='/PostNews' exact component={PostNews} />
 
@@ -48,7 +47,7 @@ export default props => (
         <Route path='/Admins' exact component={Admins} />
         <Route path='/TeamSettings' exact component={TeamSettings} />
         <Route path='/Forms' exact component={Forms} />
-        <Route path='/UsersProfile' exact component={UsersProfileList} />
+        <Route path='/UsersProfile/:user_id' exact component={UsersProfileList} />
         <Route path='/Lists' exact component={Lists} />
         <Route path='/Campaigns' exact component={Campaigns} />
         <Route path='/Instruments' exact component={Instruments} />

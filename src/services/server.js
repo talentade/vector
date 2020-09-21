@@ -224,6 +224,7 @@ export default {
 
   register(credentials) {
     credentials.password = sha256(credentials.password);
+    credentials.time     = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
     return axios.request({
       method: 'POST',
       url: app.hostURL('register'),
@@ -521,6 +522,16 @@ export default {
     return axios.request({
       method: 'GET',
       url: app.hostURL('admin/instruments'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
+  getUser(u) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('userprofile/'+u),
       headers: {
         'Authorization': app.auth()
       }

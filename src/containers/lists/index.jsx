@@ -91,7 +91,7 @@ class Lists extends Component {
               <li><span className="txt-info">0</span></li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
-            <Pagination2 />
+            {/*<Pagination2 />*/}
         </div>
       </div>
       </Container>

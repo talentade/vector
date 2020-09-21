@@ -122,6 +122,7 @@ class TableFilters extends Component {
             <li className="_active" onClick={(e) => { this.props.switchTo("forex"); this.toggleActive(e, '.borderad-menu')}}>Forex</li>
             <li onClick={(e) => { this.props.switchTo("crypto"); this.toggleActive(e, '.borderad-menu')}}>Crypto</li>
             <li onClick={(e) => { this.props.switchTo("commodities"); this.toggleActive(e, '.borderad-menu')}}>Commodity</li>
+            <li onClick={(e) => { this.props.switchTo("indices"); this.toggleActive(e, '.borderad-menu')}}>Indices</li>
             <li onClick={(e) => { this.props.switchTo("stock"); this.toggleActive(e, '.borderad-menu')}}>Stock</li>
           </ul>
 
@@ -162,25 +163,29 @@ class TableFilters extends Component {
       {this.props.table === "trade" ? (
         <div className="table-filters" style={{margin: "0 1em 1em"}}>
           <div className="search-container select-box" style={{width: "160px"}}>
-            <select>
-              <option>Pending Trades</option>
-              <option>Open Trades</option>
-              <option>Closed Trades</option>
+            <select onChange={this.props.changeType}>
+              <option value="0">Pending Trades</option>
+              <option value="1">Open Trades</option>
+              <option value="2">Closed Trades</option>
             </select>
           </div>
           <img src={calendar} className="calendar-search"/>
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.handleChange} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
             <div className="search-container select-box" style={{width: "140px"}}>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: "absolute", top: "9px", left: "4px"}}>
                 <path d="M19.2569 0H0.820313C0.388794 0 0.0390625 0.349732 0.0390625 0.78125C0.0390625 2.95685 0.97168 5.03388 2.59781 6.47934L6.01929 9.52042C6.61255 10.0478 6.95282 10.8055 6.95282 11.5994V19.2178C6.95282 19.8404 7.64862 20.2136 8.16727 19.8677L12.7765 16.795C12.9938 16.6501 13.1244 16.4063 13.1244 16.145V11.5994C13.1244 10.8055 13.4647 10.0478 14.0579 9.52042L17.4793 6.47934C19.1054 5.03388 20.038 2.95685 20.038 0.78125C20.038 0.349732 19.6883 0 19.2569 0ZM16.4412 5.31143L13.0199 8.35266C12.0934 9.17633 11.5619 10.3597 11.5619 11.5993V15.7269L8.51517 17.758V11.5994C8.51517 10.3597 7.98371 9.17633 7.05719 8.35266L3.63587 5.31159C2.53937 4.3367 1.83945 3.00095 1.65207 1.56235H18.425C18.2376 3.00095 17.5378 4.3367 16.4412 5.31143Z" fill="#03CF9E"/>
               </svg>
-              <select style={{paddingLeft: "25px"}}>
-                <option>All Types</option>
+              <select style={{paddingLeft: "25px"}} onChange={this.props.onChange}>
+                {this.props.filterOptions.map((option) => (
+                  <option key={`${option}-1`} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -217,7 +222,7 @@ class TableFilters extends Component {
               <input type="text" placeholder="Search" />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
-            <button className="create-btn">Create Task</button>
+            <button className="create-btn" onClick={() => this.props.addTask()}>Create Task</button>
           </div>
       </div>) : null}
 
@@ -259,7 +264,7 @@ class TableFilters extends Component {
             </select>
           </div>
           <div className="filter-actions">
-            <button className="create-btn">Add Note</button>
+            <button className="create-btn" onClick={() => this.props.addNote()}>Add Note</button>
           </div>
       </div>) : null}
 
@@ -322,15 +327,15 @@ class TableFilters extends Component {
               <input type="text" placeholder="Search" />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
-            <button className="create-btn">Create Meeting</button>
+            <button className="create-btn" onClick={() => this.props.addMeet()}>Create Meeting</button>
           </div>
       </div>) : null}
 
 
       {this.props.table === "emails" ? (
-        <div className="table-filters">
-            <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            <div className="search-container" style={{width: "300px"}}>
+        <div className="table-filters" style={{marginBottom: "1em"}}>
+          <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+          <div className="search-container" style={{width: "300px"}}>
               <input type="text" placeholder="Search" />
               <img src={SearchIcon} className="search-img" alt="" />
           </div>
@@ -338,6 +343,7 @@ class TableFilters extends Component {
           <img src={deleteIcon} className="filter-img"/>
           <img src={checkCircle} className="filter-img" style={{position: "relative", top: "6px", width: "23.5px", height: "25.5px"}}/>
           <img src={more} className="filter-img" style={{width: "4px"}}/>
+          <button className="create-btn" style={{position: "absolute", right: "0"}}>Compose</button>
       </div>) : null}
 
     </>

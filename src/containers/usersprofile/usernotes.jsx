@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TableFilters from '../../components/tablefilters/index';
 import folder from '../../themes/images/folder.png';
 import pencil from '../../themes/images/notes/pencil.png';
+import { Note } from '../../components/popups/index';
 import deleteIcon from '../../themes/images/notes/delete.png';
 import eye from '../../themes/images/notes/eye.png';
 import './usernotes.scss';
@@ -12,6 +13,7 @@ class UserNotes extends Component {
 
     this.state = {
       notes: false,
+      showNote: false,
     }
   }
 
@@ -20,7 +22,8 @@ class UserNotes extends Component {
   	return (
       <div className={"tab-row profile-notes"+(active ? ' _active' : '')} id="tab-row-notes">
 
-        <TableFilters table="notes" />
+        <TableFilters table="notes" addNote={() => this.setState({showNote: true})} />
+        <Note show={this.state.showNote} cancel={(e) => this.setState({showNote: false})} />
 
         <ul className="for-notes">
           <li>

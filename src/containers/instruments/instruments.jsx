@@ -43,13 +43,13 @@ class InstrumentsTable extends Component {
     return (
           <>
 
-            <table border="0">
+            <table border="0" style={{marginBottom: "1em"}}>
               <thead>
                 <tr>
                   <th>CURRENCY PAIR</th>
                   <th>BUY</th>
                   <th>SELL</th>
-                  <th>SPECIFIC RATE</th>
+                  <th>MARKET PRICE</th>
                   <th>HIGH</th>
                   <th>LOW</th>
                   <th></th>
@@ -71,90 +71,9 @@ class InstrumentsTable extends Component {
                   <td></td>
                 </tr>
               ))}
-                {/*<tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td className="ins-td"><img src={us} className="flag"/><span className="td-ins">USD/ZAR</span><img src={sa} className="flag"/></td>
-                  <td><span className="td-buy">1.3748</span></td>
-                  <td><span className="td-sell">1.3748</span></td>
-                  <td><span className="td-rate">1.3748</span></td>
-                  <td><span className="td-high">1.0654</span></td>
-                  <td><span className="td-low">1.0654</span></td>
-                  <td></td>
-                </tr>*/}
               </tbody>
             </table>
-            <Pagination2 />
+            {/*<Pagination2 />*/}
           </>
         );
   }

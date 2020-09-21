@@ -110,12 +110,13 @@ class SignIn extends Component {
               className='signin-submit-btn'
               style={{marginTop: "1em"}}
             />
+            {app.isAdmin() ? null :
             <p className='alt-action'>
-              Don't have an account?{' '}
+              Don't have an account?&nbsp;
               <NavLink to='/Register' className='login-link'>
                 Register
               </NavLink>
-            </p>
+            </p>}
           </form>
         </div>
       </div>

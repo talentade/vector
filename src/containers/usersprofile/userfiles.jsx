@@ -63,15 +63,10 @@ class UserFiles extends Component {
       ) : (
         <ul className="for-folders">
           <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>KYC</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>07. 03. 2020</span></li>
           <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>Profile pictures</span></li>
           <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>Cards</span></li>
           <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>DOD</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>KYC</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>07. 03. 2020</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>Profile pictures</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>Cards</span></li>
-          <li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>DOD</span></li>
+          {/*<li onClick={() => this.setState({files: !this.state.files})}><img src={folder} /><span>07. 03. 2020</span></li>*/}
         </ul>
       )}
       </div>

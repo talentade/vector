@@ -10,7 +10,6 @@ class TransactionHistory extends Component {
   }
 
   handleClick = (e, i) => {
-    // console.log(e.target, i);
     document.querySelectorAll(".transaction-history-record").forEach(function(el) {
       el.classList.remove("_active");
     });
