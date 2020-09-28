@@ -107,6 +107,9 @@ const app = {
   cleanTime: (d) => {
     return d.trim().replace(/,/g, "").split(" ")[1];
   },
+  altField: (f) => {
+    return f ? (f.trim().length ? f : "NOT STATED") : "NOT STATED";
+  },
   floatFormat: (x, dp = 5, txt = false) => {
     if(dp < 0) {
       let rst = String(x);

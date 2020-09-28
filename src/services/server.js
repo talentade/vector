@@ -538,6 +538,20 @@ export default {
     })
   },
 
+  changeMeetStatus(uid, id, stat) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/user/mstat/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        m: id,
+        s: stat
+      }
+    });
+  },
+
 
 
 

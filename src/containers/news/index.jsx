@@ -5,6 +5,7 @@ import Container from '../container/index';
 import TableFilters from '../../components/tablefilters/index';
 import Pagination from '../../components/Pagination/index';
 import server from '../../services/server';
+import app from '../../services/app';
 import Spinner from '../../components/spinner/index';
 import news1 from '../../themes/images/news1.png';
 import ss1 from '../../themes/images/ss1.png';
@@ -217,7 +218,7 @@ class News extends Component {
                 ))
               }
               </ul>
-              {/*<Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link>*/}
+              {app.isAdmin() ? <Link to="/PostNews" className="publish-btn">Post News <img src={addstory} /></Link> : null}
               <Pagination length="5" max_rows={this.state.max_rows} page_no={this.state.page_no} paginationChange={(p) => { this.showNews(p); }}/>
             </div>
           ): null}

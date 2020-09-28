@@ -103,7 +103,7 @@
 
     	&>div {
     		width: 420px;
-			height: 310px;
+			height: auto;
 			display: inline-flex;
 			flex-direction: column;
 			background: #DEFFF7;
@@ -164,6 +164,7 @@
     .create-btn {
     	width: 100px;
 		height: 40px;
+		margin-top: 10px;
 		background: #03CF9E;
 		border-radius: 2px;
 		font-family: Poppins;

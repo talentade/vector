@@ -108,14 +108,8 @@ class TeamSettings extends Component {
                 <input type="text" className="tf" placeholder="Full name" />
                 <input type="text" className="tf" placeholder="Email" />
                 <input type="text" className="tf" placeholder="Phone number" />
-                <p className="labs">
-                  <label>
-                    <input type="radio" name="is_admin" value="1" checked /> Make admin
-                  </label>
-                  <label>
-                    <input type="radio" name="is_admin" value="0" /> Make user
-                  </label>
-                </p>
+                <input type="password" className="tf" placeholder="Password" />
+                <input type="password" className="tf" placeholder="Repeat Password" />
                 <button className="create-btn">SEND INVITE</button>
               </div>
             </section>

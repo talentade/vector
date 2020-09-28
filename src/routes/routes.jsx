@@ -14,6 +14,7 @@ import PostNews from '../containers/postnews/index';
 import Accounts from '../containers/accounts/index';
 import BookCall from '../containers/book/index';
 import Restrictions from '../containers/restrictions/index';
+import Chats from '../containers/chats/index';
 import Transactions from '../containers/transactions/index';
 
 import Users from '../containers/users/index';
@@ -39,6 +40,7 @@ export default props => (
         <Route path='/PostNews' exact component={PostNews} />
 
         <Route path='/Restrictions' exact component={Restrictions} />
+        <Route path='/Chats' exact component={Chats} />
         <Route path='/Transactions' exact component={Transactions} />
         <Route path='/MailAccounts' exact component={MailAccounts} />
         <Route path='/Unsubscribers' exact component={Unsubscribers} />

@@ -30,7 +30,8 @@ class UsersProfileList extends Component {
       navi: 1,
       profile: null,
       showLoader: true,
-      userTab: "Profile"
+      userTab: "Meeting",// "Profile",
+      uid: ''
     }
 
   }
@@ -38,7 +39,7 @@ class UsersProfileList extends Component {
   async componentDidMount () {
     let u = this.props.match.params.user_id;
     let profile = await server.getUser(u);
-    this.setState({profile: profile.data.profile, showLoader: false});
+    this.setState({profile: profile.data.profile, uid: u, showLoader: false});
   }
 
   selectActiveTab = (e) => {
@@ -60,16 +61,16 @@ class UsersProfileList extends Component {
             <Breadcrumbs breads={"Home, Lists, Users, "+(this.state.userTab)} />
             <Ptab tabs="Profile, Accounts, Transaction History, Trading Activity, Files, Notes, Calls, Emails, Tasks, Meeting" handleClick={this.selectActiveTab} active={this.state.userTab} />
 
-            {this.state.userTab.toLowerCase() === "profile" && profile  ? <ProfileDetails active="1" profile={profile} />              : null}
-            {this.state.userTab.toLowerCase() === "accounts"            ? <ProfileAccounts active="1" accounts={profile.accounts} />   : null}
-            {this.state.userTab.toLowerCase() === "transaction history" ? <ProfilePayments active="1" history={profile.history} />   : null}
-            {this.state.userTab.toLowerCase() === "trading activity"    ? <TradingActivities active="1" trade={profile.trade} /> : null}
-            {this.state.userTab.toLowerCase() === "files"               ? <UserFiles active="1" />         : null}
-            {this.state.userTab.toLowerCase() === "notes"               ? <UserNotes active="1" />         : null}
-            {this.state.userTab.toLowerCase() === "calls"               ? <UserCalls active="1" />         : null}
-            {this.state.userTab.toLowerCase() === "emails"              ? <UserEmails active="1" />        : null}
-            {this.state.userTab.toLowerCase() === "meeting"             ? <ProfileMeetings active="1" meetings={profile.meetings} />   : null}
-            {this.state.userTab.toLowerCase() === "tasks"               ? <UserTasks active="1" />         : null}
+            {this.state.userTab.toLowerCase() === "profile" && profile  ? <ProfileDetails active="1" profile={profile} uid={this.state.uid} />              : null}
+            {this.state.userTab.toLowerCase() === "accounts"            ? <ProfileAccounts active="1" accounts={profile.accounts} uid={this.state.uid} />   : null}
+            {this.state.userTab.toLowerCase() === "transaction history" ? <ProfilePayments active="1" history={profile.history} uid={this.state.uid} />   : null}
+            {this.state.userTab.toLowerCase() === "trading activity"    ? <TradingActivities active="1" trade={profile.trade} uid={this.state.uid} /> : null}
+            {this.state.userTab.toLowerCase() === "files"               ? <UserFiles active="1" uid={this.state.uid} />         : null}
+            {this.state.userTab.toLowerCase() === "notes"               ? <UserNotes active="1" uid={this.state.uid} />         : null}
+            {this.state.userTab.toLowerCase() === "calls"               ? <UserCalls active="1" uid={this.state.uid} />         : null}
+            {this.state.userTab.toLowerCase() === "emails"              ? <UserEmails active="1" uid={this.state.uid} />        : null}
+            {this.state.userTab.toLowerCase() === "meeting"             ? <ProfileMeetings active="1" meetings={profile.meetings} uid={this.state.uid} />   : null}
+            {this.state.userTab.toLowerCase() === "tasks"               ? <UserTasks active="1" uid={this.state.uid} />         : null}
 
           </div>
         </div> : null}

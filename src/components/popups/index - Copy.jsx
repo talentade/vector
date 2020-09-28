@@ -11,8 +11,9 @@ import app from '../../services/app';
 import logout from "../../themes/images/tradeDashboard/t_nav4.svg";
 import CancelIcon from '../../themes/images/cancel.svg';
 import con_buysell from '../../themes/images/con_buysell.png';
-import '../../themes/js/datepicker.min.css';
+import bootstrapMaterialDatePicker from '../../themes/js/jquery.timeago.js';
 import datepicker from '../../themes/js/datepicker.js';
+import '../../themes/js/datepicker.min.css';
 
 const popupOut = (e) => {
   if($(e.target).hasClass("overlay") && $(e.target).hasClass("popups")) {
@@ -150,6 +151,8 @@ class Meet extends React.Component {
 
   componentDidMount () {
     let dis = this;
+
+    $('#time-id').bootstrapMaterialDatePicker();
     const picker = datepicker()('#some-id', {
       onSelect: instance => {
         dis.setState({dateSelected: instance.dateSelected.toDateString()});
@@ -170,6 +173,7 @@ class Meet extends React.Component {
               Meeting <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
             </div>
             <h2 className='edit-title' contentEditable="true" data-placeholder="What are you meeting about?" style={{fontSize: "1em", paddingLeft: "2.2em"}}></h2>
+            <input id="time-id" type="text" />
             <div className='edit-settings meet'>
               <div className='e-option'>
                 <span className='option'>Attendee</span>
@@ -188,16 +192,9 @@ class Meet extends React.Component {
                     <option>{this.state.dateSelected}</option>
                   </select>
                   &nbsp;&nbsp;
-                  <input id="time-id" type="time" />
                   <img src={time} />
                   <select>
-                  {
-                    "1,2,3,4,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-                    .split(",")
-                    .map((t) => (
-                      <option>{t}</option>
-                    ))
-                  }
+                    <option>Time</option>
                   </select>
                 </div>
               </div>

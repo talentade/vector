@@ -18,6 +18,7 @@ import Menu7 from "../themes/images/admin/menu7.png";
 import Menu8 from "../themes/images/admin/menu8.png";
 import Menu9 from "../themes/images/admin/menu9.png";
 import Menu10 from "../themes/images/admin/menu10.png";
+import ChatMenu from "../themes/images/live-chat.png";
 
 export const favouritePairs = [
   {
@@ -300,14 +301,15 @@ const appNavClass = 'l-nav-link';
 export const adminLeftNavData = [
   // {path: '/Forms', className: appNavClass, imageUrl: Menu1, name: 'forms', text: 'Forms'},
   {path: '/Lists', className: appNavClass, imageUrl: Menu2, name: 'lists', text: 'Lists'},
-  // {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
+  {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
   {path: '/TeamSettings', className: appNavClass, imageUrl: Menu4, name: 'teamsettings', text: 'Team Settings'},
   // {path: '/Unsubscribers', className: appNavClass, imageUrl: Menu5, name: 'unsubscribers', text: 'Unsubscribers'},
   // {path: '/Campaigns', className: appNavClass, imageUrl: Menu6, name: 'campaigns', text: 'Campaigns'},
   {path: '/Instruments', className: appNavClass, imageUrl: Menu7, name: 'instruments', text: 'Instruments'},
   {path: '/Documents', className: appNavClass, imageUrl: Menu8, name: 'documents', text: 'Documents'},
   {path: '/News', className: appNavClass, imageUrl: Menu9, name: 'news', text: 'News'},
-  {path: '/Restrictions', className: appNavClass, imageUrl: Menu10, name: 'restrictions', text: 'Restrictions'}
+  {path: '/Restrictions', className: appNavClass, imageUrl: Menu10, name: 'restrictions', text: 'Restrictions'},
+  {path: '/Chats', className: appNavClass, imageUrl: ChatMenu, name: 'chats', text: 'Chats'}
 ]
 
 export const TopNavData = [

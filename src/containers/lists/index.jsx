@@ -31,7 +31,7 @@ class Lists extends Component {
       <div className="col-12" id="lists-container">
         <div className="lists-section-right">
             <Breadcrumbs breads="Home, Lists" />
-            
+
             <h1 className="page-title">Lists
               <div className="btn-list">
                 <button className="create-list imp">Import</button>
@@ -54,7 +54,7 @@ class Lists extends Component {
 
             <ul className="table-body _all">
               <li><span className="txt-light">All</span></li>
-              <li><span className="txt-light">7000</span></li>
+              <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Automatic</span></li>
               <li><span className="txt-light">Today 3:11 PM</span></li>
               <li><span className="txt-light">-</span></li>
@@ -63,8 +63,9 @@ class Lists extends Component {
             </ul>
 
             <ul className="table-body _users">
-              <li><Link to="/Users" className="txt-light">Users</Link></li>
-              <li><span className="txt-light">7000</span></li>
+              {/*}<li><Link to="/Users" className="txt-light">Users</Link></li>*/}
+              <li>Users</li>
+              <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Automatic</span></li>
               <li><span className="txt-light">Today 3:11 PM</span></li>
               <li><span className="txt-light">-</span></li>
@@ -73,8 +74,9 @@ class Lists extends Component {
             </ul>
 
             <ul className="table-body _admins">
-              <li><Link to="/Admins" className="txt-light">Admins</Link></li>
-              <li><span className="txt-light">7000</span></li>
+              {/*<li><Link to="/Admins" className="txt-light">Admins</Link></li>*/}
+              <li>Admins</li>
+              <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Manual</span></li>
               <li><span className="txt-light">May 4, 2020 3:11 PM</span></li>
               <li><span className="txt-light">-</span></li>
@@ -82,7 +84,7 @@ class Lists extends Component {
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
 
-            <ul className="table-body _south">
+            {/*<ul className="table-body _south">
               <li><span className="txt-info">South African Leads form</span></li>
               <li><span className="txt-info">7000</span></li>
               <li><span className="txt-info">Manual</span></li>
@@ -90,7 +92,7 @@ class Lists extends Component {
               <li><span className="txt-default">joe young</span></li>
               <li><span className="txt-info">0</span></li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            </ul>
+            </ul>*/}
             {/*<Pagination2 />*/}
         </div>
       </div>
