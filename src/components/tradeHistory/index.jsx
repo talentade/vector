@@ -198,9 +198,10 @@ class TradeHistory extends Component {
                   ) : null}
                 </ul>
               ))}
-              {history.length ?
+              {history.length && !this.props.admin ?
                 <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
-              : <TradeNotFound text={"No "+type+" trade"} /> }
+              : this.props.admin ? null : <TradeNotFound text={"No "+type+" trade"} /> }
+              {this.props.admin && !history.length ? <TradeNotFound text={"No "+type+" trade"} /> : null}
           </div>
       </div>
   </div>

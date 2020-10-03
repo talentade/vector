@@ -2,13 +2,29 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
+import server from '../../services/server';
+import app from '../../services/app';
 import './profileaccounts.scss';
 import '../accounts/index.scss';
 import '../../components/standard/table.scss';
+import sp from '../../themes/images/circle-plus.png';
+import { Created } from '../../components/popups/index';
+import AddAccount from '../../components/addAccount/index';
 
 class ProfileDetails extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      selectedNews: null,
+      showSpinner: false,
+      showCreated: false,
+      addAcc: false,
+      accounts: [],
+      cid: "",
+      ctype: "",
+      email: app.email()
+    }
   }
 
   handleClick = (e, i) => {
@@ -18,6 +34,16 @@ class ProfileDetails extends Component {
     document.getElementById(i).classList.add("_active");
   }
 
+  changeLeverage = async (e, a) => {
+    this.props.load();
+    try {
+      await server.changeLeverage(this.props.uid, a, e.target.value);
+    } catch (e) {
+      return e;
+    }
+    this.props.refresh();
+  }
+
   render () {
     let active = parseInt(this.props.active);
     let accounts = this.props.accounts;
@@ -25,10 +51,24 @@ class ProfileDetails extends Component {
   	return (
       <div className={"tab-row profile-accounts"+(active ? ' _active' : '')} id="tab-row-accounts">
 
-        {/*<div className="acc-div">
-          <button className="add-acc">Add Account</button>
-        </div>*/}
-        
+        <div className="acc-div" style={{marginBottom: "1em"}}>
+          <button className="add-acc" onClick={(e) => this.setState({addAcc: true})}><img src={sp} /> Add account</button>
+        </div>
+
+      { this.state.addAcc ?
+        <AddAccount
+          admin={true}
+          uid={this.props.uid}
+          sending={() => this.props.load()}
+          unsending={() => this.props.load()}
+          sent={() => this.setState({showSpinner : false})}
+          showCreated={(i, t) => this.setState({showSpinner: false, showCreated: true, cid: i, ctype: t})}
+          confirmClick={(e) => { this.props.refresh(); this.setState({addAcc: false})}}
+          cancelClick={(e) => this.setState({addAcc: false})}
+        /> : null }
+
+        <Created show={this.state.showCreated} type={this.state.ctype} id={this.state.cid} cancel={(e) => { this.setState({showCreated: false}); }} />
+
         <ul className='t-history-header'>
           <li className="acc-name">TRADING ACCOUNT</li>
           <li>BALANCE</li>
@@ -46,7 +86,16 @@ class ProfileDetails extends Component {
             <span className="td"><button className={"acc_type"+(acc.account_type.toLowerCase() == "live" ? " live" : "")}>{acc.account_type.toUpperCase()}</button>{acc.account_label.length ? acc.account_label : "AV-"+acc.account_id}<br /><small className="inf">{acc.account_id}</small></span></li>
             <li className=""><span className="th">BALANCE</span><span className="td">{acc.balance} USD</span></li>
             <li className=""><span className="th">CREDIT</span><span className="td">{acc.credit} USD</span></li>
-            <li className=""><span className="th">LEVERAGE</span><span className="td">{acc.leverage}</span></li>
+            <li className=""><span className="th">LEVERAGE</span><span className="td">
+              <select className="lev" onChange={(e) => this.changeLeverage(e, acc.account_name)}>
+                <option selected={acc.leverage == '1:50'} value="1:50">1 : 50</option>
+                <option selected={acc.leverage == '1:100'} value="1:100">1 : 100</option>
+                <option selected={acc.leverage == '1:200'} value="1:200">1 : 200</option>
+                <option selected={acc.leverage == '1:300'} value="1:300">1 : 300</option>
+                <option selected={acc.leverage == '1:400'} value="1:400">1 : 400</option>
+                <option selected={acc.leverage == '1:500'} value="1:500">1 : 500</option>
+              </select>
+            </span></li>
             <li>
               <span className="th">ACTIONS</span>
               <span className="td">

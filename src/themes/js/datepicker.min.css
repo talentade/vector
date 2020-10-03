@@ -262,7 +262,8 @@
 }
 .qs-current {
     font-weight: 700;
-    text-decoration: underline;
+    background: #1dc59d;
+    color: #fff;
 }
 .qs-active,
 .qs-range-end,

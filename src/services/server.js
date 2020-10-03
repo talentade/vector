@@ -129,7 +129,7 @@ export default {
   //       // }
   //     }
   //   });
-  // },  
+  // },
   // getTransactionHistory(email, id, page_size, page_no, account) {
   //   return axios.request({
   //     method: 'GET',
@@ -303,18 +303,25 @@ export default {
     });
   },
 
-  addAccount(name, account, pwd) {
+  addAccount(name, account, pwd, uid = null) {
+    let data = {
+      u: uid,
+      name: name,
+      account: account,
+      password: sha256(pwd)
+    };
+
+    if(uid) {
+      data["admin"] = true;
+    }
+
     return axios.request({
       method: 'POST',
       url: app.hostURL('account/new/'+app.userid()),
       headers: {
         'Authorization': app.auth(),
       },
-      data: {
-        name: name,
-        account: account,
-        password: sha256(pwd)
-      }
+      data: data
     });
   },
 
@@ -370,7 +377,7 @@ export default {
       data : { amount, currency, to, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
     })
   },
-  
+
   transferFunds(from, to, amount, currency) {
     return axios.request({
       method: 'POST',
@@ -548,6 +555,122 @@ export default {
       data: {
         m: id,
         s: stat
+      }
+    });
+  },
+
+  changeTaskStatus(uid, id, stat) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/user/tstat/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        t: id,
+        s: stat
+      }
+    });
+  },
+
+  changeLeverage(uid, acc, lev) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/ulev/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        l: lev,
+        a: acc
+      }
+    });
+  },
+
+  saveNote(uid, title, note) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/takenote/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        note: note,
+        title: title,
+        creator: app.name(),
+        creator_id: app.id(),
+        time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+      }
+    });
+  },
+
+  updateNote(nid, title, note) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/updatenote/'+nid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        note: note,
+        title: title,
+        time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+      }
+    });
+  },
+
+  deleteNote(uid, id) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/delete/note/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        n: id
+      }
+    });
+  },
+
+  saveTask(uid, data) {
+    data.creator = app.name();
+    data.creator_id = app.id();
+    data.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/newtask/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
+
+  updateTask(nid, data) {
+    data.creator = app.name();
+    data.creator_id = app.id();
+    data.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/updatetask/'+nid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
+
+  deleteTask(uid, id) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/delete/task/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        t: id
       }
     });
   },

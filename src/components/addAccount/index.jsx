@@ -15,7 +15,7 @@ class AddAccount extends Component {
     super(props);
 
     let info = false;
-    
+
 
     this.state = {
       step : 0,
@@ -44,16 +44,23 @@ class AddAccount extends Component {
     let nam = document.getElementById("tr-name").value;
     let sel = document.getElementById("tr-sel").value;
     let pas = document.getElementById("tr-pass").value;
+    let uid = this.props.admin ? this.props.uid : null;
     this.props.sending();
     try {
-      const acc = await server.addAccount(nam, sel, pas);
+      const acc = await server.addAccount(nam, sel, pas, uid);
       this.props.unsending();
       if(acc.status == 200 && acc.data.success) {
-        document.getElementById("account-container").dispatchEvent(this.fireAccList);
-        this.props.sent();
-        this.props.cancelClick();
-        this.props.showCreated(acc.data.account.account_id, acc.data.account.account_type);
-        this.setState({errorMessage: ""});
+        if(this.props.admin) {          
+          this.props.sent();
+          this.props.confirmClick();
+          this.props.showCreated(acc.data.account.account_id, acc.data.account.account_type);
+        } else {
+          document.getElementById("account-container").dispatchEvent(this.fireAccList);
+          this.props.sent();
+          this.props.cancelClick();
+          this.props.showCreated(acc.data.account.account_id, acc.data.account.account_type);
+          this.setState({errorMessage: ""});
+        }
       } else {
         this.setState({errorMessage: acc.data.message});
       }
@@ -79,7 +86,7 @@ class AddAccount extends Component {
                 <input className="accs" id="tr-name" type="text" />
                 <label>Select trading account</label>
                 <select className="accs" id="tr-sel"><option value="demo">Demo</option><option value="live">Live</option></select>
-                <label>Confirm Password</label>
+                <label>{this.props.admin ? 'Enter Admin' : 'Confirm'} Password</label>
                 <input className="accs" required id="tr-pass" type="password" />
 
                 {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}

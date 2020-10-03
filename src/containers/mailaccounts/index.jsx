@@ -31,7 +31,7 @@ class MailAccounts extends Component {
       <div className="col-12" id="mailaccounts-container">
         <div className="mailaccounts-section-right">
             <Breadcrumbs breads="Home, Mail Accounts" />
-            
+
             <h1 className="page-title" style={{marginBottom: "1em"}}>Mail Accounts</h1>
 
             <ul className="table-header">
@@ -53,6 +53,10 @@ class MailAccounts extends Component {
               <li><span className="txt-light">11. 06. 2020</span></li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
+
+            <div className="plus">
+              <button>+</button>
+            </div>
         </div>
       </div>
       </Container>

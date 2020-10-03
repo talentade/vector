@@ -63,8 +63,7 @@ class Lists extends Component {
             </ul>
 
             <ul className="table-body _users">
-              {/*}<li><Link to="/Users" className="txt-light">Users</Link></li>*/}
-              <li>Users</li>
+              <li><Link to="/Users" className="txt-light">Users</Link></li>
               <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Automatic</span></li>
               <li><span className="txt-light">Today 3:11 PM</span></li>
@@ -74,8 +73,7 @@ class Lists extends Component {
             </ul>
 
             <ul className="table-body _admins">
-              {/*<li><Link to="/Admins" className="txt-light">Admins</Link></li>*/}
-              <li>Admins</li>
+              <li><Link to="/Admins" className="txt-light">Admins</Link></li>
               <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Manual</span></li>
               <li><span className="txt-light">May 4, 2020 3:11 PM</span></li>

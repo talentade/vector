@@ -13,6 +13,58 @@
   justify-content: center;
   align-items: center;
   z-index: 11111111111;
+
+
+  label.datepicker {
+    height: auto;
+    padding: 0 2px;
+    font-size: 14px;
+    cursor: pointer;
+    top: 7px !important;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    position: relative !important;
+
+    img {
+      top: -1px;
+      margin-right: 3px;
+      position: relative;
+    }
+  }
+
+  .dpk-t {
+    position: relative !important;
+    left: 2px !important;
+    top: 6px !important;
+  }
+
+  .dpk-m {
+    top: 5px !important;
+    left: -12px !important;
+    cursor: pointer;
+    font-size: 110%;
+    position: relative !important;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .dpk-s {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+  }
+
+  .dpk-s, .dpk-s2 {
+    option {
+      outline: 0 !important;
+      color: #fff !important;
+      text-align: center !important;
+      background: #03aa82 !important;
+      border: 1px solid #12b991 !important;
+    }
+  }
   
   .deposit-modal-section {
     z-index: 20;
@@ -127,8 +179,13 @@
       line-height: 30px;
       display: flex;
       color: #000000;
+      cursor: text;
       padding: 10px 2em;
       outline: none !important;
+
+      &.task {
+        border-bottom: 0.5px solid #03ce9f38;
+      }
     }
 
     .edit-content {
@@ -146,15 +203,15 @@
       line-height: 19px;
       color: #000000;
 
-
       &.meet {
         height: calc(100% - 220px);
       }
 
       &.task {
-        width: 60% !important;
-        height: calc(100% - 200px);
-        padding-top: 2em;
+        width: calc(100% - 275px) !important;
+        height: calc(100% - 275px);
+        padding-top: 1em;
+        border: 0;
       }
     }
 
@@ -166,12 +223,13 @@
 
       &.float {
         position: absolute;
-        width: 40%;
+        width: 275px;
         right: 0;
       }
 
       &.task {
         height: 70px;
+        border-top: 0.5px solid #03ce9f38;
       }
 
       &.meet {

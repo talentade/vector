@@ -2,8 +2,17 @@
 	padding: 2em !important;
 	width: 100%;
 	position: relative;
-    height: calc(100% - 120px);
-    display: flex;
+  height: calc(100% - 120px);
+  display: flex;
+
+		.plus {
+			position: absolute;
+			bottom: 30px;
+			display: block;
+			background: green;
+			z-index: 10000;
+			right: 30px;
+		}
 
     .mailaccounts-content {
     	display: flex;
@@ -131,7 +140,7 @@ html, body, #root {
 
 @media screen and (max-width: 1000px) {
 	#mailaccounts-container {
-	
+
 	}
 }
 

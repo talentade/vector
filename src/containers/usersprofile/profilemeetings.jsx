@@ -13,7 +13,7 @@ class ProfileMeetings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showMeet: !false,
+      showMeet: false,
     }
   }
 
@@ -22,12 +22,14 @@ class ProfileMeetings extends Component {
   }
 
   checkedCalls = async (id, e) => {
+    this.props.load();
     try {
       let stat = await server.changeMeetStatus(this.props.uid, id, e.target.checked ? 1 : 0);
       console.log(stat.data);
     } catch (e) {
       return e;
     }
+    this.props.refresh();
   }
 
   render () {

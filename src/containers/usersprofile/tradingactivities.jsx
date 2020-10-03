@@ -47,6 +47,7 @@ class TradingActivities extends Component {
         />
 
         <TradeHistory
+          admin={true}
           type={["pending", "open", "closed"][type]}
           filterPair={this.state.filterPair}
           filterType={this.state.filterType}

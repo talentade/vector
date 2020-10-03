@@ -1,3 +1,24 @@
+.valu {
+	outline: none !important;
+	display: inline;
+	font-family: inherit;
+	padding: 0;
+	border: 0;
+	background: transparent;
+}
+
+select.lev {
+	border: 0;
+	outline: none !important;
+	background: transparent;
+	color: #fff;
+	font-family: inherit;
+
+	option {
+		background: #00A880;
+	}
+}
+
 .page-title {
 	display: flex;
 	margin-top: 16px;
@@ -32,6 +53,10 @@
   cursor: pointer;
   height: 0;
   width: 0;
+}
+
+.min-100 {
+		display: inline-block;
 }
 
 /* Create a custom checkbox */
@@ -99,7 +124,7 @@
 	font-style: normal;
 }
 
-.txt-warning {	
+.txt-warning {
 	color: #FFE602;
 	font-family: Poppins;
 	font-style: normal;

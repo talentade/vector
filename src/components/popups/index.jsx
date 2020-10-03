@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import './index.scss';
 import fav from '../../themes/popup/fav.PNG';
 import acc from '../../themes/popup/account.PNG';
@@ -19,6 +20,14 @@ const popupOut = (e) => {
     $(e.target).find(".modal-cancel").click();
   }
 }
+
+$(function () {
+
+  $(document).delegate(".dpk-m", "click", function () {
+    $(this).text($(this).text().trim().toLowerCase() == "am" ? "PM" : "AM");
+  });
+
+});
 
 class FavPopup extends React.Component {
   render() {
@@ -118,7 +127,7 @@ class Created extends React.Component {
 
 class Note extends React.Component {
   render() {
-    const { show, cancel, type, id } = this.props;
+    const { note, type, show, cancel, action } = this.props;
     return (
       show ? (
         <div className='overlay popups' onClick={popupOut}>
@@ -126,11 +135,222 @@ class Note extends React.Component {
             <div className='edit-header'>
               Note <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
             </div>
-            <h2 className='edit-title' contentEditable="true" data-placeholder="Title"></h2>
-            <div className='edit-content' contentEditable="true" spellCheck="false" data-placeholder="Start typing a note..."></div>
+            <h2 className='edit-title' contentEditable="true" data-placeholder="Title">{type == 'new' ? '' : note.title}</h2>
+            <div className='edit-content' contentEditable="true" spellCheck="false" data-placeholder="Start typing a note...">{type == 'new' ? '' : note.note}</div>
             <div className='edit-footer'>
               <div></div>
-              <button className="action">Save Note</button>
+              {
+                type == 'new'
+                ? <button className="action" onClick={() => action($(".edit-title").text(), $(".edit-content").text())}>Save Note</button>
+                : type == 'view'
+                  ? <button className="action" onClick={cancel}>Close</button>
+                  : <button className="action" onClick={() => action($(".edit-title").text(), $(".edit-content").text())}>Update</button>
+              }
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
+class Task extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      date1Selected: "Day",
+      date2Selected: "Day",
+    }
+    this.updated = false;
+  }
+
+  canAct = () => {
+    return (
+      $(".datepicker1").text() != "Day" &&
+      $(".datepicker2").text() != "Day" &&
+      $(".edit-title").text().length &&
+      $(".edit-content").text().length &&
+      $("select[name=assigned]").val() != '- Select -'
+    );
+  }
+
+  action = async () => {
+    if(!this.canAct()) return alert("Please fill all fields");
+
+    let title     =  $(".edit-title").text();
+    let content   =  $(".edit-content").text();
+    
+    let type      =  $("select[name=type]").val();
+    let priority  =  $("select[name=priority]").val();
+    let assigned  =  $("select[name=assigned]").val();
+    
+    let time1     =  $("select[name=time1]").val();
+    let time2     =  $("select[name=time2]").val();
+
+    let ddate     =  moment($(".datepicker1").text()).format('M/D/YYYY')+" "+time1+" "+$(".dpk-m.1").text();
+    let rdate     =  moment($(".datepicker2").text()).format('M/D/YYYY')+" "+time2+" "+$(".dpk-m.2").text();
+
+    this.props.action({title, content, type, priority, assigned, ddate, rdate});
+  }
+
+  render() {
+    const { show, cancel, type, id } = this.props;
+
+    let { date1Selected, date2Selected } = this.state;
+
+    if(this.props.type != "new") {
+
+      date1Selected = date1Selected.toLowerCase() == "day"
+                    ? new Date(this.props.data.due_date.split(" ")[0]).toDateString()
+                    : date1Selected;
+      date2Selected = date2Selected.toLowerCase() == "day"
+                    ? new Date(this.props.data.reminder_date.split(" ")[0]).toDateString()
+                    : date2Selected;
+
+      setTimeout(() => {
+        if(!this.updated) {
+          $(".edit-title").text(this.props.data.title);
+          $(".edit-content").text(this.props.data.note);
+
+          $("select[name=type]").val(this.props.data.task_type);
+          $("select[name=priority]").val(this.props.data.priority);
+          $("select[name=assigned]").val(this.props.data.assigned);
+
+          $("select[name=time1]").val(this.props.data.due_date.split(" ")[1]);
+          $("select[name=time2]").val(this.props.data.reminder_date.split(" ")[1]);
+
+          $(".dpk-m.1").text(this.props.data.due_date.split(" ")[2]);
+          $(".dpk-m.2").text(this.props.data.reminder_date.split(" ")[2]);
+          
+          this.updated  = true;
+        }
+      }, 100);
+    }
+
+    let   dis     = this;
+    const picker1 = datepicker();
+    const picker2 = datepicker();
+
+    setTimeout(() => {
+      if($(".datepicker1").length) {
+        picker1(".datepicker1", {
+          onSelect: instance => {
+            dis.setState({date1Selected: instance.dateSelected.toDateString()});
+          },
+          formatter: (input, date, instance) => {
+            input.value = date.toDateString();
+          },
+        });
+      }
+      if($(".datepicker2").length) {
+        picker1(".datepicker2", {
+          onSelect: instance => {
+            dis.setState({date2Selected: instance.dateSelected.toDateString()});
+          },
+          formatter: (input, date, instance) => {
+            input.value = date.toDateString();
+          },
+        });
+      }
+    }, 1000);
+
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='edit-modal-section'>
+            <div className='edit-header'>
+              Task <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+            </div>
+            <h2 className='edit-title task' contentEditable="true" data-placeholder="Type task title" style={{fontSize: ".9em", paddingLeft: "2.7em"}}></h2>
+            <div className='edit-settings float'>
+              <div className='e-option'>
+                <span className='option'>Due Date</span>
+                <div className='field'>
+                  &nbsp;&nbsp;
+                  <label className="datepicker datepicker1">
+                    <img className="" src={calendar} />{date1Selected}
+                  </label>
+                  &nbsp;&nbsp;
+                  <img src={time} className="dpk-t"/>
+                  <select className="dpk-s" name="time1">
+                  {
+                    "1,2,3,4,5,6,7,8,9,10,11,12"
+                    .split(",")
+                    .map((t) => (
+                      <option value={t+":00"}>&nbsp;&nbsp;&nbsp;{t+" : 00"}&nbsp;&nbsp;&nbsp;</option>
+                    ))
+                  }
+                  </select>
+                  <span className="dpk-m 1">AM</span>
+                </div>
+              </div>
+            </div>
+            <div className='edit-content task' contentEditable="true" spellCheck="false" data-placeholder="Start typing task..."></div>
+            <div className='edit-settings task'>
+              <div className='e-option'>
+                <span className='option'>Type</span>
+                <div className='field'>
+                  <select name="type">
+                    <option>To-do</option>
+                    <option>Call</option>
+                    <option>Email</option>
+                    <option>Meeting</option>
+                    <option>Reminder</option>
+                  </select>
+                </div>
+              </div>
+              <div className='e-option'>
+                <span className='option'>Priority</span>
+                <div className='field'>
+                  <select name="priority">
+                    <option>None</option>
+                    <option>High</option>
+                  </select>
+                </div>
+              </div>
+              <div className='e-option'>
+                <span className='option'>Assigned to</span>
+                <div className='field'>
+                  <select name="assigned">
+                    <option>- Select -</option>
+                    <option>Adeoye Talent</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className='edit-settings'>
+              <div className='e-option'>
+                <span className='option'>Email Reminder</span>
+                <div className='field'>
+                  &nbsp;&nbsp;
+                  <label className="datepicker datepicker2">
+                    <img className="" src={calendar} />{date2Selected}
+                  </label>
+                  &nbsp;&nbsp;
+                  <img src={time} className="dpk-t"/>
+                  <select className="dpk-s" name="time2">
+                  {
+                    "1,2,3,4,5,6,7,8,9,10,11,12"
+                    .split(",")
+                    .map((t) => (
+                      <option value={t+":00"}>&nbsp;&nbsp;&nbsp;{t+" : 00"}&nbsp;&nbsp;&nbsp;</option>
+                    ))
+                  }
+                  </select>
+                  <span className="dpk-m 2">AM</span>
+                </div>
+              </div>
+            </div>
+            <div className='edit-footer'>
+              <div></div>
+              {
+                this.props.type == 'new'
+                ? <button className="action" onClick={() => this.action()}>Save Task</button>
+                : this.props.type == 'view'
+                  ? <button className="action" onClick={cancel}>Close</button>
+                  : <button className="action" onClick={() => this.action()}>Update Task</button>
+              }              
             </div>
           </div>
         </div>
@@ -148,20 +368,26 @@ class Meet extends React.Component {
     }
   }
 
-  componentDidMount () {
-    let dis = this;
-    const picker = datepicker()('#some-id', {
-      onSelect: instance => {
-        dis.setState({dateSelected: instance.dateSelected.toDateString()});
-      },
-      formatter: (input, date, instance) => {
-        input.value = date.toDateString();
-      },
-    });
-  }
+  componentDidMount () {}
 
   render() {
     const { show, cancel, type, id } = this.props;
+
+    let dis = this;
+    const picker = datepicker();
+    setTimeout(() => {
+      if($(".datepicker").length) {
+        picker(".datepicker", {
+          onSelect: instance => {
+            dis.setState({dateSelected: instance.dateSelected.toDateString()});
+          },
+          formatter: (input, date, instance) => {
+            input.value = date.toDateString();
+          },
+        });
+      }
+    }, 1000);
+
     return (
       show ? (
         <div className='overlay popups' onClick={popupOut}>
@@ -183,28 +409,27 @@ class Meet extends React.Component {
                 <span className='option'>Schedule Time</span>
                 <div className='field'>
                   &nbsp;&nbsp;
-                  <img src={calendar} className="dpk" id="some-id" />
-                  <select>
-                    <option>{this.state.dateSelected}</option>
-                  </select>
+                  <label className="datepicker">
+                    <img className="" src={calendar} />{this.state.dateSelected}
+                  </label>
                   &nbsp;&nbsp;
-                  <input id="time-id" type="time" />
-                  <img src={time} />
-                  <select>
+                  <img src={time} className="dpk-t"/>
+                  <select className="dpk-s">
                   {
-                    "1,2,3,4,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
+                    "1,2,3,4,5,6,7,8,9,10,11,12"
                     .split(",")
                     .map((t) => (
-                      <option>{t}</option>
+                      <option>&nbsp;&nbsp;&nbsp;{t+" : 00"}&nbsp;&nbsp;&nbsp;</option>
                     ))
                   }
                   </select>
+                  <span className="dpk-m">AM</span>
                 </div>
               </div>
               <div className='e-option'>
                 <span className='option'>Duration</span>
                 <div className='field'>
-                  <select>
+                  <select className="dpk-s2">
                   {
                     "1,2,3,4,5".split(",").map((h) => (
                       <option>{h} hour{h > 1 ? 's' : ''}</option>
@@ -218,89 +443,6 @@ class Meet extends React.Component {
             <div className='edit-footer'>
               <div></div>
               <button className="action large">Schedule Meeting</button>
-            </div>
-          </div>
-        </div>
-      ) : (null)
-    );
-  }
-}
-
-class Task extends React.Component {
-   render() {
-    const { show, cancel, type, id } = this.props;
-    return (
-      show ? (
-        <div className='overlay popups' onClick={popupOut}>
-          <div className='edit-modal-section'>
-            <div className='edit-header'>
-              Task <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-            </div>
-            <div className='edit-settings float'>
-              <div className='e-option'>
-                <span className='option'>Due Date</span>
-                <div className='field'>
-                  &nbsp;&nbsp;
-                  <img src={calendar} />
-                  <select>
-                    <option>Day</option>
-                  </select>
-                  &nbsp;&nbsp;
-                  <img src={time} />
-                  <select>
-                    <option>Time</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className='edit-content task' contentEditable="true" spellCheck="false" data-placeholder="Start typing task..."></div>
-            <div className='edit-settings'>
-              <div className='e-option'>
-                <span className='option'>Type</span>
-                <div className='field'>
-                  <select>
-                    <option>To-do</option>
-                  </select>
-                </div>
-              </div>
-              <div className='e-option'>
-                <span className='option'>Priority</span>
-                <div className='field'>
-                  <select>
-                    <option>None</option>
-                    <option>High</option>
-                  </select>
-                </div>
-              </div>
-              <div className='e-option'>
-                <span className='option'>Assigned to</span>
-                <div className='field'>
-                  <select>
-                    <option>Adeoye Talent(adeoyetalent@gmail.com)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className='edit-settings'>
-              <div className='e-option'>
-                <span className='option'>Email Reminder</span>
-                <div className='field'>
-                  &nbsp;&nbsp;
-                  <img src={calendar} />
-                  <select>
-                    <option>Day</option>
-                  </select>
-                  &nbsp;&nbsp;
-                  <img src={time} />
-                  <select>
-                    <option>Time</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className='edit-footer'>
-              <div></div>
-              <button className="action">Save Task</button>
             </div>
           </div>
         </div>

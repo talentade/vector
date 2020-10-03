@@ -8,6 +8,14 @@ const app = {
     if(!profile) window.location.href = "/login";
     return profile.user_id;
   },
+  time: () => {
+    return new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+  },
+  name: () => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return (profile.first_name+" "+profile.last_name).ucwords();
+  },
   userid: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
@@ -91,7 +99,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   hostURL: (url, type = 0) => {
-    let live = true;
+    let live = !true;
     if(type > 0) {
       return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
     } else {

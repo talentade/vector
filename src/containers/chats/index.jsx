@@ -45,6 +45,7 @@ class Chats extends Component {
             <ul className="people">
               <li className="active">
                 <img src={person1} />
+                <span className="online"></span>
                 <div className="p-info">
                   <h4>Sola Alabi</h4>
                   <span>Okay, so what are we supposed to do...</span>

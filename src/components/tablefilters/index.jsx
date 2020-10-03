@@ -258,7 +258,8 @@ class TableFilters extends Component {
       {this.props.table === "notes" ? (
         <div className="table-filters" style={{marginLeft: "2.1em", marginRight: "2.1em"}}>
           <div className="search-container select-box" style={{width: "190px"}}>
-            <select>
+            <select onChange={(e) => this.props.change(e)}>
+              <option>All</option>
               <option>Last Month</option>
               <option>This Month</option>
             </select>

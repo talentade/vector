@@ -37,6 +37,7 @@
       width: 400px;
       height: 77px;
       display: flex;
+      position: relative;
       cursor: pointer;
       padding: 12px 1.5em;
       flex-direction: row;
@@ -44,6 +45,18 @@
 
       &.active {
         background: #DEFFF7;
+      }
+
+      .online {
+        width: 14px;
+        height: 14px;
+        display: block;
+        position: absolute;
+        bottom: 10px;
+        left: 60px;
+        border-radius: 50%;
+        background: #0BFF23;
+        border: 3px solid #FFFFFF;
       }
 
       &>img {

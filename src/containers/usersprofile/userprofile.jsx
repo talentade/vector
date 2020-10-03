@@ -38,13 +38,13 @@ class UsersProfile extends Component {
           <h4>About User</h4>
 
           <ul>
-            <li><span>Account type :</span> Basic</li>
-            <li><span>Date of Birth :</span> {this.state.dob}</li>
-            <li><span>Gender :</span> {this.state.gender}</li>
-            <li><span>Phone :</span> {this.state.phone_number}</li>
-            <li><span>Email :</span> {this.state.email}</li>
-            <li><span>Country :</span> {this.state.country}</li>
-            <li><span>City :</span> {this.state.city}</li>
+            <li><span className="min-100">Account type :</span> Basic</li>
+            <li><span className="min-100">Date of Birth :</span> {app.altField(this.state.dob)}</li>
+            <li><span className="min-100">Gender :</span> {this.state.gender}</li>
+            <li><span className="min-100">Phone :</span> {this.state.phone_number}</li>
+            <li><span className="min-100">Email :</span> {this.state.email}</li>
+            <li><span className="min-100">Country :</span> {this.state.country}</li>
+            <li><span className="min-100">City :</span> {app.altField(this.state.city)}</li>
           </ul>
 
           <table>

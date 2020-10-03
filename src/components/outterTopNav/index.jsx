@@ -52,7 +52,7 @@ class OutterTopNav extends Component {
                   <path d="M6.73074 0.369998V6.88H0.370742V9.19H6.73074V15.67H9.28074V9.19H15.6707V6.88H9.28074V0.369998H6.73074Z" fill="white"/>
                 </svg>
               </li>
-              <li style={{marginLeft: "2em"}} className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')}>
+              {/*<li style={{marginLeft: "2em"}} className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')}>
                 {this.state.mbox && (
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
                 )}
@@ -61,7 +61,7 @@ class OutterTopNav extends Component {
                   name={`${firstName} ${lastName}`}
                   show={this.state.mbox}
                 />
-              </li>
+              </li>*/}
               <li style={{marginLeft: "2em"}}><img src={Tnav2} alt='' /></li>
               <li onClick={(e) => this.setState({showLogout: true})} className="logout-btn" style={{marginLeft: "2em"}}><img src={Tnav4} alt='' /></li>
             </ul>
