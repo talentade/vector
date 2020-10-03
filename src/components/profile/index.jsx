@@ -101,14 +101,14 @@ class Profile extends Component {
   handleFileChange = async (e) => {
     const current = e.target.files[0];
     const fd = new FormData();
-    fd.append('profile_pic.png', current, current.name);
+    fd.append('profile_doc.png', current, current.name);
 
     this.setState({ showSmallSPinner: true });
     try {
       let pi = await server.uploadImage(fd);
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
       window.location.href = "";
-      // const gp = await server.getProfile();
-      // app.profile(gp.data.profile);
       // this.props.saveUserProfile(gp.data.profile);
       // this.setState({ showSmallSPinner: false, profile_image: gp.data.profile.profile_image });
     } catch (error) {
@@ -211,10 +211,16 @@ class Profile extends Component {
       email,
       phone_number,
       country,
-      demo,
-      live,
-      address_verified,
+      dob,
+      city,
       cards,
+
+      identity_proof,
+      residence_proof,
+      dod,
+      bank_card,
+
+      address_verified,
       email_verified,
       identity_verified,
       deposit_verified,
@@ -251,70 +257,87 @@ class Profile extends Component {
         fixed: true,
       },
       {
+        dataKey: 'Date of birth',
+        value: dob,
+        editable: true,
+        fixed: false,
+      },
+      {
         dataKey: 'Country',
         value: country,
         editable: true,
         fixed: true,
       },
+      {
+        dataKey: 'City',
+        value: city,
+        editable: true,
+        fixed: false,
+      },
     ];
 
     const unverified = [];
 
-    if (!address_verified) {
+    if (!parseInt(String(residence_proof).length)) {
       unverified.push('Upload Proof of Address');
     }
 
-    if (cards && cards.length <= 0) {
-      unverified.push('Upload Debit and Credit Card');
+    if (!parseInt(String(bank_card).length)) {
+      unverified.push('Upload Bank Card');
     }
 
-    if (!deposit_verified) {
+    if (!parseInt(String(dod).length)) {
       unverified.push('Upload Declaration of Deposit');
     }
 
-    if (!identity_verified) {
+    if (!parseInt(String(identity_proof).length)) {
       unverified.push('Upload Proof of Identity');
     }
 
-    if (!email_verified) {
-      unverified.push('Verify Email Address');
-    }
+    // if (!email_verified) {
+    //   unverified.push('Verify Email Address');
+    // }
 
     const verificationData = [
       {
         itemHead: 'Upload Proof of Identity',
         itemContent: 'Upload ID Card or Passport',
         buttonText: 'Upload',
-        verified: identity_verified,
+        folder: 'identity-proof',
+        verified: parseInt(String(identity_proof).length),
         name: "doc_poi"
       },
       {
         itemHead: 'Upload Proof of Residence',
         itemContent: 'Utility Bill or Bank statement',
         buttonText: 'Upload',
-        verified: address_verified,
+        folder: 'residence-proof',
+        verified: parseInt(String(residence_proof).length),
         name: "doc_por"
       },
       {
         itemHead: 'Upload Declaration of Deposit',
         itemContent: 'Document declaring deposit in account',
         buttonText: 'Upload',
-        verified: deposit_verified,
+        folder: 'dod',
+        verified: parseInt(String(dod).length),
         name: "doc_dod"
       },
       {
-        itemHead: 'Upload Credit and Debit Card',
-        itemContent: 'Upload front and back image of debit and credit card',
+        itemHead: 'Upload Bank Card',
+        itemContent: 'Upload front of bank card',
         buttonText: 'Upload',
-        verified: cards && cards.length > 0,
+        folder: 'bank-card',
+        verified: parseInt(String(bank_card).length),
         name: "doc_card"
       },
-      {
-        itemHead: 'Email Verification',
-        itemContent: `Verify ${email}`,
-        buttonText: 'Request Verification',
-        name: "email_verified"
-      },
+      // {
+      //   itemHead: 'Email Verification',
+      //   itemContent: `Verify ${email}`,
+      //   buttonText: 'Request Verification',
+      //   verified: email_verified,
+      //   name: "email_verified"
+      // },
     ];
 
     return (

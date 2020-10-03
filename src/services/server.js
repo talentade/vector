@@ -453,7 +453,18 @@ export default {
   uploadImage(fd) {
     return axios.request({
       method: 'POST',
-      url: app.hostURL('profile-img'),
+      url: app.hostURL('upload-doc/profile-img'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: fd
+    });
+  },
+
+  uploadDoc(fd, type) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('upload-doc/'+type),
       headers: {
         'Authorization': app.auth()
       },
