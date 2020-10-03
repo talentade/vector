@@ -99,7 +99,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   hostURL: (url, type = 0) => {
-    let live = !true;
+    let live = true;
     if(type > 0) {
       return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
     } else {
