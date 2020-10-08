@@ -536,6 +536,16 @@ export default {
     })
   },
 
+  getAllWithdrawals() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/withdrawals'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
   getAllInstrument() {
     return axios.request({
       method: 'GET',
@@ -685,6 +695,93 @@ export default {
       }
     });
   },
+
+  savePermissions(p) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/savePermissions'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: { p }
+    });
+  },
+
+  savedPermissions() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/savedPermissions'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

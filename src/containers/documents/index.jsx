@@ -5,7 +5,7 @@ import Breadcrumbs from '../../components/breadcrumbs/index';
 import Ptab from '../../components/ptabs/index';
 
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
-import DocumentsTable from  './instruments.jsx';
+import DocumentsTable from  './documents.jsx';
 
 import '../../components/standard/standard.scss';
 import './index.scss';

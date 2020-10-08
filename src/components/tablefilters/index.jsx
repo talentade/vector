@@ -62,8 +62,36 @@ class TableFilters extends Component {
             </div>
 
             <button className="fil-act-btn"><img src={downloadIcon} /></button>
-            <button className="fil-act-btn"><img src={refreshIcon} /></button>
+            {/*<button className="fil-act-btn"><img src={refreshIcon} /></button>*/}
             <button className="fil-act-btn"><img src={exportIcon} /></button>
+          </div>
+        </div>
+      ) : null}
+
+      {this.props.table === "withdrawals" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">
+            <select>
+              <option>5</option>
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+          </div>
+          <div className="search-container select-box" style={{width: "170px"}}>
+            <select>
+              <option>All</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+            </select>
+          </div>
+
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" />
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
           </div>
         </div>
       ) : null}

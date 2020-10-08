@@ -44,7 +44,7 @@ class OutterTopNav extends Component {
                 />*/}
               </li>
               <li style={{opacity: 1}} className='hide-mobile nav-aname'><span className="fl">{`${firstName} ${lastName}`}</span><span className="em">{email}</span></li>
-              <li style={{opacity: 1}}><button className="save-changes">Save All Changes</button></li>
+              <li style={{opacity: 1}}><button className="save-changes" id="save-all-changes-btn">Save All Changes</button></li>
               <li style={{opacity: 1}} className="admin-search-input">
               <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" /></li>
               <li style={{opacity: 1}} className="admin-nav-plus">

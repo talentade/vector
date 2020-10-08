@@ -13,12 +13,17 @@ import News from '../containers/news/index';
 import PostNews from '../containers/postnews/index';
 import Accounts from '../containers/accounts/index';
 import BookCall from '../containers/book/index';
+import CreateAdmin from '../containers/createadmin/index';
 import Restrictions from '../containers/restrictions/index';
 import Chats from '../containers/chats/index';
 import Transactions from '../containers/transactions/index';
 
 import Users from '../containers/users/index';
+import Withdrawals from '../containers/withdrawals/index';
+
 import Admins from '../containers/admins/index';
+import Finance from '../containers/finance/index';
+
 import Forms from '../containers/forms/index';
 import UsersProfileList from '../containers/usersprofile/index';
 import Lists from '../containers/lists/index';
@@ -39,14 +44,19 @@ export default props => (
         <Route path='/News' exact component={News} />
         <Route path='/PostNews' exact component={PostNews} />
 
+        <Route path='/CreateAdmin' exact component={CreateAdmin} />
         <Route path='/Restrictions' exact component={Restrictions} />
+
         <Route path='/Chats' exact component={Chats} />
         <Route path='/Transactions' exact component={Transactions} />
         <Route path='/MailAccounts' exact component={MailAccounts} />
         <Route path='/Unsubscribers' exact component={Unsubscribers} />
 
         <Route path='/Users' exact component={Users} />
+        <Route path='/Withdrawals' exact component={Withdrawals} />
+        
         <Route path='/Admins' exact component={Admins} />
+        <Route path='/Finance' exact component={Finance} />
         <Route path='/TeamSettings' exact component={TeamSettings} />
         <Route path='/Forms' exact component={Forms} />
         <Route path='/UsersProfile/:user_id' exact component={UsersProfileList} />
