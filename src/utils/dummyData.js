@@ -8,6 +8,8 @@ import Lnav5 from "../themes/images/tradeDashboard/l_nav5.svg";
 import Lnav6 from "../themes/images/tradeDashboard/l_nav6.svg";
 
 
+import act from "../themes/images/admin/act.svg";
+import calls from "../themes/images/admin/calls.svg";
 import Menu1 from "../themes/images/admin/menu1.png";
 import Menu2 from "../themes/images/admin/menu2.png";
 import Menu3 from "../themes/images/admin/menu3.png";
@@ -301,15 +303,18 @@ const appNavClass = 'l-nav-link';
 export const adminLeftNavData = [
   // {path: '/Forms', className: appNavClass, imageUrl: Menu1, name: 'forms', text: 'Forms'},
   {path: '/Lists', className: appNavClass, imageUrl: Menu2, name: 'lists', text: 'Lists'},
-  {path: '/Finance', className: appNavClass, imageUrl: Menu5, name: 'finance', text: 'Finance'},
-  {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
-  {path: '/TeamSettings', className: appNavClass, imageUrl: Menu4, name: 'teamsettings', text: 'Team Settings'},
+  {path: '/Finance', className: appNavClass, imageUrl: Lnav6, name: 'finance', text: 'Finance'},
+  // {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
+  // {path: '/TeamSettings', className: appNavClass, imageUrl: Menu4, name: 'teamsettings', text: 'Team Settings'},
   // {path: '/Unsubscribers', className: appNavClass, imageUrl: Menu5, name: 'unsubscribers', text: 'Unsubscribers'},
   // {path: '/Campaigns', className: appNavClass, imageUrl: Menu6, name: 'campaigns', text: 'Campaigns'},
   {path: '/Instruments', className: appNavClass, imageUrl: Menu7, name: 'instruments', text: 'Instruments'},
   {path: '/Documents', className: appNavClass, imageUrl: Menu8, name: 'documents', text: 'Documents'},
+  {path: '/CallLogs', className: appNavClass, imageUrl: calls, name: 'calllogs', text: 'Call logs'},
+  {path: '/Salesfunnel', className: appNavClass, imageUrl: Menu5, name: 'salesfunnel', text: 'Salesfunnel'},
+  {path: '/Activities', className: appNavClass, imageUrl: act, name: 'activities', text: 'Activities'},
+  {path: '/CreateAdmin', className: appNavClass, imageUrl: Menu10, name: 'createadmin', text: 'Create admin'},
   {path: '/News', className: appNavClass, imageUrl: Menu9, name: 'news', text: 'News'},
-  {path: '/CreateAdmin', className: appNavClass, imageUrl: Menu10, name: 'createAdmin', text: 'Create admin'},
   {path: '/Chats', className: appNavClass, imageUrl: ChatMenu, name: 'chats', text: 'Chats'}
 ]
 

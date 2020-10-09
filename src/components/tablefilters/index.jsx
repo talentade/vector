@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import Breadcrumbs from '../breadcrumbs/index';
+import sp from '../../themes/images/circle-plus.png';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
 import downloadIcon from "../../themes/images/download.png";
 import downloadWhite from "../../themes/images/down-white.png";
@@ -185,7 +186,7 @@ class TableFilters extends Component {
       {this.props.table === "lists" ? (
         <div className="table-filters">
           <div className="filter-actions">
-            <button className="clear-btn">Download Data</button>
+            {/*<button className="clear-btn">Download Data</button>*/}
             <div className="search-container" style={{width: "300px"}}>
               <input type="text" placeholder="Search" />
               <img src={SearchIcon} className="search-img" alt="" />
@@ -271,7 +272,22 @@ class TableFilters extends Component {
               <input type="text" placeholder="Search" />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
-            <button className="create-btn" onClick={() => this.props.addTask()}>Create Task</button>
+            <button className="create-btn" id="ptb--tasks--action" onClick={() => this.props.addTask()}>Create Task</button>
+          </div>
+      </div>) : null}
+
+
+      {this.props.table === "accounts" ? (
+        <div className="table-filters">
+          <div className="search-container select-box" style={{width: "140px"}}>
+            <select onChange={(e) => this.props.filterAcc(e.target.value)}>
+              <option>All</option>
+              <option>Live</option>
+              <option>Demo</option>
+            </select>
+          </div>
+          <div className="filter-actions">
+            <button className="create-btn" onClick={() => this.props.addTask()} style={{width: "150px"}}><img src={sp} style={{position: "relative", top: "3px"}} /> Add account</button>
           </div>
       </div>) : null}
 
@@ -279,7 +295,7 @@ class TableFilters extends Component {
       {this.props.table === "payments" ? (
         <div className="table-filters">
           <div className="search-container select-box" style={{width: "140px"}}>
-            <select>
+            <select onChange={(e) => this.props.ttype(e.target.value)}>
               <option>All</option>
               <option>Deposit</option>
               <option>Withdrawal</option>
@@ -289,10 +305,8 @@ class TableFilters extends Component {
           <div className="search-container select-box" style={{width: "140px"}}>
             <select>
               <option>Pending</option>
-              <option>Completed</option>
-              <option>Pending</option>
-              <option>Hold</option>
               <option>Processing</option>
+              <option>Completed</option>
             </select>
           </div>
           <div className="filter-actions">
@@ -314,7 +328,7 @@ class TableFilters extends Component {
             </select>
           </div>
           <div className="filter-actions">
-            <button className="create-btn" onClick={() => this.props.addNote()}>Add Note</button>
+            <button className="create-btn" id="ptb--notes--action" onClick={() => this.props.addNote()}>Add Note</button>
           </div>
       </div>) : null}
 

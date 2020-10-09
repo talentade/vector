@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
+import TableFilters from '../../components/tablefilters/index';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
 import server from '../../services/server';
@@ -22,6 +23,7 @@ class ProfileDetails extends Component {
       addAcc: false,
       accounts: [],
       cid: "",
+      filterAcc: 'all',
       ctype: "",
       email: app.email()
     }
@@ -44,16 +46,21 @@ class ProfileDetails extends Component {
     this.props.refresh();
   }
 
+  filterAcc = (val) => {
+    this.setState({filterAcc: val.toLowerCase()});
+  }
+
   render () {
     let active = parseInt(this.props.active);
     let accounts = this.props.accounts;
+    if(this.state.filterAcc != 'all') {
+      accounts  = accounts.filter((a) => a.account_type.toLowerCase() === this.state.filterAcc);
+    }
 
   	return (
       <div className={"tab-row profile-accounts"+(active ? ' _active' : '')} id="tab-row-accounts">
 
-        <div className="acc-div" style={{marginBottom: "1em"}}>
-          <button className="add-acc" onClick={(e) => this.setState({addAcc: true})}><img src={sp} /> Add account</button>
-        </div>
+      <TableFilters table="accounts" filterAcc={this.filterAcc} addTask={(e) => this.setState({addAcc: true})} />
 
       { this.state.addAcc ?
         <AddAccount

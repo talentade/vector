@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import { Link } from 'react-router-dom';
 import Container from '../container/index';
 import Spinner from '../../components/spinner/index';
 import SearchIcon from '../../themes/images/micro.svg';
@@ -17,10 +18,12 @@ class Chats extends Component {
     super(props);
 
     this.state = {
+      filter: '',
       message: '',
       active: null,
       messages: [],
       chatList: [],
+      rawChatList: [],
       showInfo: false
     };
 
@@ -31,10 +34,14 @@ class Chats extends Component {
 
   chatList = async () => {
     let cl = await server.chatList();
-    this.setState({chatList: cl.data});
+    this.setState({chatList: cl.data, rawChatList: cl.data});
     if(cl.data.length) {
-      this.setState({active: cl.data[0]});
+      this.changeActive(cl.data[0]);
     }
+  }
+
+  changeActive = (cl) => {
+    this.setState({active: cl, messages: [], message: ''});
   }
 
   onShow = () => {
@@ -51,6 +58,9 @@ class Chats extends Component {
     if(window.WebSocketPlugged) {
       $(window).trigger("renewSocket");
     }
+    this.refreshMessage = setInterval(() => {
+      this.refreshMsg();
+    }, 1000);
   }
 
   async componentWillUnmount () {
@@ -58,21 +68,53 @@ class Chats extends Component {
     clearInterval(this.refreshMessage);
   }
 
+  scrollDown = () => {
+    setTimeout(() => {
+      let elem = document.getElementById("messageList");
+      elem.scrollTop = elem.scrollHeight - elem.clientHeight;
+    }, 0);
+  }
+
+  refreshMsg = () => {
+    if(window.WebSocketPlugged) {
+      window.WebSocketPlug.send(JSON.stringify({
+        "event": "GET_MESSAGES2",
+        "payload": { admin: true, user: this.state.active.user_id, last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0}
+      }));
+    }
+  }
+
+  refreshFlag = (uid) => {
+    if(window.WebSocketPlugged) {
+      window.WebSocketPlug.send(JSON.stringify({
+        "event": "SET_FLAG",
+        "payload": { user: uid }
+      }));
+    }
+  }
+
+  readReciept = (uid = null) => {
+    if(uid) {
+      let chatList = this.state.rawChatList;
+      let chl = [];
+      chatList.map((ch, ck) => {
+        let c = ch;
+        c["unflag"] = ch.user_id == uid ? true : Boolean(this.state.chatList[ck].unflag);
+        chl.push(c);
+      });
+      this.setState({chatList: chl});
+    }
+    if(window.WebSocketPlugged) {
+      window.WebSocketPlug.send(JSON.stringify({
+        "event": "READ_RECIEPT",
+        "payload": { user: this.state.active.user_id, last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0}
+      }));
+    }
+  }
+
   socketInit = () => {
     window.fct = 0;
     window.WebSocketPlug.addEventListener('message', ({data}) => {
-      if(this.state.messages.length == 0) {
-        window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: this.state.active.user_id }}));
-      }
-
-      this.refreshMessage = setInterval(() => {
-        ++window.fct;
-        if(window.WebSocketPlugged) {
-          console.log("Will fetch oo "+window.fct);
-          window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: this.state.active.user_id }}));
-        }
-      }, 10000);
-
       try {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
@@ -80,11 +122,28 @@ class Chats extends Component {
           case "MESSAGES":
             if(payload.user == this.state.active.user_id && payload.messages.length) {
               this.setState({ messages: payload.messages });
+              this.readReciept(this.state.active.user_id);
+              this.scrollDown();
             }
-            setTimeout(() => {
-              let elem = document.getElementById("messageList");
-              elem.scrollTop = elem.scrollHeight - elem.clientHeight;
-            }, 0);
+          break;
+          case "NEW_MESSAGE":
+            if(payload.user == this.state.active.user_id && payload.messages.length) {
+              this.setState({ messages: this.state.messages.concat(payload.messages) });
+              this.readReciept(this.state.active.user_id);
+              this.scrollDown();
+            }
+          break;
+          case "NEW_CHAT":
+            let chatList = this.state.chatList;
+            payload.users.forEach((v, k) => {
+              chatList.forEach((cl, ck) => {
+                if(cl.user_id == v.user_id) {
+                  chatList[ck] = v;
+                }
+              });
+            });
+            this.setState({chatList: chatList, rawChatList: chatList});
+            this.readReciept(this.state.active.user_id);
           break;
         }
       } catch (e) {
@@ -110,6 +169,15 @@ class Chats extends Component {
   }
 
   render() {
+    let clist = this.state.filter.length ? this.state.chatList.filter((c) => {
+      return (
+        c.first_name.toLowerCase().match(this.state.filter.toLowerCase()) ||
+        c.last_name.toLowerCase().match(this.state.filter.toLowerCase()) ||
+        (c.first_name + " " + c.last_name).toLowerCase().match(this.state.filter.toLowerCase()) ||
+        (c.last_name + " " + c.first_name).toLowerCase().match(this.state.filter.toLowerCase())
+      );
+    }) : this.state.chatList;
+
     return (
       <Container>
         <Spinner showSpinner={this.showSpinner} />
@@ -121,19 +189,25 @@ class Chats extends Component {
                 type='text'
                 name='search'
                 placeholder='Search'
+                onChange={(e) => this.setState({filter: e.target.value})}
               />
               <img src={SearchIcon} alt='' />
             </div>
 
             <ul className="people">
             {
-              this.state.chatList.map((cl, ck) => (
-                <li className={ck == 0 ? "active" : ""} key={Math.random()+" "+Math.random()}>
+              clist.map((cl, ck) => (
+                <li className={this.state.active && (cl.user_id == this.state.active.user_id) ? "active" : ""} key={Math.random()+" "+Math.random()} onClick={() => this.changeActive(cl)}>
                   <img src={cl.profile_image.length ? cl.profile_image : DummyImage} style={{borderRadius: "50%"}} />
                   <span className="online"></span>
                   <div className="p-info">
                     <h4>{cl.first_name+" "+cl.last_name}</h4>
-                    <span>{cl.last_message.length > 35 ? cl.last_message.substr(0, 35)+"..." : cl.last_message}</span>
+                    <span style={{
+                      fontWeight: cl.unflag || cl.flag > 0 ? 'normal' : 'bold',
+                      color: cl.unflag || cl.flag > 0 ? 'inherit' : '#000'
+                    }}>{cl.last_message.length > 35 ? cl.last_message.substr(0, 35)+"..." : cl.last_message}</span>
+                    {cl.unflag || cl.flag > 0 ? null : <span className="gdot">*</span>}
+                  {/* || cl.user_id == this.state.active.user_id*/}
                   </div>
                 </li>
               ))
@@ -147,7 +221,7 @@ class Chats extends Component {
                 <div className="section1">
                   <img src={this.state.active.profile_image.length ? this.state.active.profile_image : DummyImage} style={{borderRadius: "50%"}} />
                   <div className="p2-info">
-                    <h4>{this.state.active.first_name+" "+this.state.active.last_name}</h4>
+                    <h4><Link className="txt-info" to={"/usersprofile/"+this.state.active.user_id}>{this.state.active.first_name+" "+this.state.active.last_name}</Link></h4>
                     <span>Online</span>
                   </div>
                 </div>

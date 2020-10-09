@@ -59,6 +59,7 @@ class Market extends Component {
         code: 200
       }
     });
+
     this.refresHistory = null;
   }
 

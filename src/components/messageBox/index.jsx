@@ -62,11 +62,11 @@ class MessageBox extends Component {
         window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
       }
 
-      this.refreshMessage = setInterval(() => {
-        if(window.WebSocketPlugged) {
-          window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
-        }
-      }, 1000);
+      // this.refreshMessage = setInterval(() => {
+      //   if(window.WebSocketPlugged) {
+      //     window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
+      //   }
+      // }, 5000);
 
       try {
         let message = JSON.parse(`${data}`);

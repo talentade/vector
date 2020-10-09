@@ -6,12 +6,15 @@ import download from '../../themes/images/download-doc.png';
 import view from '../../themes/images/view-doc.png';
 import server from '../../services/server';
 import app from '../../services/app';
+import { ImageView } from '../../components/popups/index';
 
 class DocumentsTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
+      iview: false,
+      src: null,
     }
   }
 
@@ -31,6 +34,12 @@ class DocumentsTable extends Component {
   render () {
     return (
           <>
+
+          <ImageView
+            src={this.state.src}
+            show={this.state.iview}
+            cancel={() => this.setState({iview: false})}
+          />
 
             <table border="0">
               <thead>
@@ -57,10 +66,10 @@ class DocumentsTable extends Component {
                     <td><span>{(doc.first_name+" "+doc.last_name).ucwords()}</span></td>
                     <td><span className="txt-light">{doc.email}</span></td>
                     <td><span className="txt-info">{app.uid(doc.user_id)}</span></td>
-                    <td style={{opacity: doc.identity_proof.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.identity_proof.length ? <a href={doc.identity_proof} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <a href={doc.identity_proof}><img src={view} className="v-file" /></a></span></td>
-                    <td style={{opacity: doc.residence_proof.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.residence_proof.length ? <a href={doc.residence_proof} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <a href={doc.identity_proof}><img src={view} className="v-file" /></a></span></td>
-                    <td style={{opacity: doc.dod.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.dod.length ? <a href={doc.dod} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <a href={doc.identity_proof}><img src={view} className="v-file" /></a></span></td>
-                    <td style={{opacity: doc.bank_card.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.bank_card.length ? <a href={doc.bank_card} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <a href={doc.identity_proof}><img src={view} className="v-file" /></a></span></td>
+                    <td style={{opacity: doc.identity_proof.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.identity_proof.length ? <a href={doc.identity_proof} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <img onClick={() => this.setState({iview: true, src: doc.identity_proof})} src={view} className="v-file" /></span></td>
+                    <td style={{opacity: doc.residence_proof.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.residence_proof.length ? <a href={doc.residence_proof} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <img onClick={() => this.setState({iview: true, src: doc.residence_proof})} src={view} className="v-file" /></span></td>
+                    <td style={{opacity: doc.dod.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.dod.length ? <a href={doc.dod} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <img onClick={() => this.setState({iview: true, src: doc.dod})} src={view} className="v-file" /></span></td>
+                    <td style={{opacity: doc.bank_card.length ? "1" : "0.5"}}><span className="txt-default">Download {doc.bank_card.length ? <a href={doc.bank_card} download><img src={download} className="d-file"/></a> : <img src={download} className="d-file"/> } <img onClick={() => this.setState({iview: true, src: doc.bank_card})} src={view} className="v-file" /></span></td>
                   </tr>
                 ))}
               </tbody>

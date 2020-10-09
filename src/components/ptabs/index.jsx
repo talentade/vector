@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import './index.scss';
 
 class Ptab extends Component {
   constructor(props) {
     super(props);
+  }
+
+  appBack = (e) => {
+    $(window).trigger("appBack");
+    this.props.handleClick(e);
   }
 
   render () {
@@ -17,12 +23,13 @@ class Ptab extends Component {
             <li
             key={`${Math.random() * 1000000}`}
             className={b.toLowerCase().trim() === actv.toLowerCase().trim() ? '_active' : ''}
-            onClick={handleClick}
+            onClick={this.appBack}
             name={b.trim()}
+            id={"ptb-"+(b.split(" ").join("-")).trim().toLowerCase()}
             >
               {b}
               <svg width="30" height="3" viewBox="0 0 30 3" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 3C0 1.34315 1.34315 0 3 0H27C28.6569 0 30 1.34315 30 3H0Z" fill="#03CF9E"/>
+                <path d="M0 3C0 1.34315 1.34315 0 3 0H27C28.6569 0 30 1.34315 30 3H0Z" fill="#03CF9E"/>
               </svg>
             </li>
           ))}

@@ -541,6 +541,36 @@ export default {
     })
   },
 
+  getUstat() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/ustat'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
+  getFstat() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/fstat'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
+  getAllTask() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/getTasks'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+
   getAllWithdrawals() {
     return axios.request({
       method: 'GET',

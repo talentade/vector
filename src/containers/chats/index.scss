@@ -90,6 +90,20 @@
           line-height: 19px;
           color: #A09F9F;
         }
+
+        .gdot {
+          position: absolute;
+          width: 15px;
+          height: 15px;
+          background: #2bd22b;
+          bottom: 25px;
+          right: 1em;
+          text-align: center;
+          border-radius: 50%;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+        }
       }
     }
   }
@@ -178,6 +192,7 @@
     height: auto;
     // height: 250px;
     overflow: auto;
+    display: contents;
 
     p {
       font-size: 12px;
@@ -192,7 +207,7 @@
       margin-bottom: 120px;
       padding-top: 1em;
       overflow: auto;
-      height: auto;
+      height: calc(100vh - 280px);
 
       li {
         width: 100% !important;
@@ -266,7 +281,7 @@
   .section3 {
     display: flex;
     width: calc(100% - 2px);
-    height: 100px;
+    height: 110px;
     margin-left: 2px;
     background: #ffffff;
     padding: 10px 20px;

@@ -45,13 +45,14 @@ class OutterTopNav extends Component {
               </li>
               <li style={{opacity: 1}} className='hide-mobile nav-aname'><span className="fl">{`${firstName} ${lastName}`}</span><span className="em">{email}</span></li>
               <li style={{opacity: 1}}><button className="save-changes" id="save-all-changes-btn">Save All Changes</button></li>
-              <li style={{opacity: 1}} className="admin-search-input">
-              <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" /></li>
+              {/*<li style={{opacity: 1}} className="admin-search-input">
+              <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" />
+              </li>
               <li style={{opacity: 1}} className="admin-nav-plus">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6.73074 0.369998V6.88H0.370742V9.19H6.73074V15.67H9.28074V9.19H15.6707V6.88H9.28074V0.369998H6.73074Z" fill="white"/>
                 </svg>
-              </li>
+              </li>*/}
               {/*<li style={{marginLeft: "2em"}} className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')}>
                 {this.state.mbox && (
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>

@@ -28,7 +28,7 @@ class Documents extends Component {
           <Breadcrumbs breads="Home, Documents" />
           <h1 className="page-title">Documents
             <div className="search-container" style={{width: "280px"}}>
-              <input type="text" placeholder="Search News" />
+              <input type="text" placeholder="Search documents" />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
           </h1>

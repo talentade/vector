@@ -154,6 +154,24 @@ class Note extends React.Component {
   }
 }
 
+class ImageView extends React.Component {
+  render() {
+    const { src, show, cancel } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='edit-modal-section' style={{height: "auto"}}>
+            <div className='edit-header'>
+              Preview Image <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+            </div>
+            <img src={src} style={{width: "100%"}} />
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
 class Task extends React.Component {
 
   constructor(props) {
@@ -505,4 +523,4 @@ class Logout extends React.Component {
 
 
 
-export {FavPopup, Booked, Note, Task, Meet, Created, Closed, Insufficient, Logout}
+export {FavPopup, Booked, Note, Task, Meet, Created, Closed, Insufficient, ImageView, Logout}

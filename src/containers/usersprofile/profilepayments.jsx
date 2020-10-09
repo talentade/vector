@@ -8,6 +8,9 @@ import '../../components/history/index.scss';
 class ProfilePayments extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      ttype: "all"
+    }
   }
 
   handleClick = (e, i) => {
@@ -19,10 +22,17 @@ class ProfilePayments extends Component {
 
   render () {
     let active = parseInt(this.props.active);
+
+
+    let history = this.props.history;
+    if(this.state.ttype != 'all') {
+      history  = history.filter((h) => h.type.toLowerCase() === this.state.ttype);
+    }
+
   	return (
       <div className={"transaction-history"+(active ? ' _active' : '')} id="tab-row-payments">
 
-        <TableFilters table="payments" />
+        <TableFilters table="payments" ttype={(val) => this.setState({ttype: val.toLowerCase() == 'withdrawal' ? 'withdraw' : val.toLowerCase()})} />
 
         <div className='t-history-container'>
           <ul className='transaction-history-header' style={{marginTop: "2em", marginBottom: "1em", background: "#006066", borderRadius: "10px"}}>
@@ -36,7 +46,7 @@ class ProfilePayments extends Component {
           </ul>
 
         {
-          this.props.history.map((transaction, idx) => (
+          history.map((transaction, idx) => (
             <ul
               className={'transaction-history-record '+(idx == 0 ? ' _active' : '')}
               id={'transaction-history-record-'+idx}
