@@ -96,6 +96,27 @@ class TableFilters extends Component {
         </div>
       ) : null}
 
+
+      {this.props.table === "deposits" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">
+            <select>
+              <option>5</option>
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+          </div>
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" />
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {this.props.table === "admins" ? (
         <div className="table-filters">
           <div className="search-container select-box" style={{width: "174px"}}>

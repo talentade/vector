@@ -39,43 +39,22 @@ class Finance extends Component {
               <li>NAME</li>
               <li>SIZE</li>
               <li>TYPE</li>
-              <li>LAST UPDATED</li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
-
-            {/*<ul className="table-body _all">
-              <li><span className="txt-light">Credits</span></li>
-              <li><span className="txt-light">0</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">Today</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            </ul>*/}
 
             <ul className="table-body _users">
               <li><Link to="/Withdrawals" className="txt-light">Withdrawals</Link></li>
               <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">Today</span></li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
 
             <ul className="table-body _admins">
-              <li><Link to="/Admins" className="txt-light">Deposits</Link></li>
+              <li><Link to="/Deposits" className="txt-light">Deposits</Link></li>
               <li><span className="txt-light">0</span></li>
               <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">May 4</span></li>
               <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
             </ul>
-
-            {/*<ul className="table-body _south">
-              <li><span className="txt-info">South African Leads form</span></li>
-              <li><span className="txt-info">7000</span></li>
-              <li><span className="txt-info">Manual</span></li>
-              <li><span className="txt-default">May 4, 2020 3:11 PM</span></li>
-              <li><span className="txt-default">joe young</span></li>
-              <li><span className="txt-info">0</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            </ul>*/}
             {/*<Pagination2 />*/}
         </div>
       </div>

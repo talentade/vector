@@ -1,4 +1,4 @@
-#with-container {
+#depo-container {
 	padding: 2em !important;
 	width: 100%;
 	position: relative;
@@ -6,7 +6,7 @@
     display: flex;
 
 
-	.with-section-right {
+	.depo-section-right {
 		width: 100%;
 
 		&.shared {
@@ -17,6 +17,12 @@
 		.pagination-div {
 		    justify-content: center;
 		    margin-top: 1em;
+		}
+
+		.table-header, .table-body {
+			li {
+				width: calc(100% / 8) !important;
+			}
 		}
 	}
 }

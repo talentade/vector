@@ -20,6 +20,7 @@ import Transactions from '../containers/transactions/index';
 
 import Users from '../containers/users/index';
 import Withdrawals from '../containers/withdrawals/index';
+import Deposits from '../containers/deposits/index';
 
 import Admins from '../containers/admins/index';
 import Finance from '../containers/finance/index';
@@ -54,7 +55,8 @@ export default props => (
 
         <Route path='/Users' exact component={Users} />
         <Route path='/Withdrawals' exact component={Withdrawals} />
-        
+        <Route path='/Deposits' exact component={Deposits} />
+
         <Route path='/Admins' exact component={Admins} />
         <Route path='/Finance' exact component={Finance} />
         <Route path='/TeamSettings' exact component={TeamSettings} />

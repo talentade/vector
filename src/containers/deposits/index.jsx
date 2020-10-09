@@ -8,7 +8,7 @@ import DataTable from  './datatable.jsx';
 import '../../components/standard/standard.scss';
 import './index.scss';
 
-class Withdrawals extends Component {
+class Deposits extends Component {
   constructor(props) {
     super(props);
 
@@ -21,11 +21,11 @@ class Withdrawals extends Component {
     const { navi } = this.state;
     return (
       <Container>
-      <div className="col-12" id="with-container">
-        <div className="with-section-right">
-          <Breadcrumbs breads="Home, Finance, Withdrawals" />
-          <h1 className="page-title">Withdrawals</h1>
-          <TableFilters table="withdrawals" />
+      <div className="col-12" id="depo-container">
+        <div className="depo-section-right">
+          <Breadcrumbs breads="Home, Finance, Deposits" />
+          <h1 className="page-title">Deposits</h1>
+          <TableFilters table="deposits" />
           <DataTable />
         </div>
       </div>
@@ -34,4 +34,4 @@ class Withdrawals extends Component {
   }
 };
 
-export default Withdrawals;
+export default Deposits;

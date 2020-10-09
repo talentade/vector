@@ -59,10 +59,12 @@ class Market extends Component {
         code: 200
       }
     });
+    this.refresHistory = null;
   }
 
   componentWillUnmount() {
     this.realTimeListener = false;
+    clearInterval(this.refresHistory);
   }
 
   async componentDidMount() {
@@ -79,7 +81,7 @@ class Market extends Component {
       this.profile = app.profile();
     });
 
-    setInterval(() => {
+    this.refresHistory = setInterval(() => {
       if(this.realTimeListener && window.WebSocketPlugged) {
         window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
           user:    app.id(),

@@ -17,6 +17,8 @@ class MessageBox extends Component {
       messages: [],
       loaded: false
     }
+
+    this.refreshMessage = null;
   }
 
   onShow = () => {
@@ -28,6 +30,7 @@ class MessageBox extends Component {
   }
 
   async componentDidMount () {
+    this.isViewable = true;
     $(window).on("renewSocket", () => this.socketInit());
     if(window.WebSocketPlugged) {
       $(window).trigger("renewSocket");
@@ -48,11 +51,23 @@ class MessageBox extends Component {
     });
   }
 
+  async componentWillUnmount () {
+    this.isViewable = false;
+    clearInterval(this.refreshMessage);
+  }
+
   socketInit = () => {
     window.WebSocketPlug.addEventListener('message', ({data}) => {
       if(this.state.messages.length == 0) {
         window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
       }
+
+      this.refreshMessage = setInterval(() => {
+        if(window.WebSocketPlugged) {
+          window.WebSocketPlug.send(JSON.stringify({"event": "GET_MESSAGES", "payload": { user: app.id() }}));
+        }
+      }, 1000);
+
       try {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
@@ -104,12 +119,12 @@ class MessageBox extends Component {
         <div className="section2">
           <ul id="messageList">
             {this.state.messages.length > 0 ? this.state.messages.map((msg) => (
-              <li className={msg.aid.trim().length ? "y-msg" : "m-msg"}>
-                {msg.aid.trim().length ? null : <small className="m-time">{app.cleanTime(msg.create_time)}</small>}
+              <li className={msg.sid.trim() == app.userid() ? "m-msg" : "y-msg"}>
+                {msg.sid.trim() != app.userid() ? null : <small className="m-time">{app.cleanTime(msg.create_time)}</small>}
                 <div className="m-text">
                   {msg.message}
                 </div>
-                {msg.aid.trim().length ? <small className="m-time">{app.cleanTime(msg.create_time)}</small> : null}
+                {msg.sid.trim() != app.userid() ? <small className="m-time">{app.cleanTime(msg.create_time)}</small> : null}
               </li>
             )) : (null)}
           </ul>

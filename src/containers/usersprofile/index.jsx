@@ -30,7 +30,7 @@ class UsersProfileList extends Component {
       navi: 1,
       profile: null,
       showLoader: true,
-      userTab: "Tasks", //"Profile",
+      userTab: "Profile",
       uid: '',
       counter: 0
     }

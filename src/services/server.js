@@ -234,6 +234,9 @@ export default {
 
   login(credentials) {
     credentials.password = sha256(credentials.password);
+    if(app.isAdmin()) {
+      credentials.admin  = true;
+    }
     return axios.request({
       method: 'POST',
       url: app.hostURL('login'),
@@ -289,7 +292,7 @@ export default {
     }
   },
 
-  getProfile() {
+  getProfile(uid = null) {
     if(window.source) {
       window.source.cancel("Component got unmounted");
     } window.source = axios.CancelToken.source();
@@ -298,7 +301,7 @@ export default {
       cancelToken: window.source.token,
       url: app.hostURL('profile/'+app.noCache()),
       headers: {
-        'Authorization': app.auth()
+        'Authorization': uid ? uid : app.auth()
       }
     });
   },
@@ -356,14 +359,24 @@ export default {
     })
   },
 
-  fundAccount(amount, currency, account) {
+  fundAccount(amount, currency, account, uid = null, use = "", ps = "") {
+    if(ps.length) {
+      ps = sha256(ps);
+    }
     return axios.request({
       method: 'POST',
       url: app.hostURL('deposit/'+account),
       headers: {
-        'Authorization': app.auth(),
+        'Authorization': uid ? uid : app.auth(),
       },
-      data : { currency, amount, time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone}) }
+      data : {
+        currency,
+        amount,
+        use,
+        ps,
+        u: uid ? app.auth() : null,
+        time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+      }
     })
   },
 
@@ -518,14 +531,6 @@ export default {
     });
   },
 
-
-
-
-
-
-
-
-
   getAllUsers() {
     return axios.request({
       method: 'GET',
@@ -544,6 +549,28 @@ export default {
         'Authorization': app.auth()
       }
     })
+  },
+
+  processWReq(s, id) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/preq/'+id),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: { s }
+    });
+  },
+
+  deletePreq(id, uid) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/deletepreq/'+id),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: { u: uid }
+    });
   },
 
   getAllInstrument() {
@@ -716,6 +743,17 @@ export default {
       }
     });
   },
+
+  chatList() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/chats'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
 
 
 

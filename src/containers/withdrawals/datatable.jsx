@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Pagination2 from '../../components/pagination2/index';
 import '../../components/standard/table.scss';
-import nigeria from '../../themes/images/flags/nigeria.png';
+import check from '../../themes/images/check-mark.png';
 import server from '../../services/server';
+import processing from './proccessing.svg';
 import app from '../../services/app';
 
 class DataTable extends Component {
@@ -13,6 +14,7 @@ class DataTable extends Component {
       transactions: [],
       showLoader: true
     }
+    this.status = ["Pending", "Processing", "Confirmed"];
   }
 
   async componentDidMount() {
@@ -23,6 +25,24 @@ class DataTable extends Component {
     try {
       let withdraw = await server.getAllWithdrawals();
       this.setState({transactions: withdraw.data, showLoader: false});
+    } catch(e) {
+      return e;
+    }
+  }
+
+  processReq = async (s, i) => {
+    try {
+      let pr = await server.processWReq(s, i);
+      this.getAllWithdrawals();
+    } catch(e) {
+      return e;
+    }
+  }
+
+  deletePreq = async (i, uid) => {
+    try {
+      let pr = await server.deletePreq(i, uid);
+      this.getAllWithdrawals();
     } catch(e) {
       return e;
     }
@@ -39,6 +59,7 @@ class DataTable extends Component {
               <li>Account(To)</li>
               <li>Amount</li>
               <li>Reference No</li>
+              <li>Status</li>
               <li>ACTION</li>
             </ul>
 
@@ -52,14 +73,15 @@ class DataTable extends Component {
                   <li>{transaction.account_to}</li>
                   <li>{transaction.amount}</li>
                   <li>{transaction.reference}</li>
+                  <li>{this.status[transaction.status]}</li>
+                  {transaction.status < 2 ?
                   <li>
-                    <svg className="tb-action" width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9.99967 0.75C5.83301 0.75 2.27467 3.34167 0.833008 7C2.27467 10.6583 5.83301 13.25 9.99967 13.25C14.1663 13.25 17.7247 10.6583 19.1663 7C17.7247 3.34167 14.1663 0.75 9.99967 0.75ZM9.99967 11.1667C7.69967 11.1667 5.83301 9.3 5.83301 7C5.83301 4.7 7.69967 2.83333 9.99967 2.83333C12.2997 2.83333 14.1663 4.7 14.1663 7C14.1663 9.3 12.2997 11.1667 9.99967 11.1667ZM9.99967 4.5C8.61634 4.5 7.49967 5.61667 7.49967 7C7.49967 8.38333 8.61634 9.5 9.99967 9.5C11.383 9.5 12.4997 8.38333 12.4997 7C12.4997 5.61667 11.383 4.5 9.99967 4.5Z" fill="#03CF9E"/>
+                    <img className="tb-action" onClick={() => this.processReq(1, transaction.id)} src={processing} width="14" height="18" />
+                      <svg className="tb-action" onClick={() => this.deletePreq(transaction.id, transaction.user_id)} width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#ff3029" />
                     </svg>
-                    <svg className="tb-action" width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#FFE602"/>
-                    </svg>
-                  </li>
+                    <img className="tb-action" onClick={() => this.processReq(2, transaction.id)} src={check} width="18" height="18" />
+                  </li>: <li>--</li>}
                 </ul>
               ))
             }
