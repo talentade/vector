@@ -328,6 +328,18 @@ export default {
     });
   },
 
+  addInstrument(ain) {
+    ain.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/newInstrument'),
+      headers: {
+        'Authorization': app.auth(),
+      },
+      data: ain
+    });
+  },
+
   getAllPairs() {
     return axios.request({
       method: 'GET',

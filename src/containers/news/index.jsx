@@ -37,7 +37,7 @@ class News extends Component {
 
   async componentDidMount () {
 
-    this.fetchNews();
+    // this.fetchNews();
 
   }
 

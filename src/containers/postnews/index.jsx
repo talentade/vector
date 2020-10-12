@@ -37,11 +37,11 @@ class PostNews extends Component {
                 <rect x="4" width="12" height="2" rx="1" fill="#00A880"/>
                 <rect x="4" y="15" width="12" height="2" rx="1" fill="#00A880"/>
               </svg>
-              <span contentEditable="true">Title</span>
+              <h6 contentEditable="true" className="n-title" data-placeholder="Title"></h6>
             </div>
             <div className="post-story">
 
-              <p className="story">story</p>
+              <p className="story" contentEditable="true" data-placeholder="Story"></p>
               <div className="story-actions">
                 <img src={addstory} className="_active"/>
                 <img src={addfile} />

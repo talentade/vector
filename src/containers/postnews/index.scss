@@ -5,6 +5,12 @@
     height: calc(100% - 120px);
     display: flex;
 
+
+    [data-placeholder]:empty:before {
+      content: attr(data-placeholder);
+      color: inherit;
+    }
+
     .table-header li, .table-body li {
     	width: calc(100% / 8);
    	    justify-content: end;
@@ -12,6 +18,12 @@
    	    &.shot {
    	    	width: 120px;
    	    }
+    }
+
+    .n-title {
+    	width: 100%;
+	    display: block;
+	    outline: none;
     }
 
 	.post-container {
@@ -78,6 +90,7 @@
 
 		.post-story {
 			width: 100%;
+			position: relative;
 			min-height: 400px;
 			border: 1px solid #C4C4C4;
 			box-sizing: border-box;
@@ -89,6 +102,9 @@
 				font-style: normal;
 				font-weight: 500;
 				font-size: 14px;
+				display: block;
+				outline: none;
+				min-height: 300px;
 				line-height: 21px;
 				align-items: center;
 				color: #C4C4C4;
@@ -97,6 +113,8 @@
 			div.story-actions {
 				display: flex;
 				flex-direction: row;
+				position: absolute;
+				bottom: 1em;
 
 				img {
 				    background: #DEFFF7;

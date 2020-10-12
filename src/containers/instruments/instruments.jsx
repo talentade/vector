@@ -36,12 +36,11 @@ class InstrumentsTable extends Component {
     } catch(e) {
       return e;
     }
-
   }
 
   render () {
     return (
-          <>
+        <>
 
             <table border="0" style={{marginBottom: "1em"}}>
               <thead>

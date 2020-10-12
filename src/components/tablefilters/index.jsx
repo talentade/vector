@@ -177,7 +177,7 @@ class TableFilters extends Component {
           </ul>
 
           <div className="filter-actions">
-            <button className="create-btn" style={{width: "200px"}}>+ Add Instrument</button>
+            <button className="create-btn" onClick={this.props.add} style={{width: "200px"}}>+ Add Instrument</button>
           </div>
         </div>
       ) : null}

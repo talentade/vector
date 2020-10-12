@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 import Container from '../container/index';
 import Spinner from '../../components/spinner/index';
@@ -128,13 +129,19 @@ class Chats extends Component {
           break;
           case "NEW_MESSAGE":
             if(payload.user == this.state.active.user_id && payload.messages.length) {
-              this.setState({ messages: this.state.messages.concat(payload.messages) });
+              let new_msgs = [];
+              payload.messages.forEach((m, k) => {
+                if(!$("#msg-list-"+this.state.active.id+"-"+m.id).length) {
+                  new_msgs.push(m);
+                }
+              });
+              this.setState({ messages: this.state.messages.concat(new_msgs) });
               this.readReciept(this.state.active.user_id);
               this.scrollDown();
             }
           break;
           case "NEW_CHAT":
-            let chatList = this.state.chatList;
+            let chatList = this.state.rawChatList;
             payload.users.forEach((v, k) => {
               chatList.forEach((cl, ck) => {
                 if(cl.user_id == v.user_id) {
@@ -232,12 +239,12 @@ class Chats extends Component {
 
               <ul id="messageList">
                 {this.state.messages.length > 0 ? this.state.messages.map((msg) => (
-                  <li className={msg.sid.trim() == app.userid() ? "m-msg" : "y-msg"}>
-                    {msg.sid.trim() == app.userid() ? <small className="m-time">{app.cleanTime(msg.create_time)}</small> : null}
+                  <li className={msg.sid.trim() == app.userid() ? "m-msg" : "y-msg"} id={"msg-list-"+this.state.active.id+"-"+msg.id}>
+                    {msg.sid.trim() == app.userid() ? <small className="m-time">{moment(msg.create_time).calendar()}</small> : null}
                     <div className="m-text">
                       {msg.message}
                     </div>
-                    {msg.sid.trim() == app.userid() ? null : <small className="m-time">{app.cleanTime(msg.create_time)}</small>}
+                    {msg.sid.trim() == app.userid() ? null : <small className="m-time">{moment(msg.create_time).calendar()}</small>}
                   </li>
                 )) : (null)}
               </ul>
