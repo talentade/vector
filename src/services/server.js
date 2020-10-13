@@ -475,6 +475,17 @@ export default {
     });
   },
 
+  newsImage (fd) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('upload-doc/news'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: fd
+    });
+  },
+
   uploadImage(fd) {
     return axios.request({
       method: 'POST',
@@ -690,6 +701,27 @@ export default {
         creator: app.name(),
         creator_id: app.id(),
         time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+      }
+    });
+  },
+
+  saveNews(data) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/saveNews'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
+
+  getNews() {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/getNews'),
+      headers: {
+        'Authorization': app.auth()
       }
     });
   },

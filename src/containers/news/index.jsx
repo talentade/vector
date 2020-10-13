@@ -37,7 +37,7 @@ class News extends Component {
 
   async componentDidMount () {
 
-    // this.fetchNews();
+    this.fetchNews();
 
   }
 
@@ -50,6 +50,11 @@ class News extends Component {
           data: { news },
         },
       } = await server.fetchNews();
+      let news_2 = await server.getNews();
+      let _news2 = news_2.data.news;
+      if(_news2 && _news2.length) {
+        news = _news2.concat(news);
+      }
       this.setState({ showLoader: false });
       if(news) {
         news = this.processNews(news);
@@ -98,6 +103,10 @@ class News extends Component {
         val["image_mini"] = val["image_original"];
       } else if(val["image_thumbnail"]) {
         val["image_mini"] = val["image_thumbnail"];
+      } else if(val["cover"]) {
+        val["image_mini"] = {url: val["cover"]};
+        val["fulltext"] = val["content"];
+        val["summary"] = val["content"].length > 50 ? val["content"].substr(0, 50)+"..." : val["content"];
       }
       _news.push(val);
     });
@@ -134,13 +143,19 @@ class News extends Component {
   readMore = async (link) => {
     this.setState({ showLoader: true });
     try {
-      let fulltext = await server.loadLink(link);
-      if(fulltext.status == 200 && fulltext.data.length) {
+      if(this.state.activeNews.category == "all") {
         let news = this.state.activeNews;
-        news["readMore"] = fulltext.data.replace(/(href="http)/g, 'style="color: #1FCF65 !important;" target="_blank" href="http');
-        this.setState({ activeNews : news });
+        news["readMore"] = news.fulltext.replace(/(href="http)/g, 'style="color: #1FCF65 !important;" target="_blank" href="http');
+        this.setState({ activeNews : news, showLoader: false });
+      } else {
+        let fulltext = await server.loadLink(link);
+        if(fulltext.status == 200 && fulltext.data.length) {
+          let news = this.state.activeNews;
+          news["readMore"] = fulltext.data.replace(/(href="http)/g, 'style="color: #1FCF65 !important;" target="_blank" href="http');
+          this.setState({ activeNews : news });
+        }
+        this.setState({ showLoader: false });
       }
-      this.setState({ showLoader: false });
     } catch (error) {
       this.setState({ showLoader: false });
       if (!error.response) {
@@ -172,6 +187,8 @@ class News extends Component {
             {
               (this.state.activeNews.readMore) ?
               <p className="news-content" dangerouslySetInnerHTML={{__html: this.state.activeNews.readMore}} /> :
+              (this.state.activeNews.category == "all") ?
+              <p className="news-content" dangerouslySetInnerHTML={{__html: this.state.activeNews.summary}} /> :
               <p className="news-content">{this.state.activeNews.summary}</p>
             }
             {(this.state.activeNews.readMore) ? (null) : (
@@ -180,7 +197,7 @@ class News extends Component {
               <path d="M0.893939 -3.90753e-08L-2.2249e-07 0.910026L5 6L10 0.910026L9.10606 -3.98039e-07L5 4.17995L0.893939 -3.90753e-08Z" fill="#1FCF65"/>
               </svg>
             </a>
-            )}
+            )}f
 
             {this.state.similar.length ? (
               <div className="similar-stories">
@@ -206,13 +223,14 @@ class News extends Component {
           {this.state.news.length ? (
             <div className="news-section-right">
               <h1 className="news-header">Today’s News</h1>
-              {/*<img src={todays_news} className="fti" />*/}
               <ul className="todays-ul">
               {
                 this.state.news.map((news, key) => (
                   <li className="todays-li">
                     <img src={news.image_mini.url} style={{width: "auto"}} />
-                    <span>{news.title}<button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(news.i)}>Read</button>
+                    <span>{news.title}
+                    {app.isAdmin() && news.category == "all" ? <button className="del btn btn-primary" onClick={() => console.log(news.id)}>Delete</button> : null}
+                    <button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(news.i)}>Read</button>
                     </span>
                   </li>
                 ))

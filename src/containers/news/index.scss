@@ -122,6 +122,7 @@
 				span {
 				    margin-left: 2em;
 					float: left;
+					width: -webkit-fill-available;
 					font-family: Poppins;
 					font-style: normal;
 					font-weight: normal;
@@ -211,6 +212,22 @@
 			max-width: 100%;
 			border-radius: 5px;
 		}
+	}
+
+	.btn.del {
+		width: 73px;
+		height: 30px;
+		float: right;
+		cursor: pointer;
+		border: 0px solid;
+		color: #fff;
+		margin-top: 5px;
+		background: #FF5722;
+		border-radius: 2px;
+		position: absolute;
+		bottom: 0;
+		right: 100px;
+		background: #f23426;
 	}
 
 	.btn.read {
