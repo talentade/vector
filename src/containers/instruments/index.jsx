@@ -16,6 +16,7 @@ class Instruments extends Component {
 
     this.state = {
       ai: false,
+      data: false,
       active: 'forex',
     }
 
@@ -29,15 +30,16 @@ class Instruments extends Component {
         <div className="users-section-right">
           <Breadcrumbs breads="Home, Instruments" />
           <h1 className="page-title">Instruments</h1>
-          <TableFilters table="instruments" add={() => this.setState({ai: true})} switchTo={(v) => this.setState({active: v.toLowerCase()})}/>
+          <TableFilters table="instruments" add={() => this.setState({ai: true, data: false})} switchTo={(v) => this.setState({active: v.toLowerCase()})}/>
 
           {this.state.ai ?
             <AddInstrument
+              data={this.state.data}
               cancel={(e) => this.setState({ai: false})}
             />
           : null}
 
-          <InstrumentsTable active={active}/>
+          <InstrumentsTable active={active} edit={(data) => this.setState({ai: true, data: data})} />
         </div>
       </div>
       </Container>

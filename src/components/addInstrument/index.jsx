@@ -71,34 +71,34 @@ class AddInstrument extends Component {
   }
 
   render () {
-    const { cancel } = this.props;
+    const { cancel, data } = this.props;
     return (
       <div className='overlay ain' onClick={this.popupOut}>
         <div className='modal-section'>
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancel} />
             <div className='bsell-modal-content'>
-              <h6 align="center">Add new Instrument</h6>
+              <h6 align="center">{data ? "Edit" : "Add new"} Instrument</h6>
               <p className="inps" style={{marginTop: "5px"}}>
                 <div className="i-col">
                   <label>Name</label>
-                  <input className="" id="i-name" type="text" />
+                  <input className="" id="i-name" type="text" defaultValue={data ? data.name : ""}/>
                 </div>
                 <div className="i-col">
                   <label>Symbol(i.e. <b>AUD/USD</b>)</label>
-                  <input className="" id="i-symbol" type="text" />
+                  <input className="" id="i-symbol" type="text" defaultValue={data ? data.pair : ""}/>
                 </div>
                 <div className="i-col">
                   <label>Percentage Commission</label>
-                  <input className="" id="i-com" type="text" />
+                  <input className="" id="i-com" type="text" defaultValue={data ? data.commission : ""}/>
                 </div>
                 <div className="i-col">
                   <label>Leverage</label>
-                  <input className="" id="i-lev" type="text" />
+                  <input className="" id="i-lev" type="text" defaultValue={data ? data.leverage : ""}/>
                 </div>
                 <div className="i-col">
                   <label>Type</label>
-                  <select className="select-box" id="i-type">
+                  <select className="select-box" id="i-type" defaultValue={data ? data.type.toUpperCase() : "FOREX"}>
                     <option>FOREX</option>
                     <option>CRYPTO</option>
                     <option>STOCK</option>
@@ -108,28 +108,28 @@ class AddInstrument extends Component {
                 </div>
                 <div className="i-col">
                   <label>Pip per unit Lot</label>
-                  <input className="" id="i-pip" type="text" />
+                  <input className="" id="i-pip" type="text" defaultValue={data ? data.unit_per_lot : ""} />
                 </div>
                 <div className="i-col">
                   <label>MIN Volume</label>
-                  <input className="" id="i-min" type="text" />
+                  <input className="" id="i-min" type="text" defaultValue={data ? data._min : ""} />
                 </div>
                 <div className="i-col">
                   <label>MAX Volume</label>
-                  <input className="" id="i-max" type="text" />
+                  <input className="" id="i-max" type="text" defaultValue={data ? data._max : ""} />
                 </div>
                 <div className="i-col">
                   <label>Swap Long</label>
-                  <input className="" id="i-short" type="text" />
+                  <input className="" id="i-short" type="text" defaultValue={data ? data._long : ""} />
                 </div>
                 <div className="i-col">
                   <label>Swap Short</label>
-                  <input className="" id="i-long" type="text" />
+                  <input className="" id="i-long" type="text" defaultValue={data ? data._short : ""} />
                 </div>
 
                 {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 
-                <button className="sacc" onClick={this.btnSave}>Add Instrument</button>
+                {data ? <button className="sacc" disabled={true}>Update Instrument</button> : <button className="sacc" onClick={this.btnSave}>Add Instrument</button>}
               </p>
             </div>
           </div>

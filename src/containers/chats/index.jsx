@@ -142,13 +142,19 @@ class Chats extends Component {
           break;
           case "NEW_CHAT":
             let chatList = this.state.rawChatList;
+            let newList  = [];
+            let oldList  = [];
             payload.users.forEach((v, k) => {
               chatList.forEach((cl, ck) => {
                 if(cl.user_id == v.user_id) {
                   chatList[ck] = v;
+                  newList.push(v);
+                } else {
+                  oldList.push(cl);
                 }
               });
             });
+            chatList = newList.concat(oldList);
             this.setState({chatList: chatList, rawChatList: chatList});
             this.readReciept(this.state.active.user_id);
           break;

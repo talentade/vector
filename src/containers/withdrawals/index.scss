@@ -5,6 +5,10 @@
     height: calc(100% - 120px);
     display: flex;
 
+    .table-header li, .table-body li {
+    	min-width: calc(100% / 9);
+    }
+
 
 	.with-section-right {
 		width: 100%;

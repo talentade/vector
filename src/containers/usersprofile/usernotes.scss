@@ -19,6 +19,30 @@
 			display: inline-flex;
 			flex-direction: row;
 
+			&.upc {
+				width: 94%;
+				height: auto;
+				position: relative;
+			    // background: gray !important;
+
+			    h4 {
+			    	text-align: left;
+			    }
+
+			    .d-act {
+				    position: absolute;
+				    right: 0;
+				    width: auto;
+				    display: inline-flex;
+				    flex-direction: row;
+				    top: -20px;
+
+				    img {
+				    	margin-left: 10px;
+				    }
+			    }
+			}
+
 			h4 {
 				font-family: Poppins;
 				font-style: normal;
@@ -30,12 +54,39 @@
 				align-items: center;
 				text-align: center;
 				color: #FFFFFF;
+				margin-bottom: 5px;
 			}
 
 			div {
 				display: inline-flex;
 				flex-direction: column;
 				align-items: center;
+
+				&.upc {
+					align-items: unset;
+					text-align: left !important;
+
+					h6 {
+						font-family: Poppins;
+						font-style: normal;
+						overflow: hidden;
+						font-weight: 300;
+						font-size: 13px;
+						line-height: 19px;
+						margin-top: 1em;
+						color: #C4C4C4;
+						margin-left: -2.5em;
+				    	
+				    	img {
+							display: inline-block;
+							width: 18px;
+							position: relative;
+							top: 6px;
+							margin-right: 10px;
+							margin-left: 0px;
+				    	}
+					}
+				}
 
 				p {
 					font-family: Poppins;

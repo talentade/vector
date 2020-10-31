@@ -1,3 +1,23 @@
+#s-all, #s-all-2 {
+  position: relative;
+
+  a {
+    font-family: inherit;
+    position: relative;
+    top: 13px;
+    font-weight: 900;
+    text-decoration: underline !important;
+    font-family: Poppins;
+    color: #00a880;
+  }
+}
+
+#s-all-2 {
+  position: absolute;
+  top: 80px;
+  right: 70px;
+}
+
 .createadmin-section {
   padding: 30px 30px 60px 30px;
 
@@ -223,20 +243,6 @@
   display: flex !important;
   margin-bottom: 35px !important;
   justify-content: space-between !important;
-
-  #s-all {
-    position: relative;
-
-    a {
-      font-family: inherit;
-      position: relative;
-      top: 13px;
-      font-weight: 900;
-      text-decoration: underline !important;
-      font-family: Poppins;
-      color: #00a880;
-    }
-  }
 
   .ml-10 {
     margin-left: 10%;

@@ -44,6 +44,13 @@
     	width: 100px;
 		height: 100px;
 		margin: 30px auto 30px;
+
+		&.adm {
+			width: 150px !important;
+			height: 150px !important;
+			border-radius: 50%;
+			border: 1px solid #004044;
+		}
     }
 
     h2.proflle-name {

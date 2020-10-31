@@ -6,6 +6,7 @@ import VerifyPhone from '../containers/verifyPhone/index';
 import Trade from '../containers/trade/index';
 import Login from '../components/signin/index';
 import Profile from '../containers/profile/index';
+import Dashboard from '../containers/dashboard/index';
 import ForgotPassword from '../containers/forgotPassword/index';
 import ChangePassword from '../containers/resetPassword/index';
 import Market from '../containers/market/index';
@@ -17,6 +18,7 @@ import CreateAdmin from '../containers/createadmin/index';
 import Restrictions from '../containers/restrictions/index';
 import Chats from '../containers/chats/index';
 import Transactions from '../containers/transactions/index';
+import Salesfunnel from '../containers/salesfunnel/index';
 
 import Users from '../containers/users/index';
 import Withdrawals from '../containers/withdrawals/index';
@@ -24,7 +26,10 @@ import Deposits from '../containers/deposits/index';
 
 import Activities from '../containers/activities/index';
 import Admins from '../containers/admins/index';
+import AdminsProfile from '../containers/adminsprofile/index';
+
 import Finance from '../containers/finance/index';
+import Calllogs from '../containers/calllogs/index';
 
 import Forms from '../containers/forms/index';
 import UsersProfileList from '../containers/usersprofile/index';
@@ -45,6 +50,7 @@ export default props => (
         <Route path='/Accounts' exact component={Accounts} />
         <Route path='/News' exact component={News} />
         <Route path='/PostNews' exact component={PostNews} />
+        <Route path='/Dashboard' exact component={Dashboard} />
 
         <Route path='/CreateAdmin' exact component={CreateAdmin} />
         <Route path='/Restrictions' exact component={Restrictions} />
@@ -58,7 +64,11 @@ export default props => (
         <Route path='/Withdrawals' exact component={Withdrawals} />
         <Route path='/Deposits' exact component={Deposits} />
 
+        <Route path='/Salesfunnel' exact component={Salesfunnel} />
+
+        <Route path='/Calllogs' exact component={Calllogs} />
         <Route path='/Admins' exact component={Admins} />
+        <Route path='/AdminsProfile/:user_id' exact component={AdminsProfile} />
         <Route path='/Activities' exact component={Activities} />
         <Route path='/Finance' exact component={Finance} />
         <Route path='/TeamSettings' exact component={TeamSettings} />
@@ -68,6 +78,7 @@ export default props => (
         <Route path='/Campaigns' exact component={Campaigns} />
         <Route path='/Instruments' exact component={Instruments} />
         <Route path='/Documents' exact component={Documents} />
+        <Route path='/Profile' exact component={Profile} />
       </Switch>
     ) : (
         <Switch>

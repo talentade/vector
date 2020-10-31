@@ -12,6 +12,7 @@ import server from '../../services/server';
 import app from '../../services/app';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
+
 import '../../components/standard/table.scss';
 
 class Activities extends Component {
@@ -22,6 +23,7 @@ class Activities extends Component {
       tasks: [],
       data: null,
       type: 'new',
+      showLoader: true,
       showTask: false,
     }
 
@@ -119,6 +121,15 @@ class Activities extends Component {
           <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
         </ul>
 
+
+        <div
+          className='loader-container'
+          style={{ display: this.state.showLoader ? 'block' : 'none' }}
+        >
+          <div className='loader'></div>
+        </div>
+        
+        
         {
           tasks.map((t, idx) => (
             <ul className="table-body for-tasks">

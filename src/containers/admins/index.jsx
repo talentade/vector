@@ -3,7 +3,6 @@ import Container from '../container/index';
 import Pagination from '../../components/Pagination/index';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import Ptab from '../../components/ptabs/index';
-import TableFilters from '../../components/tablefilters/index';
 
 import AdminsTable from  './adminstable.jsx';
 
@@ -26,7 +25,6 @@ class Admins extends Component {
         <div className="users-section-right">
           <Breadcrumbs breads="Home, Lists, Admins" />
           <h1 className="page-title">Admins</h1>
-          <TableFilters table="admins" />
           <AdminsTable />
         </div>
       </div>

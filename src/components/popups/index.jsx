@@ -11,7 +11,9 @@ import time from './time.svg';
 import app from '../../services/app';
 import logout from "../../themes/images/tradeDashboard/t_nav4.svg";
 import CancelIcon from '../../themes/images/cancel.svg';
+import cicon from '../../themes/images/cicon.png';
 import con_buysell from '../../themes/images/con_buysell.png';
+import confirm_m from '../../themes/images/check-mark.png';
 import '../../themes/js/datepicker.min.css';
 import datepicker from '../../themes/js/datepicker.js';
 
@@ -127,16 +129,16 @@ class Created extends React.Component {
 
 class Note extends React.Component {
   render() {
-    const { note, type, show, cancel, action } = this.props;
+    const { note, type, show, cancel, action, funnel } = this.props;
     return (
       show ? (
-        <div className='overlay popups' onClick={popupOut}>
-          <div className='edit-modal-section'>
-            <div className='edit-header'>
+        <div className={'overlay popups'+(funnel ? " funnel" : "")} onClick={popupOut}>
+          <div className='edit-modal-section' style={funnel ? {height: "300px"} : null}>
+            {funnel ? null : <div className='edit-header'>
               Note <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-            </div>
+            </div>}
             <h2 className='edit-title' contentEditable="true" data-placeholder="Title">{type == 'new' ? '' : note.title}</h2>
-            <div className='edit-content' contentEditable="true" spellCheck="false" data-placeholder="Start typing a note...">{type == 'new' ? '' : note.note}</div>
+            <div className='edit-content' style={funnel ? {minHeight: "200px"} : null}  contentEditable="true" spellCheck="false" data-placeholder="Start typing a note...">{type == 'new' ? '' : note.note}</div>
             <div className='edit-footer'>
               <div></div>
               {
@@ -146,6 +148,30 @@ class Note extends React.Component {
                   ? <button className="action" onClick={cancel}>Close</button>
                   : <button className="action" onClick={() => action($(".edit-title").text(), $(".edit-content").text())}>Update</button>
               }
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
+class Email extends React.Component {
+  render() {
+    const { show, cancel, action, funnel } = this.props;
+    return (
+      show ? (
+        <div className={'overlay popups'+(funnel ? " funnel" : "")} onClick={popupOut}>
+          <div className='edit-modal-section' style={funnel ? {height: "333px"} : null}>
+            {funnel ? null : <div className='edit-header'>
+              Email <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+            </div>}
+            <h2 className='edit-title'><b className="to">To</b><span className="email">{this.props.email} <img src={cicon} /></span></h2>
+            <h2 className='edit-title bd-t bd-b'><b className="from">From</b><input type="text" readonly="true" spellCheck="false" Value={app.name()} /></h2>
+            <h2 className='edit-title'><b className="from" style={{alignItems: "baseline"}}>Subject</b><textarea id="composed-m" spellCheck="false"></textarea></h2>
+            <div className='edit-footer'>
+              <div></div>
+              <button className="action" onClick={() => action($("#composed-m").val())} disabled={true}>Send Email</button>
             </div>
           </div>
         </div>
@@ -213,7 +239,7 @@ class Task extends React.Component {
   }
 
   render() {
-    const { show, cancel, type, id } = this.props;
+    const { show, cancel, type, id, funnel } = this.props;
 
     let { date1Selected, date2Selected } = this.state;
 
@@ -275,11 +301,11 @@ class Task extends React.Component {
 
     return (
       show ? (
-        <div className='overlay popups' onClick={popupOut}>
-          <div className='edit-modal-section'>
-            <div className='edit-header'>
+        <div className={'overlay popups'+(funnel ? " funnel" : "")} onClick={popupOut}>
+          <div className='edit-modal-section' style={funnel ? {height: "330px"} : null}>
+            {funnel ? null : <div className='edit-header'>
               Task <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-            </div>
+            </div>}
             <h2 className='edit-title task' contentEditable="true" data-placeholder="Type task title" style={{fontSize: ".9em", paddingLeft: "2.7em"}}></h2>
             <div className='edit-settings float'>
               <div className='e-option'>
@@ -304,7 +330,7 @@ class Task extends React.Component {
                 </div>
               </div>
             </div>
-            <div className='edit-content task' contentEditable="true" spellCheck="false" data-placeholder="Start typing task..."></div>
+            <div className='edit-content task' style={funnel ? {minHeight: "105px"} : null} contentEditable="true" spellCheck="false" data-placeholder="Start typing task..."></div>
             <div className='edit-settings task'>
               <div className='e-option'>
                 <span className='option'>Type</span>
@@ -521,6 +547,34 @@ class Logout extends React.Component {
   }
 }
 
+class ConfirmModal extends React.Component {
+   render() {
+    const { head, text, show, cancel, confirm } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='deposit-modal-section'>
+            <div className='upper-modal'>
+              <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+              <img src={confirm_m} alt='' className='modal-main-img' />
+            </div>
+            <div className='lower-modal'>
+              <div className='lower-modal-content'>
+                <h6>{head}</h6>
+                <p>{text}</p>
+                <p style={{marginTop: "1em", justifyContent: "space-between"}}>
+                  <button class="cm-undo" onClick={cancel}>NO</button>
+                  <button class="cm-ok" onClick={confirm}>YES</button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
 
 
-export {FavPopup, Booked, Note, Task, Meet, Created, Closed, Insufficient, ImageView, Logout}
+
+export {FavPopup, Booked, Note, Email, Task, Meet, Created, Closed, Insufficient, ImageView, Logout, ConfirmModal}

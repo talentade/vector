@@ -12,6 +12,7 @@ import ss1 from '../../themes/images/ss1.png';
 import ss2 from '../../themes/images/ss2.png';
 import ss3 from '../../themes/images/ss3.png';
 import tn from '../../themes/images/tn.png';
+import { ConfirmModal } from '../../components/popups/index';
 import addstory from '../../themes/images/addstory.png';
 import todays_news from '../../themes/images/todays_news.png';
 import './index.scss';
@@ -31,7 +32,9 @@ class News extends Component {
       max_rows: 1,
       page_no: 1,
       similar: [],
-      activeNews: null
+      activeNews: null,
+      confirmID: 0,
+      confirmModal: false
     }
   }
 
@@ -69,6 +72,17 @@ class News extends Component {
         return error.message;
       }
     }
+  }
+
+  deleteNews = async (nid) => {
+    this.setState({ showLoader: true });
+    try {
+      let del = await server.deleteNews(nid);
+      window.location.href = "";
+    } catch (e) {
+      return e;
+    }
+    this.setState({ showLoader: false });
   }
 
   showNews = (p) => {
@@ -168,6 +182,13 @@ class News extends Component {
     return (
       <Container>
       {/*<Spinner showSpinner={this.state.showLoader} />*/}
+      <ConfirmModal
+        head="Delete this news?"
+        text="Click YES to confirm"
+        show={this.state.confirmModal}
+        cancel={() => this.setState({confirmModal: false})}
+        confirm={() => this.deleteNews(this.state.confirmID)}
+      />
       <div className="col-12" id="news-container">
           <div className='loader-container' style={{ display: this.state.showLoader ? 'block' : 'none' }}>
             <div className='loader'></div>
@@ -197,7 +218,7 @@ class News extends Component {
               <path d="M0.893939 -3.90753e-08L-2.2249e-07 0.910026L5 6L10 0.910026L9.10606 -3.98039e-07L5 4.17995L0.893939 -3.90753e-08Z" fill="#1FCF65"/>
               </svg>
             </a>
-            )}f
+            )}
 
             {this.state.similar.length ? (
               <div className="similar-stories">
@@ -229,7 +250,7 @@ class News extends Component {
                   <li className="todays-li">
                     <img src={news.image_mini.url} style={{width: "auto"}} />
                     <span>{news.title}
-                    {app.isAdmin() && news.category == "all" ? <button className="del btn btn-primary" onClick={() => console.log(news.id)}>Delete</button> : null}
+                    {app.isAdmin() && news.category == "all" ? <button className="del btn btn-primary" onClick={() => this.setState({confirmID: news.id, confirmModal: true})}>Delete</button> : null}
                     <button className="read btn btn-primary btn-bottom" onClick={() => this.readNews(news.i)}>Read</button>
                     </span>
                   </li>

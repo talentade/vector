@@ -6,6 +6,10 @@
     overflow: auto;
     display: flex;
 
+    .tb-action {
+    	cursor: pointer;
+    }
+
 	table {
 		width: 100%;
 		border: 0;

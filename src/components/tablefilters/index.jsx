@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import { Link } from 'react-router-dom';
 import Breadcrumbs from '../breadcrumbs/index';
 import sp from '../../themes/images/circle-plus.png';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
@@ -29,8 +30,7 @@ class TableFilters extends Component {
     e.target.classList.add("_active");
   }
 
-  componentDidMount () {
-  }
+  componentDidMount () { }
 
   render () {
   	return (
@@ -58,13 +58,35 @@ class TableFilters extends Component {
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.search} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
 
             <button className="fil-act-btn"><img src={downloadIcon} /></button>
             {/*<button className="fil-act-btn"><img src={refreshIcon} /></button>*/}
-            <button className="fil-act-btn"><img src={exportIcon} /></button>
+            {/*<button className="fil-act-btn" onClick={this.props.assign}><img src={exportIcon} /></button> */}
+          </div>
+        </div>
+      ) : null}
+
+
+      {this.props.table === "sales" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">
+            <select>
+              <option>5</option>
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>100</option>
+            </select>
+          </div>
+          <div className="search-container" style={{width: "220px"}}>
+            <input type="text" placeholder="05/03/2020 - 05/03/2020" />
+          </div>
+
+          <div className="filter-actions">
+            <button className="create-btn" onClick={this.props.add}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> Funnel</button>
           </div>
         </div>
       ) : null}
@@ -90,7 +112,7 @@ class TableFilters extends Component {
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.search} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
           </div>
@@ -111,7 +133,7 @@ class TableFilters extends Component {
           </div>
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.search} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
           </div>
@@ -130,10 +152,10 @@ class TableFilters extends Component {
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "250px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.search}/>
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
-            <button className="create-btn">Create Admin</button>
+            <Link to="/CreateAdmin"><button className="create-btn">Create Admin</button></Link>
           </div>
         </div>
       ) : null}
@@ -407,7 +429,7 @@ class TableFilters extends Component {
           <img src={deleteIcon} className="filter-img"/>
           <img src={checkCircle} className="filter-img" style={{position: "relative", top: "6px", width: "23.5px", height: "25.5px"}}/>
           <img src={more} className="filter-img" style={{width: "4px"}}/>
-          <button className="create-btn" style={{position: "absolute", right: "0"}}>Compose</button>
+          <button className="create-btn" onClick={() => this.props.compose()} style={{position: "absolute", right: "0"}}>Compose</button>
       </div>) : null}
 
     </>

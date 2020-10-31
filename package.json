@@ -8,6 +8,7 @@
         "@testing-library/react": "^9.3.2",
         "@testing-library/user-event": "^7.1.2",
         "axios": "^0.19.2",
+        "canvasjs": "^1.8.3",
         "country-list-js": "^3.1.7",
         "html-react-parser": "^0.13.0",
         "intl-tel-input": "^17.0.3",
@@ -24,7 +25,7 @@
         "react-phone-input-2": "^2.7.1",
         "react-redux": "^7.2.0",
         "react-router-dom": "^5.1.2",
-        "react-scripts": "3.4.0",
+        "react-scripts": "^4.0.0",
         "react-select": "^3.1.0",
         "react-tradingview-widget": "^1.3.2",
         "redux": "^4.0.5",
@@ -32,16 +33,14 @@
         "sha256": "^0.2.0",
         "socket.io-client": "^2.3.0",
         "styled-components": "^5.0.1",
-        "validator": "^12.2.0"
+        "validator": "^12.2.0",
+        "zadarma": "^1.0.4"
     },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
     },
     "browserslist": {
         "production": [

@@ -3,7 +3,7 @@ import Camera from '../../../themes/images/tradeDashboard/camera.svg';
 import DummyImage from '../../../themes/images/tradeDashboard/t_nav3.png';
 import './index.scss';
 
-const UserAvatar = ({ imageUrl, handleChange, showSpinner }) => {
+const UserAvatar = ({ imageUrl, handleChange, showSpinner, admin, name, email, role }) => {
   return (
     <div className='header-image-section'>
       <div className='header-image-sections-imgs'>
@@ -27,6 +27,12 @@ const UserAvatar = ({ imageUrl, handleChange, showSpinner }) => {
         accept='image/x-png,image/gif,image/jpeg'
         onChange={handleChange}
       />
+      {admin ?
+        <div className="a-name">
+          <h2>{name}</h2>
+          <div><span className="txt-success">{email}</span><span className="txt-light">&nbsp;&nbsp;-&nbsp;&nbsp;{role}</span></div>
+        </div>
+      : null}
     </div>
   );
 };

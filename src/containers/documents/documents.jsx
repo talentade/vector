@@ -15,6 +15,7 @@ class DocumentsTable extends Component {
       users: [],
       iview: false,
       src: null,
+      showLoader: true
     }
   }
 
@@ -32,6 +33,15 @@ class DocumentsTable extends Component {
   }
 
   render () {
+    let users = this.props.filter.length ? this.state.users.filter((c) => {
+      return (
+        c.first_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        c.last_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        c.email.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        (c.first_name + " " + c.last_name).toLowerCase().match(this.props.filter.toLowerCase()) ||
+        (c.last_name + " " + c.first_name).toLowerCase().match(this.props.filter.toLowerCase())
+      );
+    }) : this.state.users;
     return (
           <>
 
@@ -55,7 +65,7 @@ class DocumentsTable extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.users.map((doc) => (
+                {users.map((doc) => (
                   <tr>
                     <td style={{width: "45px"}}>
                     {doc.profile_image.length ?
@@ -74,6 +84,13 @@ class DocumentsTable extends Component {
                 ))}
               </tbody>
             </table>
+
+            <div
+              className='loader-container'
+              style={{ display: this.state.showLoader ? 'block' : 'none' }}
+            >
+              <div className='loader'></div>
+            </div>
             {/*<Pagination2 />*/}
           </>
         );

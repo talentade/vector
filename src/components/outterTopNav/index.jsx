@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import MessageBox from '../messageBox/index';
 import HoverDropdown from '../hoverDropdown/index';
 import userDp from '../../themes/images/dummydp.png';
@@ -36,16 +37,19 @@ class OutterTopNav extends Component {
                 {this.state.hover && (
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
                 )}
-                <img src={profileImage ? userDp : userDp} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
+                <img src={profileImage ? profileImage : userDp} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
                 {/*<HoverDropdown
                   name={`${firstName} ${lastName}`}
                   email={email}
                   balance={`$${balance}`}
                 />*/}
               </li>
-              <li style={{opacity: 1}} className='hide-mobile nav-aname'><span className="fl">{`${firstName} ${lastName}`}</span><span className="em">{email}</span></li>
-              <li style={{opacity: 1}}><button className="save-changes" id="save-all-changes-btn">Save All Changes</button></li>
-              {/*<li style={{opacity: 1}} className="admin-search-input">
+              <li style={{opacity: 1}} className='hide-mobile nav-aname'>
+                <span className="fl"><Link to="/Profile" style={{color: "#fff"}}>{`${firstName} ${lastName}`}</Link></span>
+                <span className="em"><Link to="/Profile" style={{color: "#fff"}}>{email}</Link></span>
+              </li>
+              {/*<li style={{opacity: 1}}><button className="save-changes" id="save-all-changes-btn">Save All Changes</button></li>
+              <li style={{opacity: 1}} className="admin-search-input">
               <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" />
               </li>
               <li style={{opacity: 1}} className="admin-nav-plus">

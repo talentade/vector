@@ -174,7 +174,7 @@ class ChartModule extends Component {
 
         this.historySeriesPair = pairMaster;
 
-        let check_for_update = async (pair, firstUpdate = false) => {
+        let check_for_update = async (pair, firstUpdate = false, _from = false) => {
           if(!this.realTimeListener || this.destroyGraph || this.historyData.length) {
             console.log("Update overuled");
             return true;
@@ -185,13 +185,15 @@ class ChartModule extends Component {
               if(this.historySeriesPair == pair) {
                 try {
                   let _history = this.graphSwitcher ? this.lastServerResponse : await server.historicalData(pair, "1m", {
-                    from: moment().subtract(2, "hour").unix(),
-                    to: moment().unix()
+                    from: _from ? _from.end - (3600 * 6) : moment().subtract(2, "hour").unix(),
+                    to: _from ? _from.end : moment().unix()
                   });
                   this.lastServerResponse = _history;
                   let _data               = _history.data.result;
                   this.graphSwitcher      = false;
                   this.setState({showLoader: false});
+
+                  console.log(_from, _history.data.result.meta.currentTradingPeriod);
 
                   const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, _data.meta.exchangeTimezoneName);
                   graphOffset  = (offset+1)*3600;
@@ -237,10 +239,17 @@ class ChartModule extends Component {
                         // this.plotGraph(this.historyData.concat(this.historySeries));
 
                         if(firstUpdate) {
-                          this.chart.current.timeScale().setVisibleRange({
-                            from: _data.timestamp[parseInt(_data.timestamp.length/2)]+graphOffset,
-                            to: _data.timestamp[_data.timestamp.length - 1]+graphOffset
-                          });
+                          if(_from) {
+                            this.chart.current.timeScale().setVisibleRange({
+                              from: _data.timestamp[_data.timestamp.length - 1]+graphOffset - (this.props.selectedOption.toLowerCase() == "forex" ? ((3600 * 4) - 1800) : 3600),
+                              to: _data.timestamp[_data.timestamp.length - 1]+graphOffset - (this.props.selectedOption.toLowerCase() == "forex" ? ((3600 * 3) - 1800) : 0)
+                            });
+                          } else {
+                            this.chart.current.timeScale().setVisibleRange({
+                              from: _data.timestamp[parseInt(_data.timestamp.length/2)]+graphOffset,
+                              to: _data.timestamp[_data.timestamp.length - 1]+graphOffset
+                            });
+                          }
                         } else {
                           if(prelength < this.historySeries.length) {
                             this.chart.current.timeScale().scrollToPosition(1, true);
@@ -251,19 +260,26 @@ class ChartModule extends Component {
                   }
                   if(this.historySeriesPair == pair) {
                     _plotHistory();
-                    if(!this.historySeries.length) {
+                    if(!this.historySeries.length && !_from) {
                       console.log("No data for", pair, "oo");
-                    } else {
+                      check_for_update(
+                        pair,
+                        true,
+                        _history.data.result.meta.currentTradingPeriod.post
+                      );
+                    } else if(!_from) {
                       setTimeout(() => {
                         if(this.historySeriesPair == pair) {
                           _plotHistory();
                         }
                       }, 2.65 * 1000);
+                      check_for_update(pair);
                     }
-                    check_for_update(pair);
                   }
                 } catch (e) {
-                  check_for_update(pair);
+                  setTimeout(() => {
+                    check_for_update(pair);
+                  }, 100);
                   console.log("-- Update ERR");
                   throw e;
                   return e;
