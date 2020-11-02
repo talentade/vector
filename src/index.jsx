@@ -1,10 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App'
-import './themes/sass/index.sass'
-import * as serviceWorker from './serviceWorker'
+import App from './App';
+// import './themes/sass/index.sass';
+import './themes/sass/index.scss';
+import * as serviceWorker from './serviceWorker';
 import store from './redux/store/index';
 
 

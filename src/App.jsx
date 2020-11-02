@@ -2,7 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 // import Error from './tools/Error/errorHandling'
 import Routes from './routes/routes.jsx'
-import './themes/sass/App.sass';
+// import './themes/sass/App.sass';
+import './themes/sass/app.scss';
 
 String.prototype.ucwords = function() {
   let str = this.toLowerCase();

@@ -83,12 +83,7 @@
 		padding: 0 2em;
 		width: 40%;
 		float: left;
-
-		.fti {
-			width: 100%;
-			margin-top: 1em;
-		}
-
+		
 		ul.todays-ul {
 			display: block;
 			width: 100%;
@@ -130,6 +125,12 @@
 				}
 			}
 		}
+
+		.fti {
+			width: 100%;
+			margin-top: 1em;
+		}
+
 	}
 
 	h1.news-header {
