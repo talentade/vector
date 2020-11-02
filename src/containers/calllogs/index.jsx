@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import axios from 'axios';
 import Container from '../container/index';
 import { Link } from 'react-router-dom';
 import TableFilters from '../../components/tablefilters/index';
@@ -36,10 +35,7 @@ class Activities extends Component {
 
   getCalls = async () => {
     try {
-      let calls = await axios.request({
-        method: 'GET',
-        url: "https://trading.avarizgroup.com/zadarma/?records"
-      });
+      let calls = await server.getCalls();
       this.setState({logs: calls.data.stats, showLoader: false});
     } catch(e) {
       return e;
@@ -52,7 +48,7 @@ class Activities extends Component {
         method: 'GET',
         url: "https://api.zadarma.com/v1/pbx/record/request/?call_id="+cid+"&pbx_call_id="+pbx
       });
-      console.log(record.data);
+      // console.log(record.data);
       // this.setState({logs: calls.data.stats, showLoader: false});
     } catch(e) {
       return e;

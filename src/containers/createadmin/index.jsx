@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import { NavLink as Link } from 'react-router-dom';
-import axios from 'axios';
 import Container from '../container/index';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import RestrictionNav from '../../components/restrictionNav/index';

@@ -178,6 +178,16 @@ export default {
     })
   },
 
+  getCalls() {
+    return axios.request({
+      method: 'GET',
+      url: "https://trading.avarizgroup.com/zadarma/?records",
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
+  
   fundAccount(amount, currency, account, uid = null, use = "", ps = "") {
     if(ps.length) {
       ps = sha256(ps);
