@@ -37,7 +37,7 @@ class OutterTopNav extends Component {
                 {this.state.hover && (
                   <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
                 )}
-                <img src={profileImage ? profileImage : userDp} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
+                <img src={profileImage ? profileImage : userDp} style={{border: "1px solid #fff"}} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
                 {/*<HoverDropdown
                   name={`${firstName} ${lastName}`}
                   email={email}
@@ -88,7 +88,7 @@ class OutterTopNav extends Component {
               {this.state.hover && (
                 <div className='overlay drop' onClick={() => this.setState({hover: false})}></div>
               )}
-              <img src={profileImage ? profileImage : Tnav3} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
+              <img src={profileImage ? profileImage : Tnav3} style={{border: "1px solid #fff"}} alt='' onMouseEnter={() => this.setState({hover: true})} onClick={() => this.setState({hover: true})}/>
               <HoverDropdown
                 name={`${firstName} ${lastName}`}
                 email={email}

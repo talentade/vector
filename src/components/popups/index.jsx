@@ -556,7 +556,7 @@ class ConfirmModal extends React.Component {
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-              <img src={confirm_m} alt='' className='modal-main-img' />
+              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "30%"}} />
             </div>
             <div className='lower-modal'>
               <div className='lower-modal-content'>

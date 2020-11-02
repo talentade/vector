@@ -107,7 +107,7 @@ const app = {
     }
   },
   isAdmin: () => {
-    return false;
+    return !false;
   },
   cleanDate: (d) => {
     return d.trim().replace(/-/g, "/").replace(/,/g, "");

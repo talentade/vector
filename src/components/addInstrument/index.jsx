@@ -15,6 +15,7 @@ class AddInstrument extends Component {
     super(props);
 
     this.state = {
+      loading: false,
       errorMessage: ''
     };
 
@@ -53,11 +54,11 @@ class AddInstrument extends Component {
 
     if(err) {
       return this.setState({errorMessage: "Please fill all fields"});
-    }
+    } this.setState({loading: true});
 
     // this.props.sending();
     try {
-      const ai_n = await server.addInstrument(ain);
+      const ai_n = this.props.data ? await server.updateInstrument(this.props.data.id, ain) : await server.addInstrument(ain);
       // this.props.unsending();
       if(ai_n.status == 200 && ai_n.data.success) {
         window.location.href = "";
@@ -68,6 +69,7 @@ class AddInstrument extends Component {
       // this.props.unsending();
       return error.message;
     }
+    this.setState({loading: false});
   }
 
   render () {
@@ -86,7 +88,7 @@ class AddInstrument extends Component {
                 </div>
                 <div className="i-col">
                   <label>Symbol(i.e. <b>AUD/USD</b>)</label>
-                  <input className="" id="i-symbol" type="text" defaultValue={data ? data.pair : ""}/>
+                  <input className="" id="i-symbol" type="text" readOnly={!!data} defaultValue={data ? data.pair : ""}/>
                 </div>
                 <div className="i-col">
                   <label>Percentage Commission</label>
@@ -129,7 +131,7 @@ class AddInstrument extends Component {
 
                 {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 
-                {data ? <button className="sacc" disabled={true}>Update Instrument</button> : <button className="sacc" onClick={this.btnSave}>Add Instrument</button>}
+                {data ? <button disabled={this.state.loading} className="sacc" onClick={this.btnSave}>Update Instrument</button> : <button disabled={this.state.loading} className="sacc" onClick={this.btnSave}>Add Instrument</button>}
               </p>
             </div>
           </div>

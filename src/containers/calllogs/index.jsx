@@ -62,7 +62,7 @@ class Activities extends Component {
   render () {
     let logs = this.state.filter.length ? this.state.logs.filter((c) => {
       return (
-        c.destination.match(this.state.filter.toLowerCase()) ||
+        String(c.destination).match(this.state.filter.toLowerCase()) ||
         c.disposition.toLowerCase().match(this.state.filter.toLowerCase())
       );
     }) : this.state.logs;

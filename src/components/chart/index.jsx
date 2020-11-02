@@ -5,6 +5,7 @@ import { createChart, CrosshairMode } from 'lightweight-charts';
 import $ from 'jquery';
 import moment from 'moment';
 import moment_tz from 'moment-timezone';
+import ReactTooltip from "react-tooltip";
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
 import candleGrf from './graph/candle.png';
@@ -883,9 +884,11 @@ class Chart extends Component {
             <p className='sell-left'>{_currentPairData.low > 0 ? "L: "+app.floatFormat(_currentPairData.low) : ''}</p>
           </div>
           <div className='chart-map'>
-            <div className='map'>
+            <p ref={ref => this.fooRef = ref} data-tip="AI TRADING Coming soon"></p>
+            <div className='map' onClick={() => { ReactTooltip.show(this.fooRef) }} onMouseEnter={() => { ReactTooltip.show(this.fooRef) }} onMouseOut={() => { setTimeout(() => ReactTooltip.hide(this.fooRef), 2000); }}>
               <img src={MapIcon} alt='' />
             </div>
+            <ReactTooltip />
             <p className='map-center'>{_currentPairData.high > 0 ? "S: "+app.floatFormat(_currentPairData.spread) : ''}</p>
           </div>
           <div className='chart-buy' onClick={(e) => {

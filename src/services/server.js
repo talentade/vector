@@ -123,7 +123,7 @@ export default {
     });
   },
 
-  deletInstrument(id, sym) {
+  deleteInstrument(id, sym) {
     return axios.request({
       method: 'PUT',
       url: app.hostURL('admin/deleteIns/'+id),
@@ -133,6 +133,17 @@ export default {
       data: {
         s: sym
       }
+    });
+  },
+
+  updateInstrument(id, data) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/updateIns/'+id),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
     });
   },
 
