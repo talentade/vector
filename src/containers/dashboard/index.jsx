@@ -93,9 +93,7 @@ class CanvasJSChart extends Component {
 
 		var chart = new CanvasJS.Chart("chartContainer", options);
 		chart.render();
-		// $("#chartContainer").removeClass("full-width");
 		setTimeout(() => {
-			// $("#chartContainer").addClass("full-width");
 			$("#chartContainer .canvasjs-chart-canvas").css("width", "calc(100% - 5em)");
 			$(".top-nav").css("background", "#004044");
 			$(".right.smaller-right").css("background", "#2a2a2a");
@@ -105,7 +103,6 @@ class CanvasJSChart extends Component {
 		return (
 	      <Container>
 	      	<div id="chartContainer" className="full-width" style={{height: "370px", margin: "2em", border: '1px solid #006066'}}></div>
-			{/*<div id = {this.chartContainerId} style = {this.containerProps} />*/}
 	      </Container>
 	    )
 	}	
