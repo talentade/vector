@@ -262,10 +262,8 @@
 }
 
 @media screen and (max-width: 900px) {
-
 #news-container {
 	display: block !important;
-
 	.news-section-left,
 	.news-section-right {
 		padding: 0 !important;
@@ -274,16 +272,12 @@
 	.news-section-right { 
 		margin-top: 2em;
 	}
-
 }
-
 }
 
 
 @media screen and (max-width: 700px) {
-
 #news-container {
-
 	.news-section-left {
 		img.ifm {
 			display: block;
