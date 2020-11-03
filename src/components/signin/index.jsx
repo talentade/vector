@@ -101,8 +101,11 @@ class SignIn extends Component {
               imageUrl={PasswordIcon}
               handleChange={this.handleChange}
             />
+
             <p className='error'>{signinError}</p>
+            
             {app.isAdmin() ? (null) : <p className='forget-password'><NavLink to="/ForgotPassword">Forgot Password?</NavLink></p>}
+            
             <CheckBox onClick={this.handleClick} id="check" />
             <input
               type='submit'
