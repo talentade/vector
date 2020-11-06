@@ -124,8 +124,8 @@ class BuyandsellModal extends Component {
       delimeter = "-";
     } else {
       base  = base;
-      base1 = base;
-      base2 = "USD";
+      base1 = "USD";
+      base2 = base;
       delimeter = "";
     }
     this.setState({
@@ -339,8 +339,8 @@ class BuyandsellModal extends Component {
   }
 
   render () {
-    const { cancelClick, confirmClick, pair, buy, sell, act } = this.props;
-    const { information, analysis } = this.state;
+    const { info, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
+    const { information, analysis, base1 } = this.state;
 
     let tkp, stl, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
 
@@ -370,15 +370,15 @@ class BuyandsellModal extends Component {
               <h6>{pair}</h6>
               {/*<p>Bitcoin vs US Dollar</p>*/}
               <ul className="info-list">
-                <li className="mt1"><span className="text-success">Quote Asset</span><span className="text-success">USD</span></li>
+                <li className="mt1"><span className="text-success">Quote Asset</span><span className="text-success">{base1}</span></li>
                 <li><span>PIp Size:</span><span>0.01 (2digits)</span></li>
                 <li><span>Lot Size:</span><span></span></li>
-                <li><span>MIN Price Change:</span><span>0.001</span></li>
-                <li className="mt1"><span className="text-primary">MIN Volume:</span><span className="text-primary">1000</span></li>
-                <li><span className="text-primary">MAX Volume:</span><span className="text-primary">1000</span></li>
+                {/*<li><span>MIN Price Change:</span><span>0.001</span></li>*/}
+                <li className="mt1"><span className="text-primary">MIN Volume:</span><span className="text-primary">{info._min}</span></li>
+                <li><span className="text-primary">MAX Volume:</span><span className="text-primary">{info._max}</span></li>
                 <li className="mt1"><span>Stops Level:</span><span>0.0</span></li>
-                <li className="mt1"><span className="text-success">Swaps Long:</span><span className="text-success">4.266</span></li>
-                <li><span className="text-success">Swaps Short:</span><span className="text-success">-13.244</span></li>
+                <li className="mt1"><span className="text-success">Swaps Long:</span><span className="text-success">{info._long}</span></li>
+                <li><span className="text-success">Swaps Short:</span><span className="text-success">{info._short}</span></li>
                 <li className="mt1"><span>Leverage</span><span>1:{app.leverage()}</span></li>
               </ul>
               <p align="center">

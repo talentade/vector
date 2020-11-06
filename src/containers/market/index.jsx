@@ -301,9 +301,13 @@ class Market extends Component {
   render() {
     const { hotStocks, showLoader } = this.state;
 
-    const stocksToDisplay = this.props.filter ? hotStocks.filter((pair) =>
-      pair.pair.toLowerCase().match(this.props.filter.toLowerCase()),
-    ) : hotStocks;
+    const stocksToDisplay = this.props.filter ? hotStocks.filter((pair) => {
+      return (
+        pair.name.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        pair.pair.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        pair.name + " ("+pair.pair+")".toLowerCase().match(this.props.filter.toLowerCase())
+      )
+    }) : hotStocks;
 
     let credit = Number(this.state.selectedAccount.credit);
     let open_pl = Number(this.state.open_pl);

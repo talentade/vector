@@ -726,10 +726,11 @@ class Chart extends Component {
       type:   this.currentPairData ? this.currentPairData.type   : this.state.selectedOption,
       ask_up: this.currentPairData ? this.currentPairData.ask_up : 1,
       bid_up: this.currentPairData ? this.currentPairData.bid_up : 1,
+    complete: this.currentPairData ? this.currentPairData.complete : 0,
       spread: this.currentPairData ? (this.currentPairData.high - this.currentPairData.low) : this.state.spread
     }
 
-    let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto') && !_currentPairData.closed;
+    let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto' || parseInt(_currentPairData.complete) === 1) && !_currentPairData.closed;
 
     // $(".multiple-chart-section").each(function () {
     //   console.log($(this).attr("class"), $(this).attr("uniqueId"));
@@ -866,10 +867,21 @@ class Chart extends Component {
 
 
       {this.state.pair1.length ? (
-        <div className='chart-cta-section' disabled={
-          (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable)
-        }>
-          <div className='chart-sell' onClick={(e) => {
+        <div
+          data-tip
+          className='chart-cta-section'
+          data-for={(_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable) ? "" : "closed"}
+          disabled={
+            (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable)
+          }>
+          {
+            ((_currentPairData.sell > 0 || _currentPairData.buy > 0) && !buyable)
+            ? <p className="m-closed"><small>Market is closed</small></p>
+            : (null)
+          }
+          <div
+            className='chart-sell'
+            onClick={(e) => {
             if(_currentPairData.sell !== 0 && _currentPairData.buy !== 0 && buyable) {
               this.showBsellModal(e, "sell")
             }
@@ -884,14 +896,17 @@ class Chart extends Component {
             <p className='sell-left'>{_currentPairData.low > 0 ? "L: "+app.floatFormat(_currentPairData.low) : ''}</p>
           </div>
           <div className='chart-map'>
-            <p ref={ref => this.fooRef = ref} data-tip="AI TRADING Coming soon"></p>
-            <div className='map' onClick={() => { ReactTooltip.show(this.fooRef) }} onMouseEnter={() => { ReactTooltip.show(this.fooRef) }} onMouseOut={() => { setTimeout(() => ReactTooltip.hide(this.fooRef), 2000); }}>
+            <div className='map' data-tip data-for="comming">
               <img src={MapIcon} alt='' />
             </div>
-            <ReactTooltip />
+            <ReactTooltip id="comming" type="dark" effect="solid">
+              <span>AI TRADING Coming soon</span>
+            </ReactTooltip>
             <p className='map-center'>{_currentPairData.high > 0 ? "S: "+app.floatFormat(_currentPairData.spread) : ''}</p>
           </div>
-          <div className='chart-buy' onClick={(e) => {
+          <div
+            className='chart-buy'
+            onClick={(e) => {
             if(_currentPairData.sell !== 0 && _currentPairData.buy !== 0 && buyable) {
               this.showBsellModal(e, "buy")
             }
@@ -907,6 +922,10 @@ class Chart extends Component {
           </div>
         </div>
       ): null}
+
+      <ReactTooltip id="closed" type="dark" effect="solid">
+        <span>Market closed</span>
+      </ReactTooltip>
 
         <div className='chart-section hide'>
           <div className='chart-section-top'>

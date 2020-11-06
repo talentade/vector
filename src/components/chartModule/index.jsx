@@ -174,7 +174,7 @@ class ChartModule extends Component {
 
         this.historySeriesPair = pairMaster;
 
-        let check_for_update = async (pair, firstUpdate = false, _from = false) => {
+        let check_for_update = async (pair, firstUpdate = false, _from = false, _pre = null) => {
           if(!this.realTimeListener || this.destroyGraph || this.historyData.length) {
             console.log("Update overuled");
             return true;
@@ -184,16 +184,23 @@ class ChartModule extends Component {
               console.log("-- checking_for_update for", pair);
               if(this.historySeriesPair == pair) {
                 try {
+                  let _unit = _from.end;
+                  if(_from) {
+                    if(_from.end > moment().unix()) {
+                      _unit = _pre.end;
+                      console.log("(-)", _from.end, "(>)", _unit);
+                    }
+                  }
                   let _history = this.graphSwitcher ? this.lastServerResponse : await server.historicalData(pair, "1m", {
-                    from: _from ? _from.end - (3600 * 6) : moment().subtract(2, "hour").unix(),
-                    to: _from ? _from.end : moment().unix()
+                    from: _from ? _unit - (3600 * 6) : moment().subtract(2, "hour").unix(),
+                    to: _from ? _unit : moment().unix()
                   });
                   this.lastServerResponse = _history;
                   let _data               = _history.data.result;
                   this.graphSwitcher      = false;
                   this.setState({showLoader: false});
 
-                  console.log(_from, _history.data.result.meta.currentTradingPeriod);
+                  console.log(_history.data.result.meta.currentTradingPeriod, _from);
 
                   const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, _data.meta.exchangeTimezoneName);
                   graphOffset  = (offset+1)*3600;
@@ -265,7 +272,8 @@ class ChartModule extends Component {
                       check_for_update(
                         pair,
                         true,
-                        _history.data.result.meta.currentTradingPeriod.post
+                        _history.data.result.meta.currentTradingPeriod.post,
+                        _history.data.result.meta.currentTradingPeriod.pre
                       );
                     } else if(!_from) {
                       setTimeout(() => {

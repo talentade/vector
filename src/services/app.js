@@ -98,6 +98,9 @@ const app = {
     }
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
+  isAdmin: () => {
+    return false;
+  },
   hostURL: (url, type = 0) => {
     let live = true;
     if(type > 0) {
@@ -105,9 +108,6 @@ const app = {
     } else {
       return live ? "https://avarizserver.herokuapp.com/"+url : "http://localhost:3003/"+url;
     }
-  },
-  isAdmin: () => {
-    return !false;
   },
   cleanDate: (d) => {
     return d.trim().replace(/-/g, "/").replace(/,/g, "");

@@ -78,12 +78,11 @@ const MarketSideBar = ({
               key={`${Math.random()}-${Math.random()}`}
               id={"market-pair-"+pair.pair.replace(/[^\w]/g, "_")}
               disabled={
-                !(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto')
-                || pair.closed
+                !(pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto' || parseInt(pair.complete) === 1) || pair.closed
               }
             >
               <div className='market-pair-flex'>
-                <h5>{pair.pair}</h5>
+                <h5>{pair.name.length ? pair.name + " ("+pair.pair+")": pair.pair}</h5>
                 <span>
                 { favouritePairs.length && Object.values(favouritePairs).indexOf(pair.pair) > -1 ||
                   _favouritePairs.length && Object.values(_favouritePairs).indexOf(pair.pair) > -1
@@ -96,7 +95,7 @@ const MarketSideBar = ({
                 }
                 <img src={CommentIcon} alt='' onClick={(e) => {
                   window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "buy", type: pair.type};
-                    if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') && !pair.closed) {
+                    if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto' || parseInt(pair.complete) === 1) && !pair.closed) {
                       showBsellModal2(e)
                     }
                   }} />
@@ -107,7 +106,7 @@ const MarketSideBar = ({
                 <div className='market-cta-section'>
                   <div className='market-sell' onClick={(e) => {
                     window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type};
-                      if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto') && !pair.closed) {
+                      if((pair.type.toLowerCase() === 'forex' || pair.type.toLowerCase() === 'crypto' || parseInt(pair.complete) === 1) && !pair.closed) {
                         showBsellModal(e)
                       }
                     }}>
