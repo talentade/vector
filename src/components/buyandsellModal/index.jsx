@@ -84,6 +84,7 @@ class BuyandsellModal extends Component {
         let payload = message.payload;
         switch(message.event) {
           case "GET_CONVERSION":
+          console.log(payload, "<<<<<<<<<<");
           if(payload.user == app.id() && payload.account == app.account()) {
             this.setState({
               analysis:     true,
@@ -126,7 +127,7 @@ class BuyandsellModal extends Component {
       base  = base;
       base1 = "USD";
       base2 = base;
-      delimeter = "";
+      delimeter = "/";
     }
     this.setState({
       pair:  this.props.pair,
@@ -144,6 +145,7 @@ class BuyandsellModal extends Component {
       window.WebSocketPlug.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
         user:      app.id(),
         account:   app.account(),
+        type:      this.props.type,
         base1:     base1.trim(),
         base2:     base2.trim(),
         delimeter: delimeter

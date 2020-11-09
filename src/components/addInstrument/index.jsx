@@ -16,6 +16,7 @@ class AddInstrument extends Component {
 
     this.state = {
       loading: false,
+      antiForex: true,
       errorMessage: ''
     };
 
@@ -38,6 +39,8 @@ class AddInstrument extends Component {
       "com":      $("#i-com").val(),
       "lev":      $("#i-lev").val(),
       "type":     $("#i-type").val(),
+      "cont":     $("#i-contract").val() || "",
+      "pips":     $("#i-pip-size").val() || "",
       "pip":      $("#i-pip").val(),
       "min":      $("#i-min").val(),
       "max":      $("#i-max").val(),
@@ -72,8 +75,25 @@ class AddInstrument extends Component {
     this.setState({loading: false});
   }
 
+  cpip = (e) => {
+    let v = e.target.value.toLowerCase();
+    if(v == "forex" || v == "crypto") {
+      this.setState({antiForex: true});
+    } else {
+      this.setState({antiForex: false});
+    }
+  }
+
   render () {
+    let antiForex;
     const { cancel, data } = this.props;
+
+    if(data) {
+      antiForex = data.type.toLowerCase() == "forex" || data.type.toLowerCase() == "crypto" ? true : false;
+    } else {
+      antiForex = this.state.antiForex;
+    }
+
     return (
       <div className='overlay ain' onClick={this.popupOut}>
         <div className='modal-section'>
@@ -100,7 +120,7 @@ class AddInstrument extends Component {
                 </div>
                 <div className="i-col">
                   <label>Type</label>
-                  <select className="select-box" id="i-type" defaultValue={data ? data.type.toUpperCase() : "FOREX"}>
+                  <select className="select-box" id="i-type" onChange={this.cpip} defaultValue={data ? data.type.toUpperCase() : "FOREX"}>
                     <option>FOREX</option>
                     <option>CRYPTO</option>
                     <option>STOCK</option>
@@ -112,6 +132,22 @@ class AddInstrument extends Component {
                   <label>Pip per unit Lot</label>
                   <input className="" id="i-pip" type="text" defaultValue={data ? data.unit_per_lot : ""} />
                 </div>
+                {!antiForex
+                   ?
+                    <div className="i-col">
+                      <label>Contract Size</label>
+                      <input className="" id="i-contract" type="text" defaultValue={data ? data.unit_per_lot : ""} />
+                    </div>
+                  : null
+                }
+                {!antiForex
+                  ?
+                    <div className="i-col">
+                      <label>Pip size</label>
+                      <input className="" id="i-pip-size" type="text" defaultValue={data ? data.unit_per_lot : ""} />
+                    </div>
+                  : null
+                }
                 <div className="i-col">
                   <label>MIN Volume</label>
                   <input className="" id="i-min" type="text" defaultValue={data ? data._min : ""} />
