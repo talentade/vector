@@ -136,7 +136,7 @@ class AddInstrument extends Component {
                    ?
                     <div className="i-col">
                       <label>Contract Size</label>
-                      <input className="" id="i-contract" type="text" defaultValue={data ? data.unit_per_lot : ""} />
+                      <input className="" id="i-contract" type="text" defaultValue={data ? data.contract : ""} />
                     </div>
                   : null
                 }
@@ -144,7 +144,7 @@ class AddInstrument extends Component {
                   ?
                     <div className="i-col">
                       <label>Pip size</label>
-                      <input className="" id="i-pip-size" type="text" defaultValue={data ? data.unit_per_lot : ""} />
+                      <input className="" id="i-pip-size" type="text" defaultValue={data ? data.pip_size : ""} />
                     </div>
                   : null
                 }

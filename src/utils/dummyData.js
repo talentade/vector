@@ -10,6 +10,7 @@ import Lnav6 from "../themes/images/tradeDashboard/l_nav6.svg";
 
 import act from "../themes/images/admin/act.svg";
 import calls from "../themes/images/admin/calls.svg";
+import Dash from "../themes/images/dashboard.png";
 import Menu1 from "../themes/images/admin/menu1.png";
 import Menu2 from "../themes/images/admin/menu2.png";
 import Menu3 from "../themes/images/admin/menu3.png";
@@ -302,6 +303,7 @@ const appNavClass = 'l-nav-link';
 
 export const adminLeftNavData = [
   // {path: '/Forms', className: appNavClass, imageUrl: Menu1, name: 'forms', text: 'Forms'},
+  {path: '/Dashboard', className: appNavClass, imageUrl: Dash, name: 'dashboard', text: 'Dashboard'},
   {path: '/Lists', className: appNavClass, imageUrl: Menu2, name: 'lists', text: 'Lists'},
   {path: '/Finance', className: appNavClass, imageUrl: Lnav6, name: 'finance', text: 'Finance'},
   // {path: '/MailAccounts', className: appNavClass, imageUrl: Menu3, name: 'mailaccounts', text: 'Mail Accounts'},
