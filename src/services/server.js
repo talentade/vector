@@ -511,6 +511,32 @@ export default {
     });
   },
 
+  changeTransferStatus(uid, stat) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/tstat/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        s: stat
+      }
+    });
+  },
+
+  KYCStatus(uid, stat) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/kyc/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        s: stat
+      }
+    });
+  },
+
   changeLeverage(uid, acc, lev) {
     return axios.request({
       method: 'PUT',

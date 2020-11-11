@@ -15,7 +15,6 @@ class CanvasJSChart extends Component {
 	render() {
 		return (
 	      <Container>
-	      	<img  className="full-width" src={dash0} />
 	      </Container>
 	    )
 	}	

@@ -51,6 +51,7 @@ class UsersProfile extends Component {
   }
 
   render () {
+
     return (
       <div className="user-profile-body">
         <img src={this.state.profile_image.length ? this.state.profile_image : userDp} className="udp" />
@@ -91,7 +92,7 @@ class UsersProfile extends Component {
             <tr>
               <td>
                 <span className="txt-default">Account status</span>
-                <span className="td-v">NOT VERIFIED</span>
+                <span className={"td-"+(this.props.profile.kyc ? "b" : "v")}>{this.props.profile.kyc ? "" : "NOT "}VERIFIED</span>
               </td>
               <td>
                 <span className="txt-default">Total Balance</span>
