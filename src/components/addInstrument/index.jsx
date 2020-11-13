@@ -129,7 +129,7 @@ class AddInstrument extends Component {
                   </select>
                 </div>
                 <div className="i-col">
-                  <label>Pip per unit Lot</label>
+                  <label>Pip per <b>0.1</b> Volume (lots)</label>
                   <input className="" id="i-pip" type="text" defaultValue={data ? data.unit_per_lot : ""} />
                 </div>
                 {!antiForex
@@ -143,7 +143,7 @@ class AddInstrument extends Component {
                 {!antiForex
                   ?
                     <div className="i-col">
-                      <label>Pip size</label>
+                      <label>Units per <b>0.1</b> Volume (lots)</label>
                       <input className="" id="i-pip-size" type="text" defaultValue={data ? data.pip_size : ""} />
                     </div>
                   : null

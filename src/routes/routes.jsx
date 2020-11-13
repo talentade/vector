@@ -80,6 +80,23 @@ export default props => (
         <Route path='/Documents' exact component={Documents} />
         <Route path='/Profile' exact component={Profile} />
       </Switch>
+    ) : app.isVerified() ? (
+        <Switch>
+            <Route exact path='/' component={Login} />
+            <Route exact path='/Login' component={Login} />
+            <Route exact path='/Register' component={Register} />
+            <Route exact path='/VerifyEmail' component={VerifyEmail} />
+            <Route exact path='/VerifyPhone' component={VerifyPhone} />
+            <Route exact path='/Book' component={BookCall} />
+            <Route exact path='/Trade' component={Trade} />
+            <Route exact path='/Accounts' component={Accounts} />
+            <Route exact path='/Profile' component={Profile} />
+            <Route exact path='/ForgotPassword' component={ForgotPassword} />
+            <Route exact path='/ChangePassword' component={ChangePassword} />
+            <Route exact path='/Market' component={Market} />
+            <Route exact path='/News' component={News} />
+            <Route exact path='/Transactions' component={Transactions} />
+        </Switch>
     ) : (
         <Switch>
             <Route exact path='/' component={Login} />
@@ -87,15 +104,8 @@ export default props => (
             <Route exact path='/Register' component={Register} />
             <Route exact path='/VerifyEmail' component={VerifyEmail} />
             <Route exact path='/VerifyPhone' component={VerifyPhone} />
-            <Route path='/Book' exact component={BookCall} />
-            <Route path='/Trade' exact component={Trade} />
-            <Route path='/Accounts' exact component={Accounts} />
-            <Route path='/Profile' exact component={Profile} />
-            <Route path='/ForgotPassword' exact component={ForgotPassword} />
-            <Route path='/ChangePassword' exact component={ChangePassword} />
-            <Route path='/Market' exact component={Market} />
-            <Route path='/News' exact component={News} />
-            <Route path='/Transactions' exact component={Transactions} />
+            <Route exact path='/Book' component={BookCall} />
+            <Route exact path='/Profile' component={Profile} />
         </Switch>
     )
 )

@@ -37,7 +37,7 @@ class Profile extends Component {
       confirmPasswordError: null,
       error: null,
       success: false,
-      verified: false,
+      verified: app.isVerified(),
       imageUrl: '',
       image: '',
       profile_image: '',
@@ -68,6 +68,8 @@ class Profile extends Component {
     app.profile(gp.data.profile);
     this.profile         = app.profile();
     this.selectedAccount = app.accountDetail();
+
+    this.setState({verified: this.profile.kyc > 0})
 
     this.props.saveUserProfile(this.profile);
 

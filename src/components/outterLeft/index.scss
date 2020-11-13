@@ -4,6 +4,10 @@
   width: 170px;
 }
 
+.--disabled {
+  filter: brightness(0.5);
+}
+
 .outter-ham {
   cursor: pointer;
 }

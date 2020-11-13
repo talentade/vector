@@ -52,7 +52,7 @@ class SignIn extends Component {
       app.profile(user);
       const accounts = app.accounts();
       this.setState({ showSpinner: false });
-      this.props.history.push(app.isAdmin() ? '/Lists' : (user.booked > 0 ? '/Trade' : '/Book'));
+      this.props.history.push(app.isAdmin() ? '/Lists' : (app.isVerified() ? '/Trade' : '/Book')); // user.booked > 0
     } catch (error) {
       this.setState({ showSpinner: false });
       if (!error.response) {

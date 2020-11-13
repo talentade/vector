@@ -322,7 +322,7 @@ class BookCall extends Component {
           <div className="col-12" id="book-container">
             <img src={check_mark} />
             <img src={scheduled} style={{marginTop: "10px"}}/>
-            <h2 className="bcw text-center">We will activate your account after our call on:</h2>
+            <h2 className="bcw text-center">We will activate your account<br />after our call on:</h2>
             <div className="scheduled-date">
               <h4>{this.state.meeting_date}</h4>
               <h5>{this.state.email}</h5>

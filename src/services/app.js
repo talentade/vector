@@ -16,6 +16,10 @@ const app = {
     if(!profile) window.location.href = "/login";
     return (profile.first_name+" "+profile.last_name).ucwords();
   },
+  isVerified: () => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    return !profile ? 0 : profile.kyc;
+  },
   userid: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
