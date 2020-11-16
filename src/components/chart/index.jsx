@@ -56,6 +56,7 @@ class Chart extends Component {
     this.realTimeListener = true;
     this.currentPairData = null;
     this.lastFetch = null;
+    this.checkingAnalysis = false;
     this.chartData1 = {graph: "candle", pair: "", level: "1d"};
 
     this.state = {
@@ -63,6 +64,7 @@ class Chart extends Component {
       currentPairs: [],
       allPairs: app.allPairs(),
       pair: '',
+      analysis: null,
       selectedPair: '',
       currentPairData: null,
       buy: 0,
@@ -198,10 +200,6 @@ class Chart extends Component {
           }
 
           if(this.loadHistory > 0) {
-            // $('.chart').html(this.duplicator);
-            // this.chart.current.removeSeries(this.charSeries);
-            // this.chartContainerRef = createRef();
-            // this.chart = createRef();
             this.chart.current.removeSeries(this.chartSeries);
             this.setGraphType(this.currentGrpahType, 0);
             this.plotGraph(this.historyData);
@@ -444,6 +442,29 @@ class Chart extends Component {
 
   }
 
+  socketInit = () => {
+    window.WebSocketPlug.addEventListener('message', ({data}) => {
+      try {
+        let message = JSON.parse(`${data}`);
+        let payload = message.payload;
+        switch(message.event) {
+          case "GET_CONVERSION":
+          if(payload.user == app.id() && payload.account == app.account() && payload.preload && payload.pair == this.state.pair1) {
+            let analysis = { conversion_1: payload.conversion_1, conversion_2: payload.conversion_2 };
+            this.checkingAnalysis = false;
+            this.setState({
+              analysis: analysis
+            });
+            console.log(analysis, "<<<<<<<<<<<<<<<");
+          }
+          break;
+        }
+      } catch (e) {
+        throw e;
+      }
+    });
+  }
+
   async componentDidMount() {
     this.realTimeListener = true;
 
@@ -453,6 +474,11 @@ class Chart extends Component {
 
     if(stockToDisplay.length) {
       this.currentPairData = stockToDisplay[0];
+    }
+
+    $(window).on("renewSocket", () => this.socketInit());
+    if(window.WebSocketPlugged) {
+      $(window).trigger("renewSocket");
     }
 
     // $(document).delegate(".instrument-icons li", "click", function () {
@@ -542,7 +568,9 @@ class Chart extends Component {
 
       const instruments = Object.keys(allPairs);
       this.pair         = allPairs.forex[0];
+      this.checkingAnalysis = false;
       this.setState({
+        analysis:       null,
         allPairs:       allPairs,
         currentPairs:   allPairs.forex,
         selectedPair:   allPairs.forex[0],
@@ -621,7 +649,9 @@ class Chart extends Component {
   handleOptionsChange = (e) => {
     this.pair = this.state.allPairs[e.target.value.toLowerCase()][0];
     this.currentPairData = null;
+    this.checkingAnalysis = false;
     this.setState({
+      analysis: null,
       currentPairData: null,
       selectedOption: e.target.value,
       currentPairs: this.state.allPairs[e.target.value.toLowerCase()],
@@ -630,7 +660,6 @@ class Chart extends Component {
 
     this.setGraphType(this.currentGrpahType, 1);
     this.plotGraphData(this.state.selectedPair);
-
   };
 
   setNewPairData = (e) => {
@@ -732,6 +761,38 @@ class Chart extends Component {
 
     let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto' || parseInt(_currentPairData.complete) === 1) && !_currentPairData.closed;
 
+    if(window.WebSocketPlugged && !this.state.analysis && !this.checkingAnalysis && (_currentPairData.type == "forex" || _currentPairData.type == "crypto")) {
+      console.log("fire ========!!!!!!!!!!!!!!!");
+      let base = this.state.pair1, base1, base2, delimeter = "";
+      if(base.indexOf("/") > -1) {
+        base  = base.split("/");
+        base1 = base[0];
+        base2 = base[1] || "USD";
+        delimeter = "/";
+      } else if(base.indexOf("-") > -1) {
+        base  = base.split("-");
+        base1 = base[0];
+        base2 = base[1] || "USD";
+        delimeter = "-";
+      } else {
+        base  = base;
+        base1 = "USD";
+        base2 = base;
+        delimeter = "/";
+      }
+      this.checkingAnalysis = true;
+      window.WebSocketPlug.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+        user:      app.id(),
+        pair:      this.state.pair1,
+        account:   app.account(),
+        type:      _currentPairData.type,
+        base1:     base1.trim(),
+        base2:     base2.trim(),
+        delimeter: delimeter,
+        preload:   true
+      }}));
+    }
+
     // $(".multiple-chart-section").each(function () {
     //   console.log($(this).attr("class"), $(this).attr("uniqueId"));
     // });
@@ -742,6 +803,7 @@ class Chart extends Component {
           {this.state.buyandsellModal ? (
             <BuyandsellModal
               info={_currentPairData.info}
+              analysis={this.state.analysis}
               pair={this.state.pair1}
               buy={_currentPairData.buy}
               sell={_currentPairData.sell}
@@ -763,7 +825,7 @@ class Chart extends Component {
           <ChartModule
             col={this.state.col}
             instruments={this.state.instruments}
-            changePair={(p, s) => this.setState({pair1: p, selectedOption1: s})}
+            changePair={(p, s) => { this.checkingAnalysis = false; this.setState({pair1: p, selectedOption1: s, analysis: null}); }}
             key={this.state.historyLevel1+"-"+this.state.pair1+"-1"}
             chartKey={this.state.historyLevel1+"-"+this.state.pair1}
             changeLevel={(l) => this.setState({historyLevel1: l})}

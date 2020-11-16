@@ -6,6 +6,7 @@ import CancelImage from '../../themes/images/cancel.png';
 import arrowBuyIcon from '../../themes/images/arrow-buy.png';
 import server from '../../services/server';
 import app from '../../services/app';
+import loader from "./loader.svg";
 import arrowSellIcon from '../../themes/images/arrow-sell.png';
 import upVlv from '../../themes/images/up.png';
 import downVlv from '../../themes/images/down.png';
@@ -47,6 +48,8 @@ class BuyandsellModal extends Component {
       changed_lot: 0.01,
       showLoader: false,
       live: 0,
+      stl_val: 0,
+      tkp_val: 0,
       estimated_price1: 0,
       estimated_price2: 0,
       lot_val: 0.01,
@@ -71,6 +74,13 @@ class BuyandsellModal extends Component {
       $(window).trigger("renewSocket");
     }
     this.initLoader();
+
+    $("#tkp_val").keyup(() => {
+      this.setState({tkp_val: Number($("#tkp_val").val())});
+    });
+    $("#stl_val").keyup(() => {
+      this.setState({stl_val: Number($("#stl_val").val())});
+    });
   }
 
   componentWillUnmount () {
@@ -84,7 +94,6 @@ class BuyandsellModal extends Component {
         let payload = message.payload;
         switch(message.event) {
           case "GET_CONVERSION":
-          console.log(payload, "<<<<<<<<<<");
           if(payload.user == app.id() && payload.account == app.account()) {
             this.setState({
               analysis:     true,
@@ -141,15 +150,32 @@ class BuyandsellModal extends Component {
       this.btnBsell("btnSell", "btnBuy");
     }
     
-    if(window.WebSocketPlugged) {
-      window.WebSocketPlug.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
-        user:      app.id(),
-        account:   app.account(),
-        type:      this.props.type,
-        base1:     base1.trim(),
-        base2:     base2.trim(),
-        delimeter: delimeter
-      }}));
+    if(window.WebSocketPlugged && (
+        this.props.type.toLowerCase() == "forex" ||
+        this.props.type.toLowerCase() == "crypto"
+      )) {
+      if(!!this.props.analysis) {
+        this.setState({
+          analysis:     true,
+          conversion_1: this.props.analysis.conversion_1,
+          conversion_2: this.props.analysis.conversion_2
+        });
+        let _a = this.props.analysis; _a.base2 = base2
+        this.pip_margin(null, _a);
+        this.vlvChange();
+      } else {
+        window.WebSocketPlug.send(JSON.stringify({"event": "GET_CONVERSION", "payload": {
+          user:      app.id(),
+          account:   app.account(),
+          type:      this.props.type,
+          base1:     base1.trim(),
+          base2:     base2.trim(),
+          delimeter: delimeter
+        }}));
+      }
+    } else if(!(this.props.type.toLowerCase() == "forex" || this.props.type.toLowerCase() == "crypto")) {
+      this.pip_margin(null);
+      this.vlvChange();
     }
   }
 
@@ -209,14 +235,49 @@ class BuyandsellModal extends Component {
     this.pip_margin(lots);
   }
 
-  pip_margin = (lots = null) => {
+  pip_margin = (lots = null, conversion = null) => {
     let volume = lots ? lots : this.state.volume;
-    if(this.state.conversion_1 > 0 && this.state.conversion_2 > 0) {
+    let market_price = (this.state.mode.toLowerCase() == "buy" ? this.props.buy : this.props.sell);
+    let { conversion_1, conversion_2, base2 } = this.state;
+
+    if(conversion) {
+      conversion_1 = conversion.conversion_1;
+      conversion_2 = conversion.conversion_2;
+      base2        = conversion.base2;
+    }
+
+    if(!(
+        this.props.type.toLowerCase() == "forex" ||
+        this.props.type.toLowerCase() == "crypto"
+      )) {
+
+      let info    = this.props.info;
+      let vol     = volume;
+      let lev     = parseFloat(this.props.info.leverage) || 1;
+      let ppl     = parseFloat(info.unit_per_lot);
+      let unit    = parseFloat(info.pip_size);
+      let cntr    = parseFloat(info.contract);
+      let pip_str = ppl * (vol / 0.1);
+      let lot_str = unit * (vol / 0.1);
+      let margin  = vol * cntr * market_price / lev;
+
+      if(ppl > 0 && lev > 0 && cntr > 0) {} else {
+        return false;
+      }
+
+      this.setState({
+        analysis: true,
+        pip_str: pip_str.toFixed(2),
+        lot_str: lot_str.toFixed(2),
+        required_margin_str: margin.toFixed(2)
+      });
+      // Margin = V (lots) × Contract × Market Price / Leverage = 0.1 × 10 × 2,804.5 / 50 = 56.90
+    } else if(conversion_1 > 0 && conversion_2 > 0) {
       if(this.props.type.toLowerCase() === "forex") {
         let lev     = 1 / app.leverage();
-        let pips    = this.state.conversion_2 * (this.state.base2.toUpperCase() == "JPY" ? 1000 : 10) * volume;
+        let pips    = conversion_2 * (base2.toUpperCase() == "JPY" ? 1000 : 10) * volume;
         let units   = volume * 100000;
-        let margin  = this.state.conversion_1 * units * lev;
+        let margin  = conversion_1 * units * lev;
         this.setState({
           pip_str: pips.toFixed(2),
           lot_str: units.toFixed(2),
@@ -228,7 +289,7 @@ class BuyandsellModal extends Component {
         let pips    = volume * dpl;
         let upl     = String(this.props.info.unit_per_lot).trim()
         let units   = volume * (upl.length ? Number(upl) : dpl);
-        let margin  = (this.state.mode.toLowerCase() == "buy" ? this.props.buy : this.props.sell) * this.state.conversion_2 * units / lev;
+        let margin  = market_price * conversion_2 * units / lev;
         this.setState({
           pip_str: pips.toFixed(2),
           lot_str: units.toFixed(2),
@@ -342,15 +403,24 @@ class BuyandsellModal extends Component {
 
   render () {
     const { info, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
-    const { information, analysis, base1 } = this.state;
+    const { information, analysis, base1, tkp_val, stl_val } = this.state;
 
-    let tkp, stl, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
+    let tkp, stl, etkp = 0, estl = 0, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
 
         tkp = (110 / 100) * Number(crate);
         stl = (90 / 100) * Number(crate);
 
         tkp = Number(String(tkp).substr(0, String(crate).length));
         stl = Number(String(stl).substr(0, String(crate).length));
+
+        tkp = tkp_val > 0 ? tkp_val : tkp;
+        stl = stl_val > 0 ? stl_val : stl;
+
+        if(this.state.required_margin_str > 0) {
+          let u = this.state.required_margin_str / buy;
+              etkp = parseFloat(u * tkp).toFixed(2);
+              estl = parseFloat(u * stl).toFixed(2);
+        }
 
         sell_when = (95 / 100) * Number(crate);
         buy_when = (105 / 100) * Number(crate);
@@ -414,6 +484,7 @@ class BuyandsellModal extends Component {
                 <li className=""><span className="text-success">Pip Value:</span><span className="text-success">{this.state.pip_str} $</span></li>
                 <li className=""><span className="text-success">{this.state.volume} lots:</span><span className="text-success">{this.state.lot_str} {this.props.type.toLowerCase() == "forex" ? this.state.base1 : "units"}</span></li>
                 <li className=""><span className="text-success">Required Margin:</span><span className="text-success">{this.state.required_margin_str} USD</span></li>
+                <li className=""><span className="text-success">Commission:</span><span className="text-success">{Number((Number(info.commission) / 100) * this.state.required_margin_str)} USD</span></li>
               </ul>
               <div className="phr">
                 <span>
@@ -426,8 +497,8 @@ class BuyandsellModal extends Component {
                       {/*<img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />
                       <img src={downVlv} className="dvlv" id="vlv_0" onClick={(e) => { this._vlvChange("down", 0); }} />*/}
                     </p>
-                    <small className="hide">Estimated Price</small>
-                    <input className="hide" type="number" placeholder="" value={this.state.estimated_price1} />
+                    <small className="">Estimated Price</small>
+                    <input className="num" type="text" readOnly placeholder="" value={"$"+estl} />
                   </span>
                 </span>
                 <span>
@@ -449,14 +520,14 @@ class BuyandsellModal extends Component {
                       {/*<img src={upVlv} className="uvlv" id="vlv_1" onClick={(e) => { this._vlvChange("up", 1); }} />
                       <img src={downVlv} className="dvlv" id="vlv_1" onClick={(e) => { this._vlvChange("down", 1); }} />*/}
                     </p>
-                    <small className="hide">Estimated Price</small>
-                    <input className="hide" type="number" placeholder="" value={this.state.estimated_price2} />
+                    <small className="">Estimated Price</small>
+                    <input className="num" type="text" readOnly placeholder="" value={"$"+etkp} />
                   </span>
                 </span>
               </div>
               <p align="center">
-                <button className="btn place_order _active" id="btnSell-order"  disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.6}} onClick={this.placeOrder}>Place Sell Order</button>
-                <button className="btn place_order" id="btnBuy-order" disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.6}} onClick={this.placeOrder}>Place Buy Order</button>
+                <button className="btn place_order _active" id="btnSell-order"  disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.6}} onClick={this.placeOrder}>{ analysis ? null : <img src={loader} style={{width: "16px", marginRight: "5px"}} /> }Place Sell Order</button>
+                <button className="btn place_order" id="btnBuy-order" disabled={!analysis} style={analysis ? {opacity: 1} : {opacity: 0.6}} onClick={this.placeOrder}>{ analysis ? null : <img src={loader} style={{width: "16px", marginRight: "5px"}} /> }Place Buy Order</button>
               </p>
             </div> : null }
           </div>
