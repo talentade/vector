@@ -75,11 +75,42 @@ class BuyandsellModal extends Component {
     }
     this.initLoader();
 
-    $("#tkp_val").keyup(() => {
-      this.setState({tkp_val: Number($("#tkp_val").val())});
+    let d = this;
+
+    $("#tkp_val_1").keyup(function () {
+      if(Number($(this).val()) <= Number($(this).data("rate"))) {
+        $(this).val($(this).data("valu"));
+        d.setState({tkp_val: Number($(this).data("valu"))});
+      } else {
+        d.setState({tkp_val: Number($(this).val())});
+      }
     });
-    $("#stl_val").keyup(() => {
-      this.setState({stl_val: Number($("#stl_val").val())});
+
+    $("#tkp_val_0").keyup(function () {
+      if(Number($(this).val()) >= Number($(this).data("rate"))) {
+        $(this).val($(this).data("valu"));
+        d.setState({tkp_val: Number($(this).data("valu"))});
+      } else {
+        d.setState({tkp_val: Number($(this).val())});
+      }
+    });
+
+    $("#stl_val_1").keyup(function () {
+      if(Number($(this).val()) >= Number($(this).data("rate"))) {
+        $(this).val($(this).data("valu"));
+        d.setState({stl_val: Number($(this).data("valu"))});
+      } else {
+        d.setState({stl_val: Number($(this).val())});
+      }
+    });
+
+    $("#stl_val_0").keyup(function () {
+      if(Number($(this).val()) <= Number($(this).data("rate"))) {
+        $(this).val($(this).data("valu"));
+        d.setState({stl_val: Number($(this).data("valu"))});
+      } else {
+        d.setState({stl_val: Number($(this).val())});
+      }
     });
   }
 
@@ -271,7 +302,6 @@ class BuyandsellModal extends Component {
         lot_str: lot_str.toFixed(2),
         required_margin_str: margin.toFixed(2)
       });
-      // Margin = V (lots) × Contract × Market Price / Leverage = 0.1 × 10 × 2,804.5 / 50 = 56.90
     } else if(conversion_1 > 0 && conversion_2 > 0) {
       if(this.props.type.toLowerCase() === "forex") {
         let lev     = 1 / app.leverage();
@@ -284,7 +314,7 @@ class BuyandsellModal extends Component {
           required_margin_str: margin.toFixed(2)
         });
       } else if(this.props.type.toLowerCase() === "crypto") {
-        let lev     = parseInt(this.props.info.type_leverage);
+        let lev     = parseInt(this.props.info.leverage);
         let dpl     = Number(this.props.info.dollar_per_lot);
         let pips    = volume * dpl;
         let upl     = String(this.props.info.unit_per_lot).trim()
@@ -350,6 +380,7 @@ class BuyandsellModal extends Component {
   }
 
   placeOrder = async () => {
+    let isBuy = this.state.mode == "buy" ? 1 : 0;
     let order = {
         "mode"            : this.state.mode,
         "type"            : this.props.type,
@@ -359,8 +390,8 @@ class BuyandsellModal extends Component {
         "lots"            : this.state.lot_str,
         "volume"          : this.state.volume,
         "margin"          : this.state.required_margin_str,
-        "stop_loss"       : document.getElementById("stop_loss").checked ? Number($("#stl_val").val().trim()) : "",
-        "take_profit"     : document.getElementById("take_profit").checked ? Number($("#tkp_val").val().trim()) : "",
+        "stop_loss"       : document.getElementById("stop_loss").checked ? Number($("#stl_val_"+isBuy).val().trim()) : "",
+        "take_profit"     : document.getElementById("take_profit").checked ? Number($("#tkp_val_"+isBuy).val().trim()) : "",
         "trade_when"      : document.getElementById("only_buy_when").checked ? Number($(".only_buy_when_actual.for-"+this.state.mode).val()) : "",
         "time"            : new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
       }
@@ -405,10 +436,13 @@ class BuyandsellModal extends Component {
     const { info, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
     const { information, analysis, base1, tkp_val, stl_val } = this.state;
 
+    console.log(info);
+    
     let tkp, stl, etkp = 0, estl = 0, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
+    let isBuy = this.state.mode == "buy" ? 1 : 0;
 
-        tkp = (110 / 100) * Number(crate);
-        stl = (90 / 100) * Number(crate);
+        tkp = (108 / 100) * Number(crate);
+        stl = (91 / 100) * Number(crate);
 
         tkp = Number(String(tkp).substr(0, String(crate).length));
         stl = Number(String(stl).substr(0, String(crate).length));
@@ -416,10 +450,28 @@ class BuyandsellModal extends Component {
         tkp = tkp_val > 0 ? tkp_val : tkp;
         stl = stl_val > 0 ? stl_val : stl;
 
+        if(this.state.mode != "buy") {
+        let _ = tkp;
+          tkp = stl;
+          stl = _;
+        }
+
         if(this.state.required_margin_str > 0) {
-          let u = this.state.required_margin_str / buy;
-              etkp = parseFloat(u * tkp).toFixed(2);
-              estl = parseFloat(u * stl).toFixed(2);
+          if(info.type.toLowerCase() == "forex") {
+            etkp = parseFloat(((Number(this.state.lot_str) * tkp / crate) - this.state.lot_str) * this.state.conversion_1).toFixed(2);
+            estl = parseFloat(((Number(this.state.lot_str) * stl / crate) - this.state.lot_str) * this.state.conversion_1).toFixed(2);
+          } else {
+            etkp = parseFloat((((crate * Number(this.state.lot_str) * tkp) / crate)) - (crate * Number(this.state.lot_str))).toFixed(2);
+            estl = parseFloat((((crate * Number(this.state.lot_str) * stl) / crate)) - (crate * Number(this.state.lot_str))).toFixed(2);
+          }
+
+          if(this.state.mode != "buy") {
+            etkp = etkp * -1;
+            estl = estl * -1;
+          }
+
+          etkp = (etkp < 0 ? '-' : '')+"$"+(etkp < 0 ? etkp * -1 : etkp);
+          estl = (estl < 0 ? '-' : '')+"$"+(estl < 0 ? estl * -1 : estl);
         }
 
         sell_when = (95 / 100) * Number(crate);
@@ -439,8 +491,8 @@ class BuyandsellModal extends Component {
               <li className={information ? '' : '_active'} onClick={() => { this.handleClick(false); setTimeout(() => { this.initLoader(); }, 10) }}><span>Markets</span></li>
             </ul>
             { information ? <div className='bsell-modal-content'>
-              <h6>{pair}</h6>
-              {/*<p>Bitcoin vs US Dollar</p>*/}
+              <h6>{info.name}{pair}</h6>
+              {info.name.length ? <p>{info.name}</p> : null}
               <ul className="info-list">
                 <li className="mt1"><span className="text-success">Quote Asset</span><span className="text-success">{base1}</span></li>
                 <li><span>PIp Size:</span><span>0.01 (2digits)</span></li>
@@ -491,20 +543,19 @@ class BuyandsellModal extends Component {
                   Set stop loss
                   <label className="switch"><input type="checkbox" id="stop_loss" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    {/*<small>Rate</small>*/}
                     <p className="stop_loss">
-                      <input type="number" placeholder="0.01" id="stl_val" defaultValue={stl} />
+                      <input type="number" placeholder="0.01" className={"stl_val"+(isBuy ? "" : " hide")} id="stl_val_1" defaultValue={stl} data-valu={stl} data-rate={crate} />
+                      <input type="number" placeholder="0.01" className={"stl_val"+(isBuy ? " hide" : "")} id="stl_val_0" defaultValue={tkp} data-valu={tkp} data-rate={crate} />
                       {/*<img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />
                       <img src={downVlv} className="dvlv" id="vlv_0" onClick={(e) => { this._vlvChange("down", 0); }} />*/}
                     </p>
                     <small className="">Estimated Price</small>
-                    <input className="num" type="text" readOnly placeholder="" value={"$"+estl} />
+                    <input className="num" type="text" readOnly placeholder="" value={estl} />
                   </span>
                 </span>
                 <span>
                   Only buy/sell when <label className="switch"><input type="checkbox" id="only_buy_when" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    {/*<small>Rate</small>*/}
                     <p className="trade_when">
                       <input type="number" className={"only_buy_when_actual for-sell"+(this.state.mode == "sell" ? "" : " hide")} defaultValue={sell_when} />
                       <input type="number" className={"only_buy_when_actual for-buy"+(this.state.mode == "buy" ? "" : " hide")} defaultValue={buy_when} />
@@ -514,14 +565,14 @@ class BuyandsellModal extends Component {
                 <span>
                   Set take profit <label className="switch"><input type="checkbox"id="take_profit" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
-                    {/*<small>Rate</small>*/}
                     <p className="take_profit">
-                      <input type="number" placeholder="0.01" id="tkp_val" defaultValue={tkp} />
+                      <input type="number" placeholder="0.01" className={"tkp_val"+(isBuy ? "" : " hide")} id="tkp_val_1" defaultValue={tkp} data-valu={tkp} data-rate={crate} />
+                      <input type="number" placeholder="0.01" className={"tkp_val"+(isBuy ? " hide" : "")} id="tkp_val_0" defaultValue={stl} data-valu={stl} data-rate={crate} />
                       {/*<img src={upVlv} className="uvlv" id="vlv_1" onClick={(e) => { this._vlvChange("up", 1); }} />
                       <img src={downVlv} className="dvlv" id="vlv_1" onClick={(e) => { this._vlvChange("down", 1); }} />*/}
                     </p>
                     <small className="">Estimated Price</small>
-                    <input className="num" type="text" readOnly placeholder="" value={"$"+etkp} />
+                    <input className="num" type="text" readOnly placeholder="" value={etkp} />
                   </span>
                 </span>
               </div>

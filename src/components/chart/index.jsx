@@ -762,7 +762,6 @@ class Chart extends Component {
     let buyable = (_currentPairData.type.toLowerCase() === 'forex' || _currentPairData.type.toLowerCase() === 'crypto' || parseInt(_currentPairData.complete) === 1) && !_currentPairData.closed;
 
     if(window.WebSocketPlugged && !this.state.analysis && !this.checkingAnalysis && (_currentPairData.type == "forex" || _currentPairData.type == "crypto")) {
-      console.log("fire ========!!!!!!!!!!!!!!!");
       let base = this.state.pair1, base1, base2, delimeter = "";
       if(base.indexOf("/") > -1) {
         base  = base.split("/");
