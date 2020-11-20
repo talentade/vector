@@ -436,7 +436,7 @@ class BuyandsellModal extends Component {
     const { info, cancelClick, confirmClick, pair, buy, sell, act } = this.props;
     const { information, analysis, base1, tkp_val, stl_val } = this.state;
 
-    console.log(info);
+    // console.log(info);
     
     let tkp, stl, etkp = 0, estl = 0, sell_when, buy_when, crate = this.state.mode == "buy" ? buy : sell;
     let isBuy = this.state.mode == "buy" ? 1 : 0;
