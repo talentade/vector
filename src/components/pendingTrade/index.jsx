@@ -15,9 +15,9 @@ class PendingTrade extends Component {
   componentWillUnmount() {}
 
   render () {
-    const { type, filterOptions, history } = this.props;
+    const { type, filterOptions, admin, history } = this.props;
     return (
-      <TradeHistory type="pending" filterOptions={filterOptions} history={history} />
+      <TradeHistory type="pending" filterOptions={filterOptions} admin={admin} history={history} />
     );
 };
 }

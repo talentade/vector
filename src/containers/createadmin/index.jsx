@@ -148,6 +148,8 @@ class CreateAdmin extends Component {
         }
       });
 
+      // console.log(permitted);
+
       try {
         let submit = {
           first_name: firstName,
@@ -156,14 +158,13 @@ class CreateAdmin extends Component {
           phone_number: phone, // phone_number,
           password,
           gender,
-          permissions: '',
           country: country,
           extension_no,
           role: selectedTab,
           permissions: permitted.join(",")
         };
 
-        const response = await server.register(submit);
+        const response = await server.register(submit, true);
         window.location.href = "";
       } catch (error) {
         this.setState({ showSpinner: !this.state.showSpinner });
@@ -211,7 +212,7 @@ class CreateAdmin extends Component {
           <RestrictionNav selectedTab={this.state.selectedTab} handleClick={this.toggleTabs} />
 
 
-          <div className={"half-screen"+(this.state.showRestrictions ? "" : " hide")}>
+          <div className={"half-screen"+(this.state.showRestrictions ? "" : " __hide")}>
             <div className="header">
               <h1>Restrictions</h1>
               <img src={CancelIcon} className="cancelIcon" onClick={() => this.setState({showRestrictions: false})} />

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import TableFilters from '../../components/tablefilters/index';
 import { Email } from '../../components/popups/index';
+import server from '../../services/server';
+import app from '../../services/app';
 import './useremails.scss';
 import '../../components/standard/table.scss';
 
@@ -20,6 +23,17 @@ class UserEmails extends Component {
 
   }
 
+  sendEmail = async (e, f, c) => {
+    this.props.load();
+    try {
+      let sm = await server.sendEmail({uid: this.props.uid, email: e, from: f, content: c});
+      this.setState({showEmail: false});
+    } catch (e) {
+      return e;
+    }
+    this.props.refresh();
+  }
+
   render () {
     let active = parseInt(this.props.active);
 
@@ -36,29 +50,35 @@ class UserEmails extends Component {
           show={this.state.showEmail}
           action={(t) => console.log(t)}
           email={this.state.profile.email}
+          action={this.sendEmail}
           cancel={(e) => this.setState({showEmail: false})}
         />
 
+
+        {
+          this.props.emails.map((em) => (
+            <ul className="table-header for-email">
+              <li className="e-act">
+                <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
+                {this.StarIcon(0)}
+              </li>
+              <li className="e-name">{(this.props.profile.first_name+" "+this.props.profile.last_name).ucwords()}</li>
+              <li className="e-mail">{em.content.length > 30 ? em.content.substr(0, 29)+"..." : em.content}</li>
+              <li className="e-time">{moment(em.create_time).calendar()}</li>
+            </ul>
+          ))
+        }
         
-        <ul className="table-header for-email">
-          <li className="e-act">
-            <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
-            {this.StarIcon(0)}
-          </li>
-          <li className="e-name">Adeoye Talent</li>
-          <li className="e-mail">Hello, you made a request for a deposit of $300k and...</li>
-          <li className="e-time">3:44 PM</li>
-        </ul>
-        <ul className="table-header for-email">
-          <li className="e-act">
-            <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
-            {this.StarIcon(0)}
-          </li>
-          <li className="e-name">Adeoye Talent</li>
-          <li className="e-mail">Hello, you made a request for a deposit of $300k and...</li>
-          <li className="e-time">3:44 PM</li>
-        </ul>
         {/*<ul className="table-header for-email">
+          <li className="e-act">
+            <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
+            {this.StarIcon(0)}
+          </li>
+          <li className="e-name">Adeoye Talent</li>
+          <li className="e-mail">Hello, you made a request for a deposit of $300k and...</li>
+          <li className="e-time">3:44 PM</li>
+        </ul>
+        <ul className="table-header for-email">
           <li className="e-act">
             <label class="checkbox-container checkbox-container-2"><input type="checkbox" /><span class="checkmark"></span></label>
             {this.StarIcon(0)}

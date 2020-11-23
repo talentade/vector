@@ -44,7 +44,9 @@
   display: block;
   position: absolute;
   width: 50%;
+  opacity: 1;
   height: auto;
+  transition: 100ms ease-in;
   background: #DEFFF7;
   z-index: 1000000000;
   bottom: 0;
@@ -52,8 +54,10 @@
   top: 72px;
   flex-direction: row;
 
-  .hide {
-    display: none !important;
+  &.__hide {
+    right: -50%;
+    opacity: 0;
+    // display: none !important;
   }
 
   .header {

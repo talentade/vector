@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import { Link } from 'react-router-dom';
 import TradeNotFound from '../tradeNotFound/index';
 import Spinner from '../../components/spinner/index';
 import Search from "../search/index";
@@ -123,7 +124,7 @@ class TradeHistory extends Component {
       <Spinner showSpinner={this.state.showSpinner} />
       <Closed show={this.state.showClosed} cancel={(e) => this.setState({showClosed: false})} />
       {
-        fil ? null :
+        fil || this.props.admin ? null :
         <div className="open-trades-container-top">
           <Search name="keyword" handleChange={this.handleChange} placeholder="Search here" />
           <Filter selectOptions={filterOptions} onChange={this.onChange} />
@@ -132,6 +133,7 @@ class TradeHistory extends Component {
       <div className='trade-history'>
           <div className='t-history-container'>
             <ul className='t-history-header'>
+            {this.props.admin ? <li>USER</li> : null}
               <li>INSTRUMENT</li>
               <li>TYPE</li>
               <li>TIME</li>
@@ -164,6 +166,7 @@ class TradeHistory extends Component {
             </ul>
             {_history.map((order, key) => (
                 <ul className={'t-history-record'+(key == 0 ? " _active" : "")} id={"t-history-record-"+key} onClick={(e) => this.handleClick(e, 't-history-record-'+key)}>
+                  {this.props.admin ? <li><span className="th">USER</span><span className="td"><Link className="txt-info" to={"/usersprofile/"+order.user_id}>{app.uid(order.user_id)}</Link></span></li> : null}
                   <li className="ins-name">
                   <img src={ins_down} className="ins_down" />
                   <img src={ins_up} className="ins_up" />

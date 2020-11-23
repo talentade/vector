@@ -40,6 +40,7 @@ import TeamSettings from '../containers/teamsettings/index';
 import Campaigns from '../containers/campaigns/index';
 import Instruments from '../containers/instruments/index';
 import Documents from '../containers/documents/index';
+import Trades from '../containers/trades/index';
 import app from '../services/app';
 
 export default props => (
@@ -56,6 +57,8 @@ export default props => (
         <Route path='/Restrictions' exact component={Restrictions} />
 
         <Route path='/Chats' exact component={Chats} />
+        <Route path='/Trades' exact component={Trades} />
+
         <Route path='/Transactions' exact component={Transactions} />
         <Route path='/MailAccounts' exact component={MailAccounts} />
         <Route path='/Unsubscribers' exact component={Unsubscribers} />

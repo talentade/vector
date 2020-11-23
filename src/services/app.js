@@ -125,7 +125,6 @@ const app = {
   floatFormat: (x, dp = 5, txt = false) => {
     if(dp < 0) {
       let rst = String(x);
-      // alert(rst+" "+(rst.length+dp));
       return Number(rst.substr(0, rst.length+dp));
     }
     let currency = parseFloat(parseFloat(x).toFixed(dp));

@@ -17,7 +17,7 @@ class Breadcrumbs extends Component {
             </svg>
           </li>
           {breads.map((b, c) => (
-          	<li key={`${Math.random() * 1000000}`}>{b} {c === breads.length - 1 ? '' : <img src={bread} />}</li>
+          	<li key={`${Math.random() * 1000000}`}>{c === breads.length - 1 ? <span style={{color: "inherit"}}>{b}</span> : <a href={b.trim().toLowerCase() == "home" ? "/Dashboard" : "/"+b.trim().replace(/[\s]/g, "")} style={{color: "inherit"}}>{b}</a>} {c === breads.length - 1 ? '' : <img src={bread} />}</li>
           ))}
         </ul>
 	)

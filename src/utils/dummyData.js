@@ -311,6 +311,7 @@ export const adminLeftNavData = [
   // {path: '/Unsubscribers', className: appNavClass, imageUrl: Menu5, name: 'unsubscribers', text: 'Unsubscribers'},
   // {path: '/Campaigns', className: appNavClass, imageUrl: Menu6, name: 'campaigns', text: 'Campaigns'},
   {path: '/Instruments', className: appNavClass, imageUrl: Menu7, name: 'instruments', text: 'Instruments'},
+  {path: '/Trades', className: appNavClass, imageUrl: Lnav2, name: 'trades', text: 'Trades'},
   {path: '/Documents', className: appNavClass, imageUrl: Menu8, name: 'documents', text: 'Documents'},
   {path: '/CallLogs', className: appNavClass, imageUrl: calls, name: 'calllogs', text: 'Call logs'},
   {path: '/Salesfunnel', className: appNavClass, imageUrl: Menu5, name: 'salesfunnel', text: 'Salesfunnel'},

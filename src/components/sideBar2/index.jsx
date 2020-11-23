@@ -18,7 +18,8 @@ class SideBar extends Component {
     currentTab,
     handleClick,
     sideNav,
-    hideNav
+    hideNav,
+    admin
   } = this.props;
   return (
     <div style={{ width: hideText ? '50px' : null, overflow: 'hidden', zIndex: '1000'}} className={'left'+(sideNav ? ' display-l-nav' : '')}>
@@ -29,13 +30,13 @@ class SideBar extends Component {
         onClick={hideNav}
       />
       <div className='margin-top'>
-        <NavigationLink
+        {admin ? null : <NavigationLink
           imageUrl={Db1Nav}
           linkName='Trade'
           secondClass={currentTab === 'Trade'}
           hideText={hideText}
           handleClick={handleClick}
-        />
+        />}
         <NavigationLink
           imageUrl={Db2Nav}
           linkName='Open Trades'

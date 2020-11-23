@@ -5,9 +5,12 @@ import sha256 from 'sha256';
 
 export default {
 
-  register(credentials) {
+  register(credentials, a = false) {
     credentials.password = sha256(credentials.password);
     credentials.time     = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+    if(a) {
+      credentials.a      = 1;
+    }
     return axios.request({
       method: 'POST',
       url: app.hostURL('register'),
@@ -524,6 +527,20 @@ export default {
     });
   },
 
+  assignAdmin(uid, aid) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/aid/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {
+        aid: aid,
+        time: new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone})
+      }
+    });
+  },
+
   KYCStatus(uid, stat) {
     return axios.request({
       method: 'PUT',
@@ -579,6 +596,18 @@ export default {
     });
   },
 
+  sendEmail(data) {
+    data.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/sendEmail'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
+
   getNews() {
     return axios.request({
       method: 'GET',
@@ -593,6 +622,17 @@ export default {
     return axios.request({
       method: 'PUT',
       url: app.hostURL('admin/deleteNews/'+id),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: null
+    });
+  },
+
+  deleteUser(uid) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/deleteUser/'+uid),
       headers: {
         'Authorization': app.auth()
       },
@@ -620,6 +660,17 @@ export default {
         'Authorization': app.auth()
       },
       data: { funnel, funnel_stage }
+    });
+  },
+
+  updateUserDetails(uid, valus) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/uudet/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: valus
     });
   },
 

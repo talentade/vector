@@ -171,7 +171,7 @@ class Email extends React.Component {
             <h2 className='edit-title'><b className="from" style={{alignItems: "baseline"}}>Subject</b><textarea id="composed-m" spellCheck="false"></textarea></h2>
             <div className='edit-footer'>
               <div></div>
-              <button className="action" onClick={() => action($("#composed-m").val())} disabled={true}>Send Email</button>
+              <button className="action" onClick={() => action(this.props.email, app.email(), $("#composed-m").val().trim())}>Send Email</button>
             </div>
           </div>
         </div>

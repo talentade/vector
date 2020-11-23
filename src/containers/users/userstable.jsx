@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import exportIcon from "../../themes/images/export.png";
 import Pagination from '../../components/Pagination/index';
 import Assign from '../../components/re-assign/index';
+import { ConfirmModal } from '../../components/popups/index';
 import Pagination2 from '../../components/pagination2/index';
 import '../../components/standard/table.scss';
 import server from '../../services/server';
@@ -17,13 +18,15 @@ class UsersTable extends Component {
       admins: [],
       assign: false,
       showLoader: true,
-      data: []
+      data: [],
+      confirmID: '',
+      confirmModal: false
     }
   }
 
   async componentDidMount() {
-    await this.getAllUsers();
     await this.getAllAdmins();
+    await this.getAllUsers();
   }
 
   getAllUsers = async () => {
@@ -42,6 +45,22 @@ class UsersTable extends Component {
     } catch(e) {
       return e;
     }
+  }
+
+  deleteUser = async () => {
+    try {
+      let del = await server.deleteUser(this.state.confirmID);
+      window.location.href = "";
+    } catch(e) {
+      return e;
+    }
+  }
+
+  accManager = (aid) => {
+    let assto = this.state.admins.filter((o) => {
+      return o.user_id == aid
+    })[0];
+    return (assto.first_name+" "+assto.last_name).ucwords();
   }
 
   render () {
@@ -68,6 +87,14 @@ class UsersTable extends Component {
                 /> : null
             }
 
+            <ConfirmModal
+              head="Delete this user?"
+              text="Click YES to confirm"
+              show={this.state.confirmModal}
+              cancel={() => this.setState({confirmModal: false})}
+              confirm={() => this.deleteUser()}
+            />
+
             <ul className="table-header">
               <li>USER ID</li>
               <li>FULLNAME</li>
@@ -91,8 +118,8 @@ class UsersTable extends Component {
                   <li><span className="txt-default">{app.cleanDate(user.create_time)}</span></li>
                   <li>{user.country}</li>
                   <li><span className="txt-success">${user.bal.toFixed(2)}</span></li>
-                  <li><span className="txt-default">Admin</span></li>
-                  <li><span className="txt-default">{user.source}</span></li>
+                  <li><span className="txt-default">{user.aid.length ? this.accManager(user.aid) : '--'}</span></li>
+                  <li><span className="txt-default">{user.source == 'undefined' ? "CRM" : user.source}</span></li>
                   <li><span className="txt-success">Online</span></li>
                   <li>
                     <Link className="tb-action" to={"/usersprofile/"+user.user_id} style={{position: "relative", top: "3px"}}>
@@ -101,7 +128,7 @@ class UsersTable extends Component {
                       </svg>
                     </Link>
                     <img src={exportIcon} onClick={() => this.setState({data: user, assign: true})} className="tb-action" width="20" height="20" style={{position: "relative", left: "-2px"}} />
-                    <svg className="tb-action" width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg onClick={() => this.setState({confirmID: user.user_id, confirmModal: true})} className="tb-action" width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#FFE602"/>
                     </svg>
                   </li>

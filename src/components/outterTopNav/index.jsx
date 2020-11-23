@@ -48,7 +48,8 @@ class OutterTopNav extends Component {
                 <span className="fl"><Link to="/Profile" style={{color: "#fff"}}>{`${firstName} ${lastName}`}</Link></span>
                 <span className="em"><Link to="/Profile" style={{color: "#fff"}}>{email}</Link></span>
               </li>
-              {/*<li style={{opacity: 1}}><button className="save-changes" id="save-all-changes-btn">Save All Changes</button></li>
+              <li style={{opacity: 1, display: "none"}}><button className="save-changes" id="save-all-changes-btn" style={{cursor: "pointer"}}>Save All Changes</button></li>
+              {/*
               <li style={{opacity: 1}} className="admin-search-input">
               <input type="text" onChange={(e) => {}} name="adminSearch" placeholder="Search here" />
               </li>

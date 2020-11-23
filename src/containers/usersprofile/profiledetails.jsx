@@ -15,12 +15,22 @@ class ProfileDetails extends Component {
   async componentDidMount () {
     $(".valu").prop("readonly", true);
     $(".pencil").click(function () {
+      $("#save-all-changes-btn").parent().css({display: "inline-block"});
       let valu  = $(this).parents("td").find(".valu");
       let name  = valu.attr("name");
       valu.attr({"spellcheck": false});
       valu.prop("readonly", false);
+      valu.addClass("edited");
       valu.focus().setCursorPosition(valu.val().length);
     });
+
+    $("#save-all-changes-btn").click(() => {
+      this.updateDetails();
+    })
+  }
+
+  componentWillUnmount () {
+    $("#save-all-changes-btn").parent().css({display: "none"});
   }
 
   kyc = async (e) => {
@@ -41,6 +51,27 @@ class ProfileDetails extends Component {
       return e;
     }
     this.props.refresh();
+  }
+
+  updateDetails = async () => {
+    let valus = {};
+    if($(".valu.edited").length) {
+      $(".valu.edited").each(function(k, v) {
+        if($(v).attr("name").length) {
+          valus[$(v).attr("name")] = $(v).val().trim() == "NOT STATED" ? "" : $(v).val();
+        }
+      });
+      setTimeout(async () => {
+        this.props.load();
+        try {
+          let sm = await server.updateUserDetails(this.props.uid, valus);
+          $("#save-all-changes-btn").parent().css({display: "none"});
+        } catch (e) {
+          return e;
+        }
+        this.props.refresh();
+      }, 50);
+    }
   }
 
   render () {
