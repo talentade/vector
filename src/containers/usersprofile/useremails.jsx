@@ -64,7 +64,7 @@ class UserEmails extends Component {
               </li>
               <li className="e-name">{(this.props.profile.first_name+" "+this.props.profile.last_name).ucwords()}</li>
               <li className="e-mail">{em.content.length > 30 ? em.content.substr(0, 29)+"..." : em.content}</li>
-              <li className="e-time">{moment(em.create_time).calendar()}</li>
+              <li className="e-time" style={{fontSize: "97%"}}>{moment(em.create_time).calendar()}</li>
             </ul>
           ))
         }

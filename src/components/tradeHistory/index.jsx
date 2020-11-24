@@ -54,10 +54,10 @@ class TradeHistory extends Component {
     )
   }
 
-  closeTrade = async (id, account, cr) => {
+  closeTrade = async (id, account, cr, uid = null) => {
     this.setState({showSpinner: true});
     try{
-      let close = await server.closeTrade(id, account, cr);
+      let close = await server.closeTrade(id, account, cr, uid);
       if(close.status == 200) {
         const gp = await server.getProfile();
         app.profile(gp.data.profile);
@@ -182,7 +182,7 @@ class TradeHistory extends Component {
                       <li className="c-rate"><span className="th">CURRENT RATE</span><span className="td">{order.current_rate}</span></li>
                       <li className="profit"><span className="th">PROFIT</span>{this.Profit(order.profit)}</li>
                       <li className="d-sell"><span className="th">DETAILS</span><span className="td">{order.mode.toUpperCase()}</span></li>
-                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.id, order.account, order.current_rate)}>Close</button></span></li>
+                      <li><span className="th">ACTION</span><span className="td"><button className="close-trade" onClick={(e) => this.closeTrade(order.id, order.account, order.current_rate, this.props.admin ? order.user_id : null)}>Close</button></span></li>
                     </>
                   ) : null}
                   {type == 'closed' ? (

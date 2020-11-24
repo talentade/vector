@@ -281,12 +281,12 @@ export default {
     });
   },
 
-  closeTrade (id, account, cr) {
+  closeTrade (id, account, cr, uid = null) {
     return axios.request({
       method: 'POST',
       url: app.hostURL('closetrade/'+account),
       headers: {
-        'Authorization': app.auth()
+        'Authorization': uid ? uid : app.auth()
       },
       data: {
         use: id,
