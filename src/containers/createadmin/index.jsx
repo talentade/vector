@@ -208,7 +208,7 @@ class CreateAdmin extends Component {
         <span id="s-all-2"><Link to="/Restrictions">See all Restrictions</Link></span>
         <div className='createadmin-section'>
           <Spinner showSpinner={this.showSpinner} />
-          <Breadcrumbs breads={"Home, Create Admins, "+(this.state._selectedTab)} />
+          <Breadcrumbs breads={"Home, Create Admin, "+(this.state._selectedTab)} />
           <RestrictionNav selectedTab={this.state.selectedTab} handleClick={this.toggleTabs} />
 
 
