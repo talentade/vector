@@ -15,6 +15,14 @@ const socketListener = () => {
   window.WebSocketPlug.addEventListener('open', () => {
     window.WebSocketPlugged = true;
     $(window).trigger("renewSocket");
+    // setInterval(() => {
+    //   if(window.messageRefresher == "off" && window.messagePayload) {
+    //     window.WebSocketPlug.send(JSON.stringify({
+    //       "event":   "GET_MESSAGES2",
+    //       "payload": window.messagePayload
+    //     }));
+    //   }
+    // }, 1000);
   });
   window.WebSocketPlug.onclose = (e) => {
     window.WebSocketPlugged = false;

@@ -221,8 +221,9 @@ class Profile extends Component {
       const gp = await server.getProfile();
       app.profile(gp.data.profile);
       this.props.saveUserProfile(gp.data.profile);
-
       this.setState({ showSpinner: false });
+      window.location.href = "";
+      
     } catch (error) {
       this.setState({ showSpinner: false });
       return error.message;

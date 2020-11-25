@@ -62,6 +62,8 @@ class BookCall extends Component {
       setTimeout(() => {
         this.setState({showLoader: false, iLoader: false});
       }, 50);
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
     } catch (error) {
       this.setState({ bookState: 0, showLoader: false, iLoader: false});
     }
@@ -100,7 +102,6 @@ class BookCall extends Component {
     }
 
     this.setState({activeM: act, lastEdge: edge});
-
     if(!range || last === null) {
       $("#monthList li").attr("class", "hide");
       $("#monthList li:eq("+edge+"),#monthList li:eq("+(edge+1)+"),#monthList li:eq("+(edge+2)+"),#monthList li:eq("+(edge+3)+")").removeClass("hide");
@@ -109,6 +110,9 @@ class BookCall extends Component {
       $("#monthList li._active").removeClass("_active");
       $("#monthList li:eq("+act+")").addClass("_active");
     }
+
+    console.log(this._today(), "<<<<<<");
+    
   }
 
   dayListActive = () => {
@@ -135,7 +139,10 @@ class BookCall extends Component {
     }
 
     this.setState({days: days.reverse(), weekDay: 7, today: 1, maxDay: ld});
+    console.log(this._today(), "<<<<<<");
   }
+
+  async componentWillUpdate () {}
 
   sevenLeft = () => {
     let wd = this.state.weekDay;
@@ -146,6 +153,7 @@ class BookCall extends Component {
       }
       this.setState({weekDay: wd, today: td});
     }
+    console.log(this._today(), "<<<<<<");
   }
 
   sevenRight = (d = 0) => {
@@ -194,6 +202,13 @@ class BookCall extends Component {
   setCurHour = (i, h, a) => {
     $("#timeList .d-time._active").removeClass("_active");
     this.setState({currentHour2: i, currentHour: h, am_pm: a});
+  }
+
+  _today = () => {
+    return this.state.thisYear+"/"+(this.state.activeM+1)+"/"+this.state.today;
+    // const moment = require('moment');
+    // const today = moment();
+    // console.log(today.format());
   }
 
   scheduleCall = async () => {
@@ -309,7 +324,15 @@ class BookCall extends Component {
                 <ul className="time-list" id="timeList">
                 {
                   this.twentyFour().map(({ihour, hour, time, am_pm}) => (
-                    <li><button className={"d-time"+(this.state.currentHour2 == ihour ? " _active" : "")} onClick={(e) => this.setCurHour(ihour, hour, am_pm)}>{time}</button></li>
+                    <li>
+                      <button
+                        className={"d-time"+(this.state.currentHour2 == ihour ? " _active" : "")}
+                        onClick={(e) => this.setCurHour(ihour, hour, am_pm)}
+                        data-date={this.state.thisYear+"/"+((this.state.activeM+1) > 9 ? (this.state.activeM+1) : "0"+(this.state.activeM+1))+"/"+this.state.today}
+                      >
+                        {time}
+                      </button>
+                    </li>
                   ))
                 }
                 </ul>

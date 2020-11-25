@@ -50,6 +50,7 @@ class MessageBox extends Component {
       }
     });
 
+    window.messageRefresher = "on";
     this.refreshMessage = setInterval(() => {
       this.refreshMsg();
     }, 1000);
@@ -82,6 +83,7 @@ class MessageBox extends Component {
 
   async componentWillUnmount () {
     this.isViewable = false;
+    window.messageRefresher = "off";
     clearInterval(this.refreshMessage);
   }
 

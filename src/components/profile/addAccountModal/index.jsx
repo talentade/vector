@@ -55,6 +55,8 @@ class AccountModal extends Component {
       this.props.saveUserProfile(gp.data.profile);
       this.props.toggleAddCardModal();
       this.setState({ showSpinner: false });
+      window.location.href = "";
+      
     } catch (error) {
       this.setState({ showSpinner: false });
       return error.message;

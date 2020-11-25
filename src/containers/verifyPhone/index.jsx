@@ -57,7 +57,7 @@ class VerifyPhone extends Component {
     try {
       let result = await server.verifyPhone(`${name}${name_2}${name_3}${name_4}`);
       this.setState({ showSpinner: false });
-      this.props.history.push('/Book');
+      this.props.history.push('/Profile'); // Book
     } catch (error) {
       this.setState({ showSpinner: false });
       if(error && error.response) {

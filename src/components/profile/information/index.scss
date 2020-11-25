@@ -4,7 +4,6 @@
   padding: 10px 0;
   font-family: Poppins, sans-serif;
   border-bottom: 0.4px solid #888888;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -82,4 +81,8 @@
       }
     }
   }
+}
+
+.account-details-section .information {
+  border-bottom: 0.4px solid #d8d8d8 !important;
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import app from '../../services/app';
 import { Link } from 'react-router-dom';
 import Breadcrumbs from '../breadcrumbs/index';
 import sp from '../../themes/images/circle-plus.png';
@@ -162,7 +163,7 @@ class TableFilters extends Component {
 
       {this.props.table === "news" ? (
         <div className="table-filters" style={{marginBottom: "1em"}}>
-          <Breadcrumbs breads="Home, News" />
+          {app.isAdmin() ? <Breadcrumbs breads="Home, News" /> : null}
           <div className="filter-actions">
 
             <div className="search-container" style={{width: "280px", overflow: "unset"}}>
