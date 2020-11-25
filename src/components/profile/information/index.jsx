@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import EditLogo from "../../../themes/images/tradeDashboard/edit.svg";
+import Verified from "../../../themes/images/tradeDashboard/verifiedOne.svg";
+
 import "./index.scss";
 
 export default class UserInfo extends Component {
@@ -17,6 +20,7 @@ export default class UserInfo extends Component {
 	}
 
 	toggleEdit = (e) => {
+		$(e.target).parents(".ikvd").find(".data-value").focus();
 	 	this.setState({ editable: !this.state.editable });
 	}
 
@@ -28,16 +32,16 @@ export default class UserInfo extends Component {
 	}
 
 	render () {
-	  const { dataKey, alt, fixed } = this.props;
+	  let { dataKey, value, alt, name, fixed } = this.props;
 	  let editable = !!this.state.editable;
-	  let value = this.state.value;
+	  // let value = this.state.value;
 
 	  return (
 	    <div className={"information"+(alt ? ' alt' : '')}>
 	      <p className="key">{dataKey}</p>
-	      <div>
-	        <p className="value">{!editable ? <input className="data-value" spellcheck="false" onChange={this.handleChange} defaultValue={value} /> : value}</p>
-	        <img src={EditLogo} alt="" style={{cursor: "pointer", opacity: editable ? '1' : '0.3'}} onClick={(e) => !fixed&&this.toggleEdit()} />
+	      <div className="ikvd">
+	        <p className="value"><input className="data-value" name={name} spellcheck="false" onChange={this.handleChange} defaultValue={value} /></p>
+	        <img src={EditLogo} alt="" className={fixed ? "ed" : ""} style={{cursor: "pointer"}} onClick={(e) => !fixed&&this.toggleEdit(e)} />
 	      </div>
 	    </div>
 	  );

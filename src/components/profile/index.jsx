@@ -51,6 +51,31 @@ class Profile extends Component {
     this.unverifiedItems = [];
   }
 
+  updateDetails = async () => {
+    let valus = {};
+    let ecl = $(".uis .data-value.edited").length;
+    if(ecl) {
+      $(".uis .data-value.edited").each(function(v) {
+        if($(this).attr("name").length) {
+          valus[$(this).attr("name")] = $(this).val().trim();
+        }
+      });
+      setTimeout(async () => {
+        try {
+          let sm = await server.updateUserDetails(this.id, valus);
+          $("._sdt").parent().css({display: 'none'});
+          const gp = await server.getProfile();
+          app.profile(gp.data.profile);
+          this.profile         = app.profile();
+          this.selectedAccount = app.accountDetail();
+          window.location.href = "";
+        } catch (e) {
+          return e;
+        }
+      }, 50);
+    }
+  }
+
   async componentDidMount() {
     if (!app.id().length) this.props.history.push('/Login');
 
@@ -62,6 +87,11 @@ class Profile extends Component {
     $(window).on("changePassword", () => {
       this.setState({showBoxes: true});
       window.changePassword = false;
+    });
+
+    $(document).delegate(".uis .data-value", "keyup", function () {
+      $(this).addClass("edited");
+      $("._sdt").parent().css({display: 'flex'});
     });
 
     const gp = await server.getProfile();
@@ -226,7 +256,7 @@ class Profile extends Component {
       email_verified,
       identity_verified,
       deposit_verified,
-    } = this.props.userProfile;
+    } = this.profile;
 
     let balance   = this.selectedAccount.balance;
     let id        = app.id();
@@ -235,10 +265,18 @@ class Profile extends Component {
 
     const userData = [
       {
-        dataKey: 'Name',
-        value: `${first_name} ${last_name}`,
+        dataKey: 'First Name',
+        value: `${first_name}`,
+        name: 'first_name',
         editable: true,
-        fixed: true,
+        fixed: false,
+      },
+      {
+        dataKey: 'Last Name',
+        value: `${last_name}`,
+        name: 'last_name',
+        editable: true,
+        fixed: false,
       },
       {
         dataKey: 'User ID',
@@ -249,18 +287,14 @@ class Profile extends Component {
       {
         dataKey: 'Email',
         value: email,
+        name: 'email',
         editable: true,
-        fixed: true,
+        fixed: false,
       },
       {
         dataKey: 'Phone',
         value: phone_number,
-        editable: true,
-        fixed: true,
-      },
-      {
-        dataKey: 'Date of birth',
-        value: dob,
+        name: 'phone_number',
         editable: true,
         fixed: false,
       },
@@ -273,6 +307,14 @@ class Profile extends Component {
       {
         dataKey: 'City',
         value: city,
+        name: 'city',
+        editable: true,
+        fixed: false,
+      },
+      {
+        dataKey: 'Date of birth',
+        value: dob,
+        name: 'dob',
         editable: true,
         fixed: false,
       },
@@ -359,13 +401,16 @@ class Profile extends Component {
             showSpinner={this.state.showSmallSPinner}
           />
 
-          <div className='user-information-section'>
+          <div className='user-information-section uis'>
             {userData.map((data) => (
               <Information
                 key={`${data.dataKey}-1-${Math.random()}-${Math.random()}`}
                 {...data}
               />
             ))}
+            <div style={{justifyContent: "center", display: 'none'}}>
+              <button onClick={this.updateDetails} type="button" className="_sdt">Update</button>
+            </div>
           </div>
           <div className='password-actions-section'>
             <HorizontalBar showBoxes={this.hidePasswordBoxes} />

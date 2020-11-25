@@ -46,8 +46,7 @@ class Container extends Component {
         this.props.toggleOutterNav();
         window.__toggleOutterNav = true;
       }
-      $("body").attr("style", 'min-width: 1400px;');
-      $("html").attr("style", 'background: #004044');
+      $("html").attr("style", 'min-width: 1400px; overflow: auto !important; background: #004044;');
     }
   }
 
