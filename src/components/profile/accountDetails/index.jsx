@@ -36,6 +36,7 @@ export default class AccountDetails extends Component {
       const gp = await server.getProfile();
       app.profile(gp.data.profile);
       this.props.showSpinner();
+      this.props.done();
     } catch (err) {
       this.props.showSpinner();
       return err;

@@ -37,6 +37,7 @@ class Profile extends Component {
       newPasswordError: null,
       confirmPasswordError: null,
       error: null,
+      accu: false,
       success: false,
       verified: app.isVerified(),
       imageUrl: '',
@@ -70,7 +71,10 @@ class Profile extends Component {
           app.profile(gp.data.profile);
           this.profile         = app.profile();
           this.selectedAccount = app.accountDetail();
-          window.location.href = "";
+          this.setState({accu: true, showCallBack: true});
+          setTimeout(() => {
+            window.location.href = "";
+          }, 3000);
         } catch (e) {
           return e;
         }
@@ -410,10 +414,16 @@ class Profile extends Component {
     });
 
     let vdw = "Your document will be verified by the admin, this could take about 24-48 working hours after which your account will be activated.";
+    let hed = "Verification required";
 
+    if(this.state.accu) {
+      vdw = "Profile details updated!";
+      hed = "Account Updated";
+    }
+    
     return (
       <div className='profile-section-container'>
-        <CallBack show={this.state.showCallBack} cancel={(e) => this.setState({showCallBack: false})} head="Verification required" text={vdw} />
+        <CallBack show={this.state.showCallBack} cancel={(e) => this.setState({showCallBack: false})} head={hed} text={vdw} />
 
         {this.props.showAddCardModal ? (
           <AccountModal
@@ -518,6 +528,7 @@ class Profile extends Component {
           <div className='account-details-section profile-bg'>
             <AccountDetails
               balance={`$${balance}`}
+              done={(e) => this.setState({accu: true, showCallBack: true})}
               handleClick={this.toggleModalButtonClick}
               showSpinner={(e) => this.setState({showSpinner: !this.state.showSpinner})}
             />
