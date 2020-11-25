@@ -103,6 +103,31 @@ class Closed extends React.Component {
   }
 }
 
+
+class CallBack extends React.Component {
+  render() {
+    const { head, text, show, cancel } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='deposit-modal-section'>
+            <div className='upper-modal'>
+              <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
+              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "30%"}} />
+            </div>
+            <div className='lower-modal'>
+              <div className='lower-modal-content'>
+                <h6>{head}</h6>
+                <p>{text}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
 class Created extends React.Component {
   render() {
     const { show, cancel, type, id } = this.props;
@@ -577,4 +602,4 @@ class ConfirmModal extends React.Component {
 
 
 
-export {FavPopup, Booked, Note, Email, Task, Meet, Created, Closed, Insufficient, ImageView, Logout, ConfirmModal}
+export {FavPopup, Booked, Note, Email, Task, Meet, Created, Closed, CallBack, Insufficient, ImageView, Logout, ConfirmModal}

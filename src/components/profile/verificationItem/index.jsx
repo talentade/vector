@@ -7,7 +7,7 @@ import loader from "../loader.svg";
 import Unverified from "../../../themes/images/tradeDashboard/verifiedTwo.svg";
 import "./index.scss";
 
-const handleDocChange = async (e, folder) => {
+const handleDocChange = async (e, folder, name = null) => {
   const current = e.target.files[0];
   const fd = new FormData();
   fd.append('profile_doc.png', current, current.name);
@@ -16,7 +16,8 @@ const handleDocChange = async (e, folder) => {
     let pi = await server.uploadDoc(fd, folder);
     const gp = await server.getProfile();
     app.profile(gp.data.profile);
-    window.location.href = "";
+    window._veripopcon = name;
+    $(window).trigger("veripopcon");
   } catch (error) {
     window.location.href = "";
     return error.message;
@@ -38,7 +39,7 @@ const VerificationItem = ({ verified, itemHead, itemContent, folder, name, butto
           <p>{(verified ? 'Re-' : '')+buttonText}</p>
         </label>
         {folder
-          ? <input type="file" name={name} onChange={(e) => handleDocChange(e, folder)} id={`${itemHead}1`} />
+          ? <input type="file" name={name} onChange={(e) => handleDocChange(e, folder, name)} id={`${itemHead}1`} />
           : null
         }
         {/* style={{ background: verified ? '#C4C4C4' : null}} disabled={verified} */}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import io from "socket.io-client";
 import Container from '../container/index';
 import book_call from '../../themes/images/book-call.png';
@@ -38,6 +39,8 @@ class BookCall extends Component {
       meeting_time: null,
       meeting_id: null
     }
+
+    this.TVAL = Number(String(moment().format('YYYY/MM/DD')).split("/").join(""));
   }
 
   async componentDidMount() {
@@ -315,7 +318,11 @@ class BookCall extends Component {
                 </button>
                 {
                   this.state.days.map(({key, day, date}) => (
-                    <li onClick={() => this.sevenActive(date)} className={(date == this.state.today ? '_active' : '')+(key > this.state.weekDay-1 || key < (this.state.weekDay - 7) ? ' hide' : '')}><span className="d-name">{day}</span><span className="d-date">{date}</span></li>
+                    <li
+                      onClick={() => this.sevenActive(date)}
+                      className={(date == this.state.today ? '_active' : '')+(key > this.state.weekDay-1 || key < (this.state.weekDay - 7) ? ' hide' : '')}
+                      data-date={Number(this.state.thisYear+""+((this.state.activeM+1) > 9 ? (this.state.activeM+1) : "0"+(this.state.activeM+1))+""+(this.state.today > 9 ? date : "0"+date))}
+                    ><span className="d-name">{day}</span><span className="d-date">{date}</span></li>
                   ))
                 }
               </ul>
@@ -328,7 +335,6 @@ class BookCall extends Component {
                       <button
                         className={"d-time"+(this.state.currentHour2 == ihour ? " _active" : "")}
                         onClick={(e) => this.setCurHour(ihour, hour, am_pm)}
-                        data-date={this.state.thisYear+"/"+((this.state.activeM+1) > 9 ? (this.state.activeM+1) : "0"+(this.state.activeM+1))+"/"+this.state.today}
                       >
                         {time}
                       </button>

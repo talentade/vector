@@ -17,6 +17,7 @@ import VerificationGroup from './verificationGroup/index';
 import Spinner from '../spinner/index';
 import server from '../../services/server';
 import app from '../../services/app';
+import { CallBack } from '../../components/popups/index';
 import AccountModal from './addAccountModal/index';
 import './index.scss';
 
@@ -39,6 +40,7 @@ class Profile extends Component {
       success: false,
       verified: app.isVerified(),
       imageUrl: '',
+      showCallBack: false,
       image: '',
       profile_image: '',
       showSmallSPinner: false,
@@ -87,6 +89,17 @@ class Profile extends Component {
     $(window).on("changePassword", () => {
       this.setState({showBoxes: true});
       window.changePassword = false;
+    });
+
+    $(window).on("veripopcon", (e) => {
+      if(window.vdv && window.vdv == 3 && window._veripopcon == window.lab) {
+        this.setState({showCallBack: true});
+        setTimeout(() => {
+          window.location.href = "";
+        }, 6000);
+      } else {
+        window.location.href = "";
+      }
     });
 
     $(document).delegate(".uis .data-value", "keyup", function () {
@@ -385,8 +398,23 @@ class Profile extends Component {
       // },
     ];
 
+
+    window.vdv = 0;
+    window.lab = "";
+    Object.entries(verificationData).forEach((v) => {
+      if(v[1].verified > 0) {
+        window.vdv += 1;
+      } else if(!window.lab.length) {
+        window.lab = v[1].name;
+      }
+    });
+
+    let vdw = "Your document will be verified by the admin, this could take about 24-48 working hours after which your account will be activated.";
+
     return (
       <div className='profile-section-container'>
+        <CallBack show={this.state.showCallBack} cancel={(e) => this.setState({showCallBack: false})} head="Verification required" text={vdw} />
+
         {this.props.showAddCardModal ? (
           <AccountModal
             handleClick={this.toggleModalButtonClick}
@@ -463,6 +491,9 @@ class Profile extends Component {
               unverifiedItems={unverified}
               verified={this.state.verified}
             />
+            {
+              this.profile.kyc < 1 && window.vdv == 4 ? <marquee style={{color: "#fff", fontFamily: 'Poppins', fontSize: ".9em", fontWeight: "bolder"}}>{vdw}</marquee> : null
+            }
             <VerificationGroup items={verificationData} />
           </div>
 
