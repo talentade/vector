@@ -10,12 +10,12 @@ export default class AccountDetails extends Component {
 
     this.profile = app.profile();
     this.state = {
-      account_name: this.profile["account_name"],
-      account_number: this.profile["account_number"],
-      bank_name: this.profile["bank_name"],
-      bank_address: this.profile["bank_address"],
-      bank_SWIFT_code: this.profile["bank_SWIFT_code"],
-      bank_IBAN: this.profile["bank_IBAN"],
+      account_name: this.profile["account_name"] || "",
+      account_number: this.profile["account_number"] || "",
+      bank_name: this.profile["bank_name"] || "",
+      bank_address: this.profile["bank_address"] || "",
+      bank_SWIFT_code: this.profile["bank_SWIFT_code"] || "",
+      bank_IBAN: this.profile["bank_IBAN"] || "",
       saveD: false
     };
   }
@@ -51,12 +51,12 @@ export default class AccountDetails extends Component {
           {this.state.saveD ? <button onClick={this.saveDetails} type="button">Save Details</button> : null}
         </div>
         <div className='user-information-section'>
-          <Information dataKey="ACCOUNT NAME"     value={this.state.account_name} handleChange={this.handleChange} name="account_name"        editable={this.state.account_name.length} alt/>
-          <Information dataKey="ACCOUNT NUMBER"   value={this.state.account_number} handleChange={this.handleChange} name="account_number"    editable={this.state.account_number.length} alt/>
-          <Information dataKey="BANK NAME"        value={this.state.bank_name} handleChange={this.handleChange} name="bank_name"              editable={this.state.bank_name.length} alt/>
-          <Information dataKey="BANK ADDRESS"     value={this.state.bank_address} handleChange={this.handleChange} name="bank_address"        editable={this.state.bank_address.length} alt/>
-          <Information dataKey="BANK SWIFT CODE"  value={this.state.bank_SWIFT_code} handleChange={this.handleChange} name="bank_SWIFT_code"  editable={this.state.bank_SWIFT_code.length} alt/>
-          <Information dataKey="BANK IBAN"        value={this.state.bank_IBAN} handleChange={this.handleChange} name="bank_IBAN"              editable={this.state.bank_IBAN.length} alt/>
+          <Information dataKey="ACCOUNT NAME"     value={this.state.account_name} handleChange={this.handleChange} name="account_name"        editable={this.state.account_name.length || false} alt/>
+          <Information dataKey="ACCOUNT NUMBER"   value={this.state.account_number} handleChange={this.handleChange} name="account_number"    editable={this.state.account_number.length || false} alt/>
+          <Information dataKey="BANK NAME"        value={this.state.bank_name} handleChange={this.handleChange} name="bank_name"              editable={this.state.bank_name.length || false} alt/>
+          <Information dataKey="BANK ADDRESS"     value={this.state.bank_address} handleChange={this.handleChange} name="bank_address"        editable={this.state.bank_address.length || false} alt/>
+          <Information dataKey="BANK SWIFT CODE"  value={this.state.bank_SWIFT_code} handleChange={this.handleChange} name="bank_SWIFT_code"  editable={this.state.bank_SWIFT_code.length || false} alt/>
+          <Information dataKey="BANK IBAN"        value={this.state.bank_IBAN} handleChange={this.handleChange} name="bank_IBAN"              editable={this.state.bank_IBAN.length || false} alt/>
         </div>
       </div>
     </div>
