@@ -38,6 +38,14 @@ export default {
     });
   },
 
+  resendOTP(t) {
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('resend/'+t),
+      data: {user: app.userid()}
+    });
+  },
+
   verifyPhone(otp) {
     return axios.request({
       method: 'POST',

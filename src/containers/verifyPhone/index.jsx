@@ -43,7 +43,7 @@ class VerifyPhone extends Component {
         this.refs[field.name].nextSibling.focus();
       }
     }
-  };
+  }
 
   verifyCode = async (e) => {
     e.preventDefault();
@@ -65,7 +65,17 @@ class VerifyPhone extends Component {
         this.setState({ error: verificationError });
       }
     }
-  };
+  }
+
+  resendOTP = async () => {
+    this.setState({ showSpinner: true });
+    try {
+      await server.resendOTP("s");
+      this.setState({ showSpinner: false });
+    } catch (error) {
+      this.setState({ showSpinner: false });
+    }
+  }
 
   resetInput = (e, field) => {
     if (e.keyCode === 8) {
@@ -150,6 +160,7 @@ class VerifyPhone extends Component {
               className="verification-submit-btn"
             />
           </div>
+          <center><a onClick={this.resendOTP} style={{fontFamily: 'Poppins', position: 'relative', top: "10px", cursor: "pointer", color: "#218d4c"}}>Didn't get OTP?</a></center>
         </form>
       </div>
     );

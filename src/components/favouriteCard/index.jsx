@@ -16,7 +16,7 @@ const FavouriteCard = ({ fade, remove, pair, showSpinner, showBsellModal2}) => (
     <div className="smaller-items">
       <p className="p-price">{app.floatFormat(pair.bid)}</p>
       {pair.bid_up > 0 ? <img className={"direction up"} src={Up} /> : <img className={"direction down"} src={Down} />}
-      <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type}; showBsellModal2(e)}} />
+      <img src={CommentIcon} alt='' onClick={(e) => { window.buyAndSellData = {info: pair, pair: pair.pair, buy: pair.ask, sell: pair.bid, act: "sell", type: pair.type}; showBsellModal2(e)}} />
     </div>
   </div>
 );

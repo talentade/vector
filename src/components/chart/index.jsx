@@ -734,6 +734,7 @@ class Chart extends Component {
   }
 
   render() {
+    window.hotStockData = this.props.hotStocks;
     if(this.state.pair1.length) {
       const stockToDisplay = this.props.hotStocks.filter((pair) => {
         if(pair.pair) {
@@ -937,8 +938,10 @@ class Chart extends Component {
           }>
           {
             ((_currentPairData.sell > 0 || _currentPairData.buy > 0) && !buyable)
-            ? <p className="m-closed"><small>Market is closed</small></p>
-            : (null)
+            ? <p className="m-closed"><small>{this.state.pair1} market is closed</small></p>
+            : (_currentPairData.info.name || "").length > 0
+            ? <p className="m-closed"><strong>{_currentPairData.info.name+" ("+this.state.pair1+")"}</strong></p>
+            : <p className="m-closed"><strong>{this.state.pair1}</strong></p>
           }
           <div
             className='chart-sell'

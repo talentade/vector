@@ -108,7 +108,7 @@ const app = {
   hostURL: (url, type = 0) => {
     let live = true;
     if(type > 0) {
-      return live ? "wss://avarizserver.herokuapp.com/" : "ws://localhost:3003";
+      return live ? "wss://avarizsocket.herokuapp.com/" : "ws://localhost:3003";
     } else {
       return live ? "https://avarizserver.herokuapp.com/"+url : "http://localhost:3003/"+url;
     }

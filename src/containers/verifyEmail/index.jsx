@@ -64,7 +64,17 @@ class VerifyEmail extends Component {
       const verificationError = error.response.data.message;
       this.setState({ error: verificationError });
     }
-  };
+  }
+
+  resendOTP = async () => {
+    this.setState({ showSpinner: true });
+    try {
+      await server.resendOTP("e");
+      this.setState({ showSpinner: false });
+    } catch (error) {
+      this.setState({ showSpinner: false });
+    }
+  }
 
   resetInput = (e, field) => {
     if (e.keyCode === 8) {
@@ -145,6 +155,7 @@ class VerifyEmail extends Component {
               className='verification-submit-btn'
             />
           </div>
+          <center><a onClick={this.resendOTP} style={{fontFamily: 'Poppins', position: 'relative', top: "10px", cursor: "pointer", color: "#218d4c"}}>Didn't get OTP?</a></center>
         </form>
       </div>
     );

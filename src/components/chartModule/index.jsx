@@ -181,7 +181,7 @@ class ChartModule extends Component {
           }
           if(this.historySeriesPair == pair && this.realTimeListener && !this.destroyGraph) {
             setTimeout(async () => {
-              console.log("-- checking_for_update for", pair);
+              // console.log("-- checking_for_update for", pair);
               if(this.historySeriesPair == pair) {
                 try {
                   let _unit = _from.end;
@@ -200,7 +200,7 @@ class ChartModule extends Component {
                   this.graphSwitcher      = false;
                   this.setState({showLoader: false});
 
-                  console.log(_history.data.result.meta.currentTradingPeriod, _from);
+                  // console.log(_history.data.result.meta.currentTradingPeriod, _from);
 
                   const offset = getOffsetBetweenTimezonesForDate(new Date, Intl.DateTimeFormat().resolvedOptions().timeZone, _data.meta.exchangeTimezoneName);
                   graphOffset  = (offset+1)*3600;
@@ -499,13 +499,20 @@ class ChartModule extends Component {
 
   render() {
     let sop = this.props.selectedOption;
+    let stocks = [];
+
+    if(window.hotStockData) {
+      for (const [key, value] of Object.entries(window.hotStockData)) {
+        stocks[value.pair] = value.name;
+      }
+    }
 
     return this.destroyGraph ? null : (
       <div className={'col-md-'+(this.props.ki > 1 ? '6' : this.props.col)+' chart-section multiple-chart-section chart-section-'+this.props.ki} uniqueId={this.props.chartKey}>
         <div className='chart-section-top'>
           <div className='chart-section-top-left'>
-            <select className='blue-select' onChange={this.setNewPairData} value={this.state.selectedPair}>
-              {this.state.allPairs[sop].map((data, key) => (<option key={key}>{data}</option>))}
+            <select className='blue-select' onChange={this.setNewPairData} value={this.state.selectedPair}> 
+              {this.state.allPairs[sop].map((data, key) => (<option key={key} value={data}>{(stocks[data] || "").length ? stocks[data] : data}</option>))}
             </select>
             {this.props.ki === 1 ?
               <button onClick={this.props.addComparism} className="a-comp">Add Comparison</button> :
