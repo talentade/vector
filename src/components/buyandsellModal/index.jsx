@@ -390,6 +390,7 @@ class BuyandsellModal extends Component {
         "lots"            : this.state.lot_str,
         "volume"          : this.state.volume,
         "margin"          : this.state.required_margin_str,
+        "commission"      : Number((Number(this.props.info.commission) / 100) * this.state.required_margin_str),
         "stop_loss"       : document.getElementById("stop_loss").checked ? Number($("#stl_val_"+isBuy).val().trim()) : "",
         "take_profit"     : document.getElementById("take_profit").checked ? Number($("#tkp_val_"+isBuy).val().trim()) : "",
         "trade_when"      : document.getElementById("only_buy_when").checked ? Number($(".only_buy_when_actual.for-"+this.state.mode).val()) : "",
