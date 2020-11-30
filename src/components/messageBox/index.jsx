@@ -16,7 +16,7 @@ class MessageBox extends Component {
       message: '',
       active: app.profile(),
       messages: [],
-      loaded: false
+      onShow: false
     }
 
     this.refreshMessage = null;
@@ -26,11 +26,12 @@ class MessageBox extends Component {
     setTimeout(() => {
       let element = document.getElementById("messageList");
       element.scrollTop = element.scrollHeight - element.clientHeight;
-      this.setState({ loaded: true });
-    }, 0);
+      this.setState({ onShow: true });
+    }, 50);
   }
 
   async componentDidMount () {
+    window.mct = false;
     $(window).on("renewSocket", () => this.socketInit());
     if(window.WebSocketPlugged) {
       $(window).trigger("renewSocket");
@@ -82,6 +83,7 @@ class MessageBox extends Component {
   }
 
   async componentWillUnmount () {
+    window.mct = false;
     this.isViewable = false;
     window.messageRefresher = "off";
     clearInterval(this.refreshMessage);
@@ -111,6 +113,12 @@ class MessageBox extends Component {
     }
   }
 
+  componentWillUpdate = () => {
+    if(this.props.show && !this.state.onShow && this.state.messages.length > 0) {
+      this.onShow();
+    }
+  }
+
   socketInit = () => {
     window.fct = 0;
     window.WebSocketPlug.addEventListener('message', ({data}) => {
@@ -133,9 +141,16 @@ class MessageBox extends Component {
                   new_msgs.push(m);
                 }
               });
-              this.setState({ messages: this.state.messages.concat(new_msgs) });
-              this.readReciept(this.state.active.user_id);
-              this.scrollDown();
+              if(new_msgs.length) {
+                if(!this.props.show && window.mct && this.state.messages.length > 0) {
+                  this.props.ring(new_msgs.length);
+                }
+                window.mct = true;
+                this.setState({ onShow: false });
+                this.setState({ messages: this.state.messages.concat(new_msgs) });
+                this.readReciept(this.state.active.user_id);
+                this.scrollDown();
+              }
             }
           break;
           // case "NEW_CHAT":
@@ -164,9 +179,6 @@ class MessageBox extends Component {
   }
 
   render() {
-    if(this.props.show && !this.state.loaded && this.state.messages.length > 0) {
-      this.onShow();
-    }
     return (
       <div className={"message-dropdown"+(this.state.mobile ? ' mobile' : '')+(app.isAdmin() ? ' admin' : '')}>
         <div className="section1">

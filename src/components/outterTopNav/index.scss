@@ -6,6 +6,24 @@
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.__newMessage {
+  top: -5px;
+  left: 1em;
+  height: 20px;
+  box-shadow: 0px 2px 3px #000;
+  width: 20px;
+  font-weight: bold;
+  font-size: 12px;
+  position: absolute;
+  border: 1px solid #c30e0e;
+  background: red;
+  justify-content: center;
+  font-family: 'Poppins';
+  border-radius: 50%;
+  align-items: center;
+  display: flex;
+}
+
 .dropdown {
   z-index: 2 !important;
   cursor: pointer;

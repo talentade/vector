@@ -257,10 +257,9 @@ class BuyandsellModal extends Component {
       } else {
         lots -= 0.01;
       }
+      lots = lots.toFixed(2);
+      $("#vlv").val(lots);
     }
-
-    lots = lots.toFixed(2);
-    $("#vlv").val(lots);
 
     this.setState({ volume : lots });
     this.pip_margin(lots);

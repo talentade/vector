@@ -52,7 +52,8 @@ class SignIn extends Component {
       app.profile(user);
       const accounts = app.accounts();
       this.setState({ showSpinner: false });
-      this.props.history.push(app.isAdmin() ? '/Lists' : (app.isVerified() ? '/Trade' : '/Profile')); // Book + user.booked > 0
+      // this.props.history.push(app.isAdmin() ? '/Lists' : (app.isVerified() ? '/Trade' : '/Profile')); // Book + user.booked > 0
+      window.location.href = app.isAdmin() ? '/Lists' : (app.isVerified() ? '/Trade' : '/Profile');
     } catch (error) {
       this.setState({ showSpinner: false });
       if (!error.response) {

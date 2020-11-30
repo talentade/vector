@@ -8,31 +8,16 @@ import { toggleSideNav, toggleOutterNav, toggleTransactionNav } from '../../redu
 import { saveUserProfile } from '../../redux/actions/index';
 import server from '../../services/server';
 import app from '../../services/app';
+import socketPlug from '../../services/emit';
 import $ from 'jquery';
 
-const socketListener = () => {
-  window.WebSocketPlug = window.WebSocketPlugged ? window.WebSocketPlug : new WebSocket(app.hostURL("socket", 1));
-  window.WebSocketPlug.addEventListener('open', () => {
-    window.WebSocketPlugged = true;
-    $(window).trigger("renewSocket");
-    // setInterval(() => {
-    //   if(window.messageRefresher == "off" && window.messagePayload) {
-    //     window.WebSocketPlug.send(JSON.stringify({
-    //       "event":   "GET_MESSAGES2",
-    //       "payload": window.messagePayload
-    //     }));
-    //   }
-    // }, 1000);
-  });
-  window.WebSocketPlug.onclose = (e) => {
-    window.WebSocketPlugged = false;
-    setTimeout(() => {
-      socketListener();
-    }, 1000);
-  }
+if(["Book", "Trade", "Accounts", "Profile", "ForgotPassword", "ChangePassword", "Market", "News", "Transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1) {
+  setTimeout(() => {
+    $("#_sphs_").remove();
+  }, 700);
+} else {
+  $("#_sphs_").remove();
 }
-
-socketListener();
 
 class Container extends Component {
   constructor(props) {
@@ -49,6 +34,7 @@ class Container extends Component {
 
   componentDidMount() {
     this.props.saveUserProfile(this.profile);
+    socketPlug();
     if(this.isAdmin) {
       if(!window.__toggleOutterNav) {
         this.props.toggleOutterNav();

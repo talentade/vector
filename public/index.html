@@ -8,6 +8,44 @@
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Avarizgroup" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <style type="text/css">
+      #_sphs_ {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        position: fixed;
+        background: #004044;
+        align-items: center;
+        z-index: 100000000000;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      #_sphs_ img._logo {
+        margin-top: 1em;
+        width: 100px;
+        height: 100px;
+      }
+
+      #_sphs_ img._logo2 {
+        margin-top: 1em;
+        height: 50px;
+      }
+
+      #_sphs_ h4 {
+        margin-top: 1em;
+        font-family: 'Poppins';
+        color: #fff;
+      }
+
+      #_sphs_ img._svg {
+        margin-top: 1em;
+        width: 30px;
+        height: 30px;
+      }
+    </style>
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -32,6 +70,12 @@
 
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="_sphs_">
+      <img src="./logo.png" class="_logo" />
+      <img src="./av.png" class="_logo2" />
+      <!-- <h4>AVARIZ GROUP</h4> -->
+      <img src="./loader.svg" class="_svg" />
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -50,5 +94,29 @@
     <script src='plugins/perfect-scrollbar/perfect-scrollbar.min.js'></script> -->
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 </body>
+<script type="text/javascript">
+function fadeOutEffect() {
+    var fadeTarget = document.getElementById("_sphs_");
+    var fadeEffect = setInterval(function () {
+        if (!fadeTarget.style.opacity) {
+            fadeTarget.style.opacity = 1;
+        }
+        if (fadeTarget.style.opacity > 0) {
+            fadeTarget.style.opacity -= 0.05;
+        } else {
+            clearInterval(fadeEffect);
+        }
+    }, 100);
+}
 
+window.onload = function () {
+  if(
+      ["Book", "Trade", "Accounts", "Profile", "ForgotPassword", "ChangePassword", "Market", "News", "Transactions"]
+      .indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1
+    ) {
+    document.getElementById("_sphs_").style.display = 'none';
+  }
+  fadeOutEffect();
+}
+</script>
 </html>

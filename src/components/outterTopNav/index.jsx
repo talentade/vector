@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import MessageBox from '../messageBox/index';
 import HoverDropdown from '../hoverDropdown/index';
@@ -7,9 +8,11 @@ import Tnav1 from "../../themes/images/tradeDashboard/t_nav1.svg";
 import Tnav2 from "../../themes/images/tradeDashboard/t_nav2.svg";
 import Tnav3 from "../../themes/images/tradeDashboard/t_nav3.png";
 import Tnav4 from "../../themes/images/tradeDashboard/t_nav4.svg";
+import newMessage from "../../themes/sounds/new.ogg";
 import liveChat from "../../themes/images/live-chat.png";
 import { Logout } from '../../components/popups/index';
 import HeaderImage from "../../themes/images/company_logo.png";
+import app from '../../services/app';
 import './index.scss';
 
 class OutterTopNav extends Component {
@@ -18,11 +21,23 @@ class OutterTopNav extends Component {
     this.state = {
       hover: false,
       mbox: false,
+      newMessage: app.messageCount() || 0,
       showLogout: false
+    }
+    this.audio = new Audio(require("../../themes/sounds/new.ogg").default);
+  }
+
+  ring = (n) => {
+    let nm = this.state.newMessage + Number(n);
+    app.messageCount(nm);
+    this.setState({newMessage: nm});
+    if(this.state.newMessage > 0) {
+      $(this.audio)[0].play();
     }
   }
 
   render() {
+
     const { isAdmin, profileImage, email, firstName, lastName, balance, handleLogout } = this.props;
     return (
       <>
@@ -73,14 +88,16 @@ class OutterTopNav extends Component {
             </ul>
           ) : (
           <ul className='top-nav-list'>
-            <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')}>
+            <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')} style={{position: "relative"}}>
               {this.state.mbox && (
-                <div className='overlay drop' onClick={() => this.setState({mbox: false, hover: false})}></div>
+                <div className='overlay drop' onClick={() => { app.messageCount(0); this.setState({newMessage: 0, mbox: false, hover: false}); }}></div>
               )}
-              <img src={liveChat} alt='' onMouseEnter={() => (!window.BuyandsellModalPopup) && this.setState({mbox: true})} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true}) }}/>
+              <img src={liveChat} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: true, newMessage: 0}); app.messageCount(0); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true, newMessage: 0}); app.messageCount(0); }} />
+              {this.state.newMessage > 0 ? <span className="__newMessage">{this.state.newMessage}</span> : null}
               <MessageBox
                 name={`${firstName} ${lastName}`}
                 show={this.state.mbox}
+                ring={(n) => this.ring(n)}
               />
             </li>
             <li><img src={Tnav2} alt='' /></li>

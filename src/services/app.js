@@ -16,6 +16,15 @@ const app = {
     if(!profile) window.location.href = "/login";
     return (profile.first_name+" "+profile.last_name).ucwords();
   },
+  messageCount: (a = -1) => {
+    if(a > 0) {
+      localStorage.setItem("avariz_mcnt", a); return a;
+    } else if(a < 0) {
+      return Number(localStorage.getItem("avariz_mcnt") || 0);
+    } else {
+      return localStorage.removeItem("avariz_mcnt");
+    }
+  },
   isVerified: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     return !profile ? 0 : profile.kyc;
@@ -103,7 +112,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   isAdmin: () => {
-    return !false;
+    return false;
   },
   hostURL: (url, type = 0) => {
     let live = true;

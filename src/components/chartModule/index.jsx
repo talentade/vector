@@ -188,7 +188,7 @@ class ChartModule extends Component {
                   if(_from) {
                     if(_from.end > moment().unix()) {
                       _unit = _pre.end;
-                      console.log("(-)", _from.end, "(>)", _unit);
+                      // console.log("(-)", _from.end, "(>)", _unit);
                     }
                   }
                   let _history = this.graphSwitcher ? this.lastServerResponse : await server.historicalData(pair, "1m", {
