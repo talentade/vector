@@ -67,16 +67,20 @@ class MessageBox extends Component {
 
   refreshMsg = () => {
     if(window.WebSocketPlugged) {
-      window.WebSocketPlug.send(JSON.stringify({
-        "event": "GET_MESSAGES2",
-        "payload": {
-          admin:   false,
-          user:    app.id(),
-          account: app.account(),
-          flag:    this.props.show,
-          last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0
-        }
-      }));
+      try {
+        window.WebSocketPlug.send(JSON.stringify({
+          "event": "GET_MESSAGES2",
+          "payload": {
+            admin:   false,
+            user:    app.id(),
+            account: app.account(),
+            flag:    this.props.show,
+            last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0
+          }
+        }));
+      } catch(e) {
+        throw e;
+      }
     }
   }
 
