@@ -8,6 +8,9 @@ const app = {
     if(!profile) window.location.href = "/login";
     return profile.user_id;
   },
+  loggedIn: () => {
+    return !!localStorage.getItem("avariz_profile");
+  },
   time: () => {
     return new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
   },
@@ -85,6 +88,11 @@ const app = {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
     return profile.accounts;
+  },
+  messages: () => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    if(!profile) window.location.href = "/login";
+    return profile.messages || [];
   },
   email: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));

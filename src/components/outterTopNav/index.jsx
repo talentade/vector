@@ -21,19 +21,26 @@ class OutterTopNav extends Component {
     this.state = {
       hover: false,
       mbox: false,
-      newMessage: app.messageCount() || 0,
+      newMessage: 0,
       showLogout: false
     }
     this.audio = new Audio(require("../../themes/sounds/new.ogg").default);
   }
 
   ring = (n) => {
-    let nm = this.state.newMessage + Number(n);
-    app.messageCount(nm);
-    this.setState({newMessage: nm});
-    if(this.state.newMessage > 0) {
+    n = Number(n);
+    this.setState({newMessage: n});
+    if(n > 0) {
       $(this.audio)[0].play();
     }
+  }
+
+  onShow = () => {
+    setTimeout(() => {
+      let element = document.getElementById("messageList");
+      element.scrollTop = element.scrollHeight - element.clientHeight;
+      window.scrollChat = true;
+    }, 250);
   }
 
   render() {
@@ -88,11 +95,11 @@ class OutterTopNav extends Component {
             </ul>
           ) : (
           <ul className='top-nav-list'>
-            <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')} style={{position: "relative"}}>
+            <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')} style={{position: "relative", cursor: "pointer"}}>
               {this.state.mbox && (
-                <div className='overlay drop' onClick={() => { app.messageCount(0); this.setState({newMessage: 0, mbox: false, hover: false}); }}></div>
+                <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false}); }}></div>
               )}
-              <img src={liveChat} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: true, newMessage: 0}); app.messageCount(0); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true, newMessage: 0}); app.messageCount(0); }} />
+              <img src={liveChat} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: true, newMessage: 0}); this.onShow(); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true, newMessage: 0}); this.onShow(); }} />
               {this.state.newMessage > 0 ? <span className="__newMessage">{this.state.newMessage}</span> : null}
               <MessageBox
                 name={`${firstName} ${lastName}`}

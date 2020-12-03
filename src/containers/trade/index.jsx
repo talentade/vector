@@ -85,14 +85,14 @@ class TradeDashboard extends Component {
       this.profile = app.profile();
     });
 
-    setInterval(() => {
-      if(this.realTimeListener && window.WebSocketPlugged) {
-        window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
-          user:    app.id(),
-          account: app.account(),
-        }}));
-      }
-    }, 1000);
+    // setInterval(() => {
+    //   if(this.realTimeListener && window.WebSocketPlugged) {
+    //     window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
+    //       user:    app.id(),
+    //       account: app.account(),
+    //     }}));
+    //   }
+    // }, 1000);
 
     setTimeout(() => {
       let filterOptions = Object.keys(app.allPairs());

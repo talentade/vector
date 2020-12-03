@@ -67,6 +67,13 @@
 
       p.stop_loss, p.take_profit, p.trade_when {
         position: relative;
+        
+        .esw {
+          display: flex;
+          color: red;
+          font-family: Poppins;
+          font-size: 14px;
+        }
 
         img.uvlv {
           position: absolute;

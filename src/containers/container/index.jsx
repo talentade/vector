@@ -11,10 +11,17 @@ import app from '../../services/app';
 import socketPlug from '../../services/emit';
 import $ from 'jquery';
 
-if(["Book", "Trade", "Accounts", "Profile", "ForgotPassword", "ChangePassword", "Market", "News", "Transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1) {
-  setTimeout(() => {
-    $("#_sphs_").remove();
-  }, 700);
+if(["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1) {
+  (async () => {
+    if(app.loggedIn()) {
+      setTimeout(() => { $("#_sphs_").remove(); }, 100);
+      const gp = await server.getProfile();
+      app.profile(gp.data.profile);
+    } else {
+      window.location.href = "/login";
+      process.exit(0);
+    }
+  })();
 } else {
   $("#_sphs_").remove();
 }
@@ -33,8 +40,8 @@ class Container extends Component {
   }
 
   componentDidMount() {
-    this.props.saveUserProfile(this.profile);
     socketPlug();
+    this.props.saveUserProfile(this.profile);
     if(this.isAdmin) {
       if(!window.__toggleOutterNav) {
         this.props.toggleOutterNav();

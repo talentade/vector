@@ -18,7 +18,7 @@ const Balance = ({ balance, balanceItemData }) => {
       </div>
 
       <div className="btn">
-        <Link to="Transactions">DEPOSIT</Link>
+        <a href="/Transactions">DEPOSIT</a>
       </div>
     </div>
   );

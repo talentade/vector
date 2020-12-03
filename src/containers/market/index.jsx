@@ -82,15 +82,15 @@ class Market extends Component {
       this.profile = app.profile();
     });
 
-    this.refresHistory = setInterval(() => {
-      if(this.realTimeListener && window.WebSocketPlugged) {
-        console.log("--TRADE_HISTORY");
-        window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
-          user:    app.id(),
-          account: app.account(),
-        }}));
-      }
-    }, 1500);
+    // this.refresHistory = setInterval(() => {
+    //   if(this.realTimeListener && window.WebSocketPlugged) {
+    //     console.log("--TRADE_HISTORY");
+    //     window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
+    //       user:    app.id(),
+    //       account: app.account(),
+    //     }}));
+    //   }
+    // }, 1500);
 
     var w = $(window).innerHeight();
     $(".market-pairs").attr("style", "height: "+(Number(w) - 180)+"px !important; min-height: "+(Number(w) - 180)+"px !important;");

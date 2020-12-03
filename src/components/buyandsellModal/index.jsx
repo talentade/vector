@@ -79,36 +79,44 @@ class BuyandsellModal extends Component {
 
     $("#tkp_val_1").keyup(function () {
       if(Number($(this).val()) <= Number($(this).data("rate"))) {
-        $(this).val($(this).data("valu"));
-        d.setState({tkp_val: Number($(this).data("valu"))});
+        // $(this).val($(this).data("valu"));
+        // d.setState({tkp_val: Number($(this).data("valu"))});
+        $(this).css({color: "red", fontWeight: "normal", borderColor: "red"});
       } else {
+        $(this).css({color: "#03CF9E", fontWeight: "normal", borderColor: "#03CF9E"});
         d.setState({tkp_val: Number($(this).val())});
       }
     });
 
     $("#tkp_val_0").keyup(function () {
       if(Number($(this).val()) >= Number($(this).data("rate"))) {
-        $(this).val($(this).data("valu"));
-        d.setState({tkp_val: Number($(this).data("valu"))});
+        // $(this).val($(this).data("valu"));
+        // d.setState({tkp_val: Number($(this).data("valu"))});
+        $(this).css({color: "red", fontWeight: "normal", borderColor: "red"});
       } else {
+        $(this).css({color: "#03CF9E", fontWeight: "normal", borderColor: "#03CF9E"});
         d.setState({tkp_val: Number($(this).val())});
       }
     });
 
     $("#stl_val_1").keyup(function () {
       if(Number($(this).val()) >= Number($(this).data("rate"))) {
-        $(this).val($(this).data("valu"));
-        d.setState({stl_val: Number($(this).data("valu"))});
+        // $(this).val($(this).data("valu"));
+        // d.setState({stl_val: Number($(this).data("valu"))});
+        $(this).css({color: "red", fontWeight: "normal", borderColor: "red"});
       } else {
+        $(this).css({color: "#03CF9E", fontWeight: "normal", borderColor: "#03CF9E"});
         d.setState({stl_val: Number($(this).val())});
       }
     });
 
     $("#stl_val_0").keyup(function () {
       if(Number($(this).val()) <= Number($(this).data("rate"))) {
-        $(this).val($(this).data("valu"));
-        d.setState({stl_val: Number($(this).data("valu"))});
+        // $(this).val($(this).data("valu"));
+        // d.setState({stl_val: Number($(this).data("valu"))});
+        $(this).css({color: "red", fontWeight: "normal", borderColor: "red"});
       } else {
+        $(this).css({color: "#03CF9E", fontWeight: "normal", borderColor: "#03CF9E"});
         d.setState({stl_val: Number($(this).val())});
       }
     });
@@ -544,6 +552,7 @@ class BuyandsellModal extends Component {
                   <label className="switch"><input type="checkbox" id="stop_loss" onChange={this.handleChange} /><span className="slider round"></span></label>
                   <span className="switch-ctxt hide">
                     <p className="stop_loss">
+                      {/*<span className="esw">Can't be less than 1212.63</span>*/}
                       <input type="number" placeholder="0.01" className={"stl_val"+(isBuy ? "" : " hide")} id="stl_val_1" defaultValue={stl} data-valu={stl} data-rate={crate} />
                       <input type="number" placeholder="0.01" className={"stl_val"+(isBuy ? " hide" : "")} id="stl_val_0" defaultValue={tkp} data-valu={tkp} data-rate={crate} />
                       {/*<img src={upVlv} className="uvlv" id="vlv_0" onClick={(e) => { this._vlvChange("up", 0); }} />

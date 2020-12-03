@@ -963,9 +963,12 @@ class Chart extends Component {
             <div className='map' data-tip data-for="comming">
               <img src={MapIcon} alt='' />
             </div>
-            <ReactTooltip id="comming" type="dark" effect="solid">
-              <span>AI TRADING Coming soon</span>
-            </ReactTooltip>
+            {
+              (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable) ? null :
+              <ReactTooltip id="comming" type="dark" effect="solid">
+                <span>AI TRADING Coming soon</span>
+              </ReactTooltip>
+            }
             <p className='map-center'>{_currentPairData.high > 0 ? "S: "+app.floatFormat(_currentPairData.spread) : ''}</p>
           </div>
           <div
@@ -987,9 +990,12 @@ class Chart extends Component {
         </div>
       ): null}
 
-      <ReactTooltip id="closed" type="dark" effect="solid">
-        <span>Market closed</span>
-      </ReactTooltip>
+      {/*
+        (_currentPairData.sell === 0 || _currentPairData.buy === 0 || !buyable) ? null :
+        <ReactTooltip id="closed" type="dark" effect="solid">
+          <span>Market closed</span>
+        </ReactTooltip>
+      */}
 
         <div className='chart-section hide'>
           <div className='chart-section-top'>
