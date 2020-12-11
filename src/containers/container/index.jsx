@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import OutterTopNav from '../../components/outterTopNav/index';
-import './index.scss';
 import OutterLeftNav from '../../components/outterLeft/index';
 import { toggleSideNav, toggleOutterNav, toggleTransactionNav } from '../../redux/actions/index';
 import { saveUserProfile } from '../../redux/actions/index';
 import server from '../../services/server';
-import app from '../../services/app';
 import socketPlug from '../../services/emit';
+import app from '../../services/app';
 import $ from 'jquery';
+import './index.scss';
 
 if(["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1) {
   (async () => {

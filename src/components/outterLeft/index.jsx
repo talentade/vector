@@ -60,7 +60,11 @@ class OutterLeftNav extends Component {
               className={'link-icons '+nav.name+(page.toLowerCase() == nav.path.replace("/", "").toLowerCase() ? ' active' : '')}
             >
             {
-              (nav.name == 'trade' || nav.name == 'market' || (this.urlName() === 'transactions' && this.urlName(nav.path) === 'transactions')) && isclk
+              (
+                (nav.name == 'trade' && page == 'trade') ||
+                (nav.name == 'market' && page == 'market') ||
+                (nav.name == 'transactions' && page == 'transactions')
+              ) && isclk
              ?
             (
               <NavLink

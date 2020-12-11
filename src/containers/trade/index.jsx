@@ -85,15 +85,6 @@ class TradeDashboard extends Component {
       this.profile = app.profile();
     });
 
-    // setInterval(() => {
-    //   if(this.realTimeListener && window.WebSocketPlugged) {
-    //     window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
-    //       user:    app.id(),
-    //       account: app.account(),
-    //     }}));
-    //   }
-    // }, 1000);
-
     setTimeout(() => {
       let filterOptions = Object.keys(app.allPairs());
       let f = [];
@@ -110,7 +101,6 @@ class TradeDashboard extends Component {
       try {
         let message = JSON.parse(`${data}`);
         let payload = message.payload;
-        // console.log(payload);
         switch(message.event) {
           case "PAIR_DATA":
             this.fetchFavs();
@@ -172,15 +162,15 @@ class TradeDashboard extends Component {
         let brate = app.floatFormat(rate ? rate[0].ask : 0);
         let srate = app.floatFormat(rate ? rate[0].bid : 0);
         trade.current_rate = trade.mode == "buy" ? brate : srate;
-        if(trade.order_status == 0) {
+        if(parseInt(trade.order_status) == 0) {
           open_pl += Number(trade.profit);
           margin += Number(trade.required_margin);
           open_trades.push(trade);
         }
-        if(trade.order_status == 1) {
+        if(parseInt(trade.order_status) == 1) {
           pending_trades.push(trade);
         }
-        if(trade.order_status == 2) {
+        if(parseInt(trade.order_status) == 2) {
           closed_trades.push(trade);
         }
       }
@@ -192,7 +182,7 @@ class TradeDashboard extends Component {
       closed_trades:     closed_trades,
       open_pl:           open_pl.toFixed(2),
       margin:            Number(margin).toFixed(2),
-      equity:            open_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
+      equity:            open_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl) + Number(margin)).toFixed(2) : 0
     });
   }
 
@@ -297,6 +287,10 @@ class TradeDashboard extends Component {
     });
   }
 
+  numberWithCommas = (x) => {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   showPrice = (p) => {
     let cl, pr;
     if(p > 0) {
@@ -311,7 +305,7 @@ class TradeDashboard extends Component {
     }
     let price = p < 0 ? -1 * Number(p) : Number(p);
     return (
-      <span className={cl}>{pr+price.toFixed(2).toLocaleString()}</span>
+      <span className={cl}>{pr+this.numberWithCommas(price.toFixed(2).toLocaleString())}</span>
     )
   }
 
@@ -345,7 +339,7 @@ class TradeDashboard extends Component {
 
     const marginItems = [
       {
-        margin: 'Margin',
+        margin: 'Used Margin',
         price: this.showPrice(margin),
       },
       {
@@ -360,6 +354,8 @@ class TradeDashboard extends Component {
         ).toFixed(2)+"%",
       },
     ];
+
+    let altBalance = this.numberWithCommas(Number(Number(this.state.selectedAccount.balance) + Number(margin)).toFixed(2));
 
     return (
       <Container>
@@ -410,7 +406,7 @@ class TradeDashboard extends Component {
                 <div className='balance-margin'>
                   <div className='balance-demo'>
                     <Balance
-                      balance={`$${Number(this.state.selectedAccount.balance).toLocaleString()}`}
+                      balance={`$${altBalance}`}
                       balanceItemData={balanceItems}
                     />
                     {currentTab !== 'Balance' ? (
@@ -440,7 +436,7 @@ class TradeDashboard extends Component {
               ) : (
                 <MobileBalance
                   demoOptions={this.state.accounts}
-                  balance={`$${this.state.selectedAccount.balance}`}
+                  balance={`$${altBalance}`}
                   balanceItemData={balanceItems}
                   marginItems={marginItems}
                   handleDemoChange={this.handleAccountChange}

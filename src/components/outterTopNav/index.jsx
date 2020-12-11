@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import MessageBox from '../messageBox/index';
+import NotificationBox from '../notifications/index';
 import HoverDropdown from '../hoverDropdown/index';
 import userDp from '../../themes/images/dummydp.png';
 import Tnav1 from "../../themes/images/tradeDashboard/t_nav1.svg";
@@ -21,6 +22,8 @@ class OutterTopNav extends Component {
     this.state = {
       hover: false,
       mbox: false,
+      ibox: false,
+      newNotice: 0,
       newMessage: 0,
       showLogout: false
     }
@@ -97,9 +100,9 @@ class OutterTopNav extends Component {
           <ul className='top-nav-list'>
             <li className={'live-chat-mbox'+(this.state.mbox ? ' mbox' : '')} style={{position: "relative", cursor: "pointer"}}>
               {this.state.mbox && (
-                <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false}); }}></div>
+                <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false, ibox: false}); }}></div>
               )}
-              <img src={liveChat} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: true, newMessage: 0}); this.onShow(); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true, newMessage: 0}); this.onShow(); }} />
+              <img src={liveChat} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: true, ibox: false, newMessage: 0}); this.onShow(); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: true, ibox: false, newMessage: 0}); this.onShow(); }} />
               {this.state.newMessage > 0 ? <span className="__newMessage">{this.state.newMessage}</span> : null}
               <MessageBox
                 name={`${firstName} ${lastName}`}
@@ -107,7 +110,14 @@ class OutterTopNav extends Component {
                 ring={(n) => this.ring(n)}
               />
             </li>
-            <li><img src={Tnav2} alt='' /></li>
+            <li style={{position: "relative", cursor: "pointer"}}>
+              {this.state.ibox && (
+                <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false, ibox: false}); }}></div>
+              )}
+              <img src={Tnav2} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: false, ibox: true, newNotice: 0}); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: false, ibox: true, newNotice: 0}); }} />
+              <span className="__newNotice"></span>
+              <NotificationBox show={this.state.ibox} />
+            </li>
             <li className='hide-mobile'>{`${firstName} ${lastName}`}</li>
             <li className={'dropdown'+(this.state.hover ? ' hover' : '')}>
               {this.state.hover && (

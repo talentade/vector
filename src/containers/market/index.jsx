@@ -8,13 +8,16 @@ import Balance from '../../components/balance/index';
 import Accounts from '../../components/accounts/index';
 import BuyandsellModal from '../../components/buyandsellModal/index';
 import BsConfirmationModal from '../../components/bsConfirmationModal/index';
+import FilterIcon from '../../themes/images/tradeDashboard/filter.svg';
 import Margin from '../../components/margin/index';
 import Favourites from '../../components/favourites/index';
 import Chart from '../../components/chart/index';
 import Spinner from '../../components/spinner/index';
 import Container from '../container/index';
 import { FavPopup } from '../../components/popups/index';
+import SearchIcon from '../../themes/images/micro.svg';
 import MarketSideBar from '../../components/marketSidebar/index';
+import { filterInstrument } from '../../redux/actions/index';
 import { setHotStocks } from '../../redux/actions/index';
 import './index.scss';
 
@@ -35,6 +38,7 @@ class Market extends Component {
       open_pl: 0,
       equity: 0,
       margin: 0,
+      filter: '',
       favourites: [],
       all_trades: [],
       open_trades: [],
@@ -82,16 +86,6 @@ class Market extends Component {
       this.profile = app.profile();
     });
 
-    // this.refresHistory = setInterval(() => {
-    //   if(this.realTimeListener && window.WebSocketPlugged) {
-    //     console.log("--TRADE_HISTORY");
-    //     window.WebSocketPlug.send(JSON.stringify({"event": "TRADE_HISTORY", "payload": {
-    //       user:    app.id(),
-    //       account: app.account(),
-    //     }}));
-    //   }
-    // }, 1500);
-
     var w = $(window).innerHeight();
     $(".market-pairs").attr("style", "height: "+(Number(w) - 180)+"px !important; min-height: "+(Number(w) - 180)+"px !important;");
 
@@ -109,7 +103,7 @@ class Market extends Component {
         // console.log(payload);
         switch(message.event) {
           case "PAIR_DATA":
-            this.fetchFavs();
+            // this.fetchFavs();
             this.setState({ hotStocks: payload, showLoader: false, showSpinner: false });
           break;
           case "TRADE_HISTORY":
@@ -168,15 +162,15 @@ class Market extends Component {
         let brate = app.floatFormat(rate ? rate[0].ask : 0);
         let srate = app.floatFormat(rate ? rate[0].bid : 0);
         trade.current_rate = trade.mode == "buy" ? brate : srate;
-        if(trade.order_status == 0) {
+        if(parseInt(trade.order_status) == 0) {
           open_pl += Number(trade.profit);
           margin += Number(trade.required_margin);
           open_trades.push(trade);
         }
-        if(trade.order_status == 1) {
+        if(parseInt(trade.order_status) == 1) {
           pending_trades.push(trade);
         }
-        if(trade.order_status == 2) {
+        if(parseInt(trade.order_status) == 2) {
           closed_trades.push(trade);
         }
       }
@@ -188,7 +182,7 @@ class Market extends Component {
       closed_trades:     closed_trades,
       open_pl:           open_pl.toFixed(2),
       margin:            Number(margin).toFixed(2),
-      equity:            open_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl)).toFixed(2) : 0
+      equity:            open_trades.length ? (Number(this.state.selectedAccount.balance) + Number(open_pl) + Number(margin)).toFixed(2) : 0
     });
   }
 
@@ -281,6 +275,10 @@ class Market extends Component {
     });
   }
 
+  numberWithCommas = (x) => {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   showPrice = (p) => {
     let cl, pr;
     if(p > 0) {
@@ -295,18 +293,19 @@ class Market extends Component {
     }
     let price = p < 0 ? -1 * Number(p) : Number(p);
     return (
-      <span className={cl}>{pr+price.toFixed(2).toLocaleString()}</span>
+      <span className={cl}>{pr+this.numberWithCommas(price.toFixed(2).toLocaleString())}</span>
     )
   }
 
   render() {
-    const { hotStocks, showLoader } = this.state;
+    const { hotStocks, showLoader, filter } = this.state;
 
-    const stocksToDisplay = this.props.filter ? hotStocks.filter((pair) => {
+    let fil = filter.replace(/[^\w\s]/gi, '');
+    const stocksToDisplay = fil.length ? hotStocks.filter((pair) => {
       return (
-        pair.name.toLowerCase().match(this.props.filter.toLowerCase()) ||
-        pair.pair.toLowerCase().match(this.props.filter.toLowerCase()) ||
-        pair.name + " ("+pair.pair+")".toLowerCase().match(this.props.filter.toLowerCase())
+        pair.name.toLowerCase().match(fil.toLowerCase()) ||
+        pair.pair.toLowerCase().match(fil.toLowerCase()) ||
+        (pair.name + " "+pair.pair).toLowerCase().match(fil.toLowerCase())
       )
     }) : hotStocks;
 
@@ -336,7 +335,7 @@ class Market extends Component {
 
     const marginItems = [
       {
-        margin: 'Margin',
+        margin: 'Used Margin',
         price: this.showPrice(margin),
       },
       {
@@ -351,6 +350,8 @@ class Market extends Component {
         ).toFixed(2)+"%",
       },
     ];
+
+    let altBalance = this.numberWithCommas(Number(Number(this.state.selectedAccount.balance) + Number(margin)).toFixed(2));
 
     return (
       <Container>
@@ -378,18 +379,32 @@ class Market extends Component {
             cancel={this.cancelBsellModal}
           />
 
-          <MarketSideBar
-            pairs={stocksToDisplay}
-            clickHandler={this.toggleSideBar}
-            hideText={this.state.clicked}
-            showLoader={showLoader}
-            _favouritePairs={this.state._favouritePairs}
-            favouritePairs={this.state.favouritePairs}
-            showBsellModal={this.showBsellModal}
-            addToFav={this.addToFav}
-            remFav={this.remFav}
-            showBsellModal2={this.showBsellModal2}
-          />
+
+          <div style={{width: this.state.clicked ? '50px' : null, overflow: 'hidden'}} className={`left display-l-nav big-left`}>
+            <img src={FilterIcon} alt='' className='filter-img' onClick={this.toggleSideBar} />
+            <div className='loader-container' style={{ display: showLoader ? 'block' : 'none' }}>
+              <div className='loader'></div>
+            </div>
+            <div className='market-search' style={{display: this.state.clicked ? 'none' : 'flex'}}>
+              <input type='text' name='searchText' id="ins_search" onKeyUp={(e) => this.setState({filter: e.target.value})} placeholder='Search Instrument' /> {/*onChange={(event) => filterInstrument(event.target.value)} */}
+              <img src={SearchIcon} alt='' />
+            </div>
+            <div className='margin-top-small' style={{ display: this.state.clicked ? 'none' : 'block' }}>
+              <MarketSideBar
+                pairs={stocksToDisplay}
+                clickHandler={this.toggleSideBar}
+                hideText={this.state.clicked}
+                showLoader={showLoader}
+                _favouritePairs={this.state._favouritePairs}
+                favouritePairs={this.state.favouritePairs}
+                showBsellModal={this.showBsellModal}
+                addToFav={this.addToFav}
+                remFav={this.remFav}
+                showBsellModal2={this.showBsellModal2}
+              />
+            </div>
+          </div>
+
           <div
             className='right big-right'
             style={{ width: this.state.clicked ? 'calc(100% - 50px)' : null }}
@@ -399,7 +414,7 @@ class Market extends Component {
                 <div className='balance-margin'>
                   <div className='balance-demo'>
                     <Balance
-                      balance={`$${this.state.selectedAccount.balance}`}
+                      balance={`$${altBalance}`}
                       balanceItemData={balanceItems}
                     />
                     <Accounts
