@@ -36,6 +36,16 @@ class NotificationBox extends Component {
     });
   }
 
+  gotoN = (g) => {
+    if(g.length) {
+      g = g.split("/");
+      if(g.length > 1) {
+        localStorage.setItem(g[0].toLowerCase() == "transactions" ? "TSelected" : "RSelected", g[1]);
+      }
+      window.location.href = g[0];
+    }
+  }
+
   render() {
     return (
       this.props.show ?
@@ -43,8 +53,8 @@ class NotificationBox extends Component {
         <div className="section2">
           <ul id="notificationList">
           {
-            this.state.notifications.map(({notice, flag}) => (
-              <li className={flag ? "" : "new"}>{notice}</li>
+            this.state.notifications.map((n) => (
+              <li className={n.flag ? "" : "new"} onClick={() => this.gotoN(n.goto)} style={n.goto.length ? {cursor: "ponter"} : null}>{n.notice}</li>
             ))
           }
           </ul>
