@@ -1,6 +1,8 @@
 .notification-dropdown {
   position: absolute;
   cursor: pointer;
+  max-height: 300px;
+  overflow: auto;
   // display: none;
   right: -121px;
   top: 40px;
@@ -13,6 +15,23 @@
   height: auto;
   background: #006066;
   border-radius: 3px;
+
+  &::-webkit-scrollbar {
+    width: 7px;
+    background: #004044;
+    border-radius: 1em;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #004044 !important;
+    border-radius: 1em;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    border-radius: 1em;
+    background: #b7b7b7 !important;
+  }
 
   &.user {
     right: -5px;
@@ -83,18 +102,22 @@
       overflow: auto;
 
       li {
-        width: 100% !important;
-        margin-bottom: 1px;
-        padding: 2px 1em 2px;
+        width: 96% !important;
+        padding: 1em;
         text-align: center;
         color: #c4c4c4;
         font-weight: 300;
+        margin: 2%;
         cursor: pointer;
-        border-bottom: 0.4px solid #beecec75;
+        border-bottom: 0.3px solid #ffffff8c;
 
         &.new {
           // font-weight: bold !important;
           color: #fff;
+        }
+
+        &:last-child {
+          border-bottom: 0px;
         }
 
         .m-time {
@@ -240,12 +263,13 @@
   background: #555; 
 }
 
-.live-chat-mbox.mbox .notification-dropdown.mobile {
+.notification-dropdown.mobile {
   display: block !important;
   width: 98%;
   right: 1% !important;
   top: 48px;
   bottom: 2px;
+  max-height: 82%;
   position: fixed;
 }
 
@@ -256,7 +280,7 @@
   }
 
   .section2 {
-    height: calc(100% - 100px);
+    height: 100%;
   }
 
   .section3 input {

@@ -26,6 +26,14 @@ class NotificationBox extends Component {
     } else {
       this.setState({ mobile: false });
     }
+
+    $(window).resize(() => {
+      if(window.innerWidth <= 670) {
+        this.setState({ mobile: true });
+      } else {
+        this.setState({ mobile: false });
+      }
+    });
   }
 
   render() {
