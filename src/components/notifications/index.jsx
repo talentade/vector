@@ -14,7 +14,7 @@ class NotificationBox extends Component {
     super(props);
     this.state = {
       mobile: false,
-      notifications: app.profile()["notifications"]
+      notifications: app.profile()["notifications"] || []
     }
 
     this.refreshNotice = null;
