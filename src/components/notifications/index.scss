@@ -1,8 +1,6 @@
 .notification-dropdown {
   position: absolute;
-  cursor: pointer;
-  max-height: 300px;
-  overflow: auto;
+  // cursor: pointer;
   // display: none;
   right: -121px;
   top: 40px;
@@ -16,32 +14,43 @@
   background: #006066;
   border-radius: 3px;
 
-  &::-webkit-scrollbar {
-    width: 7px;
-    background: #004044;
-    border-radius: 1em;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #004044 !important;
-    border-radius: 1em;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    cursor: pointer;
-    border-radius: 1em;
-    background: #b7b7b7 !important;
-  }
-
   &.user {
     right: -5px;
+  }
+
+  .nhead {
+    color: #000 !important;
+    height: 40px;
+    width: 100%;
+    padding: .5em 1em;
+    background: #fff;
+    justify-content: space-between;
+    border-radius: 4px 4px 0 0;
+
+    & > * {
+      font-weight: normal;
+      display: inline-block;
+      font-family: 'Poppins';
+    }
+  }
+
+  .clear_all {
+    top: 12px;
+    right: 1em;
+    float: right;
+    font-size: 90%;
+    color: #000000;
+    cursor: pointer;
+    user-select: none;
+    margin-top: 2px;
+    font-family: 'Poppins';
+    text-decoration: underline;
   }
 
   .section1 {
     width: 280px;
     height: 50px;
     position: relative;
-
     background: #FFFFFF;
     border-radius: 3px 3px 0px 0px;
     padding: 10px 15px 0px;
@@ -84,8 +93,27 @@
 
   .section2 {
     width: 100%;
+    height: 100%;
+    max-height: 300px;
     overflow: auto;
     min-height: 20px;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      border-radius: 1em;
+      background: #004044;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #004044 !important;
+      border-radius: 1em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      cursor: pointer;
+      border-radius: 1em;
+      background: #b7b7b7 !important;
+    }
 
     p {
       font-size: 12px;
@@ -102,14 +130,31 @@
       overflow: auto;
 
       li {
-        width: 96% !important;
+        width: calc(100% - 20px) !important;
         padding: 1em;
-        text-align: center;
+        padding-bottom: 1.2em;
+        position: relative;
+        text-align: left;
+        -webkit-user-select: none;
+        user-select: none;
         color: #c4c4c4;
         font-weight: 300;
         margin: 2%;
+        margin-left: 10px;
+        // list-style: inside;
         cursor: pointer;
         border-bottom: 0.3px solid #ffffff8c;
+
+        span {
+          position: absolute;
+          width: 100%;
+          display: inline-block;
+          bottom: 2px;
+          font-size: 80%;
+          right: 2px;
+          color: #DDD;
+          text-align: right;
+        }
 
         &.new {
           // font-weight: bold !important;
@@ -121,15 +166,15 @@
         }
 
         .m-time {
-          font-family: Poppins;
-          font-style: normal;
+          font-family: "Poppins";
           font-weight: normal;
-          font-size: 11px;
+          align-items: center;
+          font-style: normal;
           line-height: 12px;
+          font-size: 11px;
+          color: #A7A7A7;
           display: flex;
           margin: 10px;
-          align-items: center;
-          color: #A7A7A7;
         }
 
         &.y-msg {
@@ -232,6 +277,7 @@
 .notification-dropdown::before {
   content: '';
   background: #006066;
+  background: #ffffff;
   width: 15px;
   height: 15px;
   position: absolute;
@@ -250,11 +296,10 @@
   width: 8px;
 }
 
-/* Track */
 #notificationList::-webkit-scrollbar-track {
   background: #f1f1f1; 
 }
- 
+
 #notificationList::-webkit-scrollbar-thumb {
   background: #888; 
 }
@@ -265,12 +310,16 @@
 
 .notification-dropdown.mobile {
   display: block !important;
-  width: 98%;
   right: 1% !important;
+  width: 98%;
   top: 48px;
   bottom: 2px;
   max-height: 82%;
   position: fixed;
+
+  .section2 {
+    max-height: 100% !important;
+  }
 }
 
 .notification-dropdown.mobile {
@@ -289,7 +338,5 @@
 }
 
 .notification-dropdown.mobile::before {
-  background: #004044 !important;
   right: 41% !important;
-  top: -10px !important;
 }
