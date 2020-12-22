@@ -361,12 +361,12 @@ export default {
     });
   },
 
-  deleteCard(id, PAN) {
+  deleteCard(id, PAN, uid = null) {
     return axios.request({
       method: 'PUT',
       url: app.hostURL('removeCard/'+PAN+'/'+id),
       headers: {
-        'Authorization': app.auth()
+        'Authorization': uid ? uid : app.auth()
       }
     });
   },

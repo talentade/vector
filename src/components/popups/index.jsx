@@ -5,6 +5,10 @@ import './index.scss';
 import fav from '../../themes/popup/fav.PNG';
 import acc from '../../themes/popup/account.PNG';
 import err from '../../themes/popup/err.PNG';
+import vector from './vector.png';
+import radar1 from './radar1.png';
+import radar2 from './radar2.png';
+import radar3 from './radar3.png';
 import bc from '../../themes/popup/booked.PNG';
 import calendar from './calendar.svg';
 import time from './time.svg';
@@ -198,6 +202,26 @@ class Email extends React.Component {
               <div></div>
               <button className="action" onClick={() => action(this.props.email, app.email(), $("#composed-m").val().trim())}>Send Email</button>
             </div>
+          </div>
+        </div>
+      ) : (null)
+    );
+  }
+}
+
+class Success extends React.Component {
+  render() {
+    const { src, show, cancel } = this.props;
+    return (
+      show ? (
+        <div className='overlay popups' onClick={popupOut}>
+          <div className='edit-modal-section' style={{height: "500px", position: "relative", borderRadius: "5px"}}>
+            <img src={vector} className="vector" />
+            <img src={radar1} className="radar1" />
+            <img src={radar2} className="radar2" />
+            <img src={radar3} className="radar3" />
+            <h3 className="r-head">Transaction Completed</h3>
+            <p className="r-text txt-success">A Deposit of USD 500 has been successfully made<br />to Credit the account of 0138423(LIVE)</p>
           </div>
         </div>
       ) : (null)
@@ -602,4 +626,4 @@ class ConfirmModal extends React.Component {
 
 
 
-export {FavPopup, Booked, Note, Email, Task, Meet, Created, Closed, CallBack, Insufficient, ImageView, Logout, ConfirmModal}
+export {FavPopup, Booked, Note, Email, Task, Meet, Created, Closed, Success, CallBack, Insufficient, ImageView, Logout, ConfirmModal}

@@ -68,6 +68,11 @@ class MessageBox extends Component {
   refreshMsg = () => {
     if(window.WebSocketPlugged) {
       try {
+        let clr = window.nclear || false;
+        let nid = window.lastnid > 0 ? window.lastnid : (app.profile()["notifications"] || []).length ? app.profile()["notifications"][0]["id"] : 0;
+        if(clr) {
+          window.nclear = false;
+        }
         window.WebSocketPlug.send(JSON.stringify({
           "event": "GET_MESSAGES2",
           "payload": {
@@ -75,6 +80,9 @@ class MessageBox extends Component {
             user:    app.id(),
             account: app.account(),
             flag:    this.props.show,
+            lastnid: nid,
+            nflag  : window.nread,
+            nclear : clr,
             last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0
           }
         }));

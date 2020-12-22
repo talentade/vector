@@ -28,6 +28,7 @@ class OutterTopNav extends Component {
       showLogout: false
     }
     this.audio = new Audio(require("../../themes/sounds/new.ogg").default);
+    this.notify = new Audio(require("../../themes/sounds/note.ogg").default);
   }
 
   ring = (n) => {
@@ -35,6 +36,14 @@ class OutterTopNav extends Component {
     this.setState({newMessage: n});
     if(n > 0) {
       $(this.audio)[0].play();
+    }
+  }
+
+  ring2 = (n) => {
+    n = Number(n);
+    this.setState({newNotice: n});
+    if(n > 0) {
+      $(this.notify)[0].play();
     }
   }
 
@@ -115,8 +124,12 @@ class OutterTopNav extends Component {
                 <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false, ibox: false}); }}></div>
               )}
               <img src={Tnav2} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: false, ibox: true, newNotice: 0}); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: false, ibox: true, newNotice: 0}); }} />
-              <span className="__newNotice"></span>
-              <NotificationBox show={this.state.ibox} />
+              {this.state.newNotice > 0 ? <span className="__newNotice"></span> : null}
+
+              <NotificationBox
+                show={this.state.ibox}
+                ring={(n) => this.ring2(n)}
+              />
             </li>
             <li className='hide-mobile'>{`${firstName} ${lastName}`}</li>
             <li className={'dropdown'+(this.state.hover ? ' hover' : '')}>

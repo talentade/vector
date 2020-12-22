@@ -24,6 +24,65 @@
     }
   }
 
+  .vector {
+    width: 100%;
+    height: 262px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    position: absolute;
+  }
+
+  .radar1 {
+    position: absolute;
+    height: 200px;
+    width: 200px;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+  }
+
+  .radar2 {
+    position: absolute;
+    height: 180px;
+    width: 180px;
+    z-index: 1;
+    left: calc(50% - 90px);
+    top: calc(50% - 90px);
+  }
+
+  .radar3 {
+    position: absolute;
+    height: 150px;
+    width: 150px;
+    z-index: 2;
+    left: calc(50% - 75px);
+    top: calc(50% - 75px);
+  }
+
+  .r-head {
+    position: absolute;
+    top: 367px;
+    width: 100%;
+    text-align: center;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 33px;
+    color: #fff;
+  }
+
+  .r-text {
+    position: absolute;
+    top: 424px;
+    width: 100%;
+    text-align: center;
+    font-family: Poppins;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 21px;
+    color: #03CF9E;
+  }
 
   label.datepicker {
     height: auto;

@@ -5,11 +5,16 @@ import userIcon from '../../themes/images/user-contacct.png';
 import app from '../../services/app';
 import server from '../../services/server';
 import pencil from '../../themes/images/pencil-edit.png';
+import { Success } from '../../components/popups/index';
+import DebitCard from '../../components/profile/debitCard/index';
 import './profiledetails.scss';
 
 class ProfileDetails extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showSuccess: true
+    }
   }
 
   async componentDidMount () {
@@ -53,6 +58,16 @@ class ProfileDetails extends Component {
     this.props.refresh();
   }
 
+  deleteCard = async (id, cardPAN) => {
+    this.props.load();
+    try {
+      await server.deleteCard(id, cardPAN, this.props.uid); 
+    } catch (error) {
+      return error
+    }
+    this.props.refresh();
+  }
+
   updateDetails = async () => {
     let valus = {};
     if($(".valu.edited").length) {
@@ -77,8 +92,11 @@ class ProfileDetails extends Component {
   render () {
     let active = parseInt(this.props.active);
     let state = this.props.profile;
+    let cards = state.cards;
   	return (
       <div className={"tab-row profile-details"+(active ? ' _active' : '')} id="tab-row-profile">
+
+        <Success show={!this.state.showSuccess} cancel={(e) => this.setState({showSuccess: false})} />
 
         <div className="detail-row">
           <h3><img src={userIcon} /> Personal Details</h3>
@@ -170,6 +188,22 @@ class ProfileDetails extends Component {
             </li>
           </ul>
         </div>
+
+
+
+          <div className='detail-row' style={{height: "auto", background: "transparent"}}>
+            <div className='my-cards'>
+              {cards
+                ? cards.map((data) => (
+                    <DebitCard
+                      {...data}
+                      deleteCard={() => this.deleteCard(data.id, data.PAN)}
+                      key={`${Math.random()}1-${Math.random()}-${Math.random()}`}
+                    />
+                  ))
+                : null}
+            </div>
+          </div>
 
       </div>
 	 )

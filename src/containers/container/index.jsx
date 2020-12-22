@@ -11,7 +11,8 @@ import app from '../../services/app';
 import $ from 'jquery';
 import './index.scss';
 
-if(["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1) {
+let isOnApp = ["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1;
+if(isOnApp) {
   (async () => {
     if(app.loggedIn()) {
       setTimeout(() => { $("#_sphs_").remove(); }, 100);
