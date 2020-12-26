@@ -17,7 +17,8 @@ class AddInstrument extends Component {
     this.state = {
       loading: false,
       antiForex: true,
-      errorMessage: ''
+      errorMessage: '',
+      forex: 0,
     };
 
   }
@@ -29,7 +30,11 @@ class AddInstrument extends Component {
   }
 
   componentDidMount () {
-
+    if(this.props.data) {
+      this.setState({forex: this.props.data.type.toLowerCase() == "forex" ? 1 : 0});
+    } else {
+      this.setState({forex: 1});
+    }
   }
 
   btnSave = async () => {
@@ -48,15 +53,22 @@ class AddInstrument extends Component {
       "long":     $("#i-long").val()
     }
 
-    let err = 0;
+    let err = 0, _val = "";
     Object.keys(ain).forEach((v, k) => {
       if(!ain[v].length) {
-        err += 1;
+        if(
+          (ain.type.toLowerCase() == "forex" && (v == "cont" || v == "lev"))
+          || (v == "min") || (v == "max") || (v == "short") || (v == "long")
+        ) {} else {
+          err += 1;
+          _val += v+", ";
+        }
       }
     });
 
     if(err) {
-      return this.setState({errorMessage: "Please fill all fields"});
+      console.log(_val);
+      return this.setState({errorMessage: "Please fill all necessary fields"});
     } this.setState({loading: true});
 
     // this.props.sending();
@@ -77,6 +89,7 @@ class AddInstrument extends Component {
 
   cpip = (e) => {
     let v = e.target.value.toLowerCase();
+    this.setState({forex: v == "forex" ? 1 : 0});
     if(v == "forex" || v == "crypto") {
       this.setState({antiForex: true});
     } else {
@@ -103,23 +116,23 @@ class AddInstrument extends Component {
               <h6 align="center">{data ? "Edit" : "Add new"} Instrument</h6>
               <p className="inps" style={{marginTop: "5px"}}>
                 <div className="i-col">
-                  <label>Name</label>
+                  <label>Name<span className="requ">*</span></label>
                   <input className="" id="i-name" type="text" defaultValue={data ? data.name : ""}/>
                 </div>
                 <div className="i-col">
-                  <label>Symbol(i.e. <b>AUD/USD</b>)</label>
+                  <label>Symbol(i.e. <b>AUD/USD</b>)<span className="requ">*</span></label>
                   <input className="" id="i-symbol" type="text" readOnly={!!data} defaultValue={data ? data.pair : ""}/>
                 </div>
                 <div className="i-col">
-                  <label>Percentage Commission</label>
+                  <label>Percentage Commission<span className="requ">*</span></label>
                   <input className="" id="i-com" type="text" defaultValue={data ? data.commission : ""}/>
                 </div>
                 <div className="i-col">
-                  <label>Leverage</label>
+                  <label>Leverage{this.state.forex > 0 ? null : <span className="requ">*</span>}</label>
                   <input className="" id="i-lev" type="text" defaultValue={data ? data.leverage : ""}/>
                 </div>
                 <div className="i-col">
-                  <label>Type</label>
+                  <label>Type<span className="requ">*</span></label>
                   <select className="select-box" id="i-type" onChange={this.cpip} defaultValue={data ? data.type.toUpperCase() : "FOREX"}>
                     <option>FOREX</option>
                     <option>CRYPTO</option>
@@ -129,13 +142,13 @@ class AddInstrument extends Component {
                   </select>
                 </div>
                 <div className="i-col">
-                  <label>Pip per <b>0.1</b> Volume (lots)</label>
+                  <label>Pip per <b>0.1</b> Volume (lots)<span className="requ">*</span></label>
                   <input className="" id="i-pip" type="text" defaultValue={data ? data.unit_per_lot : ""} />
                 </div>
                 {!antiForex
                    ?
                     <div className="i-col">
-                      <label>Contract Size</label>
+                      <label>Contract Size<span className="requ">*</span></label>
                       <input className="" id="i-contract" type="text" defaultValue={data ? data.contract : ""} />
                     </div>
                   : null
@@ -143,7 +156,7 @@ class AddInstrument extends Component {
                 {!antiForex
                   ?
                     <div className="i-col">
-                      <label>Units per <b>0.1</b> Volume (lots)</label>
+                      <label>Units per <b>0.1</b> Volume (lots)<span className="requ">*</span></label>
                       <input className="" id="i-pip-size" type="text" defaultValue={data ? data.pip_size : ""} />
                     </div>
                   : null

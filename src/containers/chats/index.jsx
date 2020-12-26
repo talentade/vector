@@ -10,6 +10,7 @@ import person1 from '../../themes/images/person1.png';
 import ppl from '../../themes/images/paper-plane.png';
 import CancelIcon from '../../themes/images/cancel.svg';
 import DummyImage from '../../themes/images/tradeDashboard/t_nav3.png';
+import loading from './loading.gif';
 import server from '../../services/server';
 import app from '../../services/app';
 import './index.scss';
@@ -59,6 +60,7 @@ class Chats extends Component {
     if(window.WebSocketPlugged) {
       $(window).trigger("renewSocket");
     }
+    this.refreshMsg();
     this.refreshMessage = setInterval(() => {
       this.refreshMsg();
     }, 1000);
@@ -80,7 +82,12 @@ class Chats extends Component {
     if(window.WebSocketPlugged) {
       window.WebSocketPlug.send(JSON.stringify({
         "event": "GET_MESSAGES2",
-        "payload": { admin: true, user: this.state.active.user_id, last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0}
+        "payload": {
+          admin: true,
+          user: this.state.active.user_id,
+          lastnid: 0,
+          last_id: this.state.messages.length ? this.state.messages[this.state.messages.length - 1]["id"] : 0
+        }
       }));
     }
   }
@@ -252,7 +259,7 @@ class Chats extends Component {
                     </div>
                     {msg.sid.trim() == app.userid() ? null : <small className="m-time">{moment(msg.create_time).calendar()}</small>}
                   </li>
-                )) : (null)}
+                )) : this.state.active ? (<li className="li-loading"><img src={loading} /></li>) : (null)}
               </ul>
 
             </div>

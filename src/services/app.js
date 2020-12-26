@@ -105,6 +105,7 @@ const app = {
     return profile.phone_number.trim();
   },
   retryLimit: 10,
+  maxrow: 5,
   profile: (p = null) => {
     if(p) {
       localStorage.setItem('avariz_profile', JSON.stringify(p));
@@ -120,7 +121,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   isAdmin: () => {
-    return false;
+    return !false;
   },
   hostURL: (url, type = 0) => {
     let live = true;

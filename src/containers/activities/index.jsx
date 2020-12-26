@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Container from '../container/index';
 import { Link } from 'react-router-dom';
+import Pagination from '../../components/paginationTwo/index'
 import TableFilters from '../../components/tablefilters/index';
 import meeting from '../../themes/images/meeting.png';
 import eye from '../../themes/images/eye.png';
@@ -21,6 +22,8 @@ class Activities extends Component {
     this.state = {
       tid: 0,
       tasks: [],
+      page_no: 1,
+      page_size: app.maxrow,
       data: null,
       type: 'new',
       showLoader: true,
@@ -83,7 +86,13 @@ class Activities extends Component {
   }
 
   render () {
-    let tasks = this.state.tasks;
+    let { page_no, page_size, tasks } = this.state;
+
+    let max_rows = tasks.length;
+    let stt = (page_no-1)*page_size;
+    let max = stt+page_size;
+        max = max > max_rows ? max_rows : max;
+      tasks = tasks.slice(stt, max > max_rows ? max_rows : max);
 
   	return (
       <Container>
@@ -154,6 +163,8 @@ class Activities extends Component {
             </ul>
           ))
         }
+
+        <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
 
       </div>
       </div>

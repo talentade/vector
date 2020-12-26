@@ -9,7 +9,7 @@ import upVlv from '../../themes/images/up.png';
 import server from '../../services/server';
 import downVlv from '../../themes/images/down.png';
 
-class AddFunnel extends Component {
+class AddStage extends Component {
   constructor(props) {
 
     super(props);
@@ -32,12 +32,14 @@ class AddFunnel extends Component {
 
   btnSave = async () => {
 
+    let fid  = $("#tr-fid").val();
     let name = $("#tr-name").val();
+    let code = $("#tr-code").val();
 
-    if(name.length) {
+    if(name.length && code.length) {
       try {
         this.setState({errorMessage: ""});
-        let sf = await server.saveFunnel({funnel: name});
+        let sf = await server.newStage({fid: fid, stage: name, code: code});
         this.props.cancel();
         window.location.href = "";
       } catch (e) {
@@ -50,21 +52,31 @@ class AddFunnel extends Component {
   }
 
   render () {
-    const { cancel } = this.props;
+    const { cancel, funnels, sid } = this.props;
     return (
       <div className='overlay fun' onClick={this.popupOut}>
         <div className='modal-section'>
           <div className='bsell-modal'>
             <img src={CancelImage} alt='' className='modal-cancel' onClick={cancel} />
             <div className='bsell-modal-content'>
-              <h6 align="center">Add new Funnel</h6>
+              <h6 align="center">Add new funnel stage</h6>
               <p className="inps" style={{marginTop: "5px"}}>
-                <label>Funnel name</label>
+                <label>Select Funnel</label>
+                <select className="accs" id="tr-fid" value={sid}>
+                  {
+                    funnels.map((f) => (
+                      <option value={f.id} key={f.id}>{f.funnel}</option>
+                    ))
+                  }
+                </select>
+                <label>Funnel Stage Name</label>
                 <input className="accs" id="tr-name" type="text" />
+                <label>Color code</label>
+                <input className="accs" id="tr-code" type="text" />
 
                 {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 
-                <button className="sacc" onClick={this.btnSave}>Add Funnel</button>
+                <button className="sacc" onClick={this.btnSave}>Add Stage</button>
               </p>
             </div>
           </div>
@@ -74,4 +86,4 @@ class AddFunnel extends Component {
   };
 }
 
-export default AddFunnel;
+export default AddStage;

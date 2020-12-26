@@ -1,0 +1,30 @@
+.pagination-2 {
+	display: flex;
+    justify-content: center;
+    margin-top: 1em;
+
+	button.pg-p, button.pg-no, button.pg-n {
+		border: 0;
+		margin: 1em;
+	    height: 35px;
+	    width: 100px;
+		background: #00A880;
+		border-radius: 2px;
+		font-family: Poppins;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 12px;
+		line-height: 18px;
+		align-items: center;
+		color: #FFFFFF;
+		cursor: pointer;
+	}
+
+	button.pg-no {
+		width: 40px;
+		color: #546B81;
+		background: #EAFFFA;
+		border: 1px solid #00A880;
+		border-radius: 2px;
+	}
+}

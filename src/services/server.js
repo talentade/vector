@@ -660,14 +660,26 @@ export default {
     });
   },
 
-  updateFunnel(uid, funnel, funnel_stage) {
+  newStage(data) {
+    data.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+    return axios.request({
+      method: 'POST',
+      url: app.hostURL('admin/newStage'),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: data
+    });
+  },
+
+  updateFunnel(uid, fdata) {
     return axios.request({
       method: 'PUT',
       url: app.hostURL('admin/ufunnel/'+uid),
       headers: {
         'Authorization': app.auth()
       },
-      data: { funnel, funnel_stage }
+      data: fdata
     });
   },
 
@@ -682,10 +694,20 @@ export default {
     });
   },
 
-  getFunnel() {
+  getFunnels() {
     return axios.request({
       method: 'GET',
-      url: app.hostURL('admin/getFunnel'),
+      url: app.hostURL('admin/getFunnels'),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
+  getStages(id) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('admin/getStages/'+id),
       headers: {
         'Authorization': app.auth()
       }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Pagination2 from '../../components/pagination2/index';
+import Pagination from '../../components/paginationTwo/index';
 import '../../components/standard/table.scss';
 import download from '../../themes/images/download-doc.png';
 import view from '../../themes/images/view-doc.png';
@@ -13,6 +13,8 @@ class DocumentsTable extends Component {
     super(props);
     this.state = {
       users: [],
+      page_no: 1,
+      page_size: app.maxrow,
       iview: false,
       src: null,
       showLoader: true
@@ -33,6 +35,7 @@ class DocumentsTable extends Component {
   }
 
   render () {
+    let { page_no, page_size } = this.state;
     let users = this.props.filter.length ? this.state.users.filter((c) => {
       return (
         c.first_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
@@ -42,6 +45,14 @@ class DocumentsTable extends Component {
         (c.last_name + " " + c.first_name).toLowerCase().match(this.props.filter.toLowerCase())
       );
     }) : this.state.users;
+
+
+  let max_rows = users.length;
+  let stt = (page_no-1)*page_size;
+  let max = stt+page_size;
+      max = max > max_rows ? max_rows : max;
+    users = users.slice(stt, max > max_rows ? max_rows : max);
+
     return (
           <>
 
@@ -91,7 +102,8 @@ class DocumentsTable extends Component {
             >
               <div className='loader'></div>
             </div>
-            {/*<Pagination2 />*/}
+
+            <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
           </>
         );
   }

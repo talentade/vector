@@ -22,7 +22,7 @@ class TradeHistory extends Component {
     this.state = {
       showSpinner: false,
       showClosed: false,
-      page_size: 5,
+      page_size: app.maxrow,
       page_no: 1,
       filterPair: '',
       filterType: ''
@@ -203,7 +203,7 @@ class TradeHistory extends Component {
                   ) : null}
                 </ul>
               ))}
-              {history.length && !this.props.admin ?
+              {history.length ?
                 <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
               : this.props.admin ? null : <TradeNotFound text={"No "+type+" trade"} /> }
               {this.props.admin && !history.length ? <TradeNotFound text={"No "+type+" trade"} /> : null}

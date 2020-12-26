@@ -74,6 +74,15 @@ class TableFilters extends Component {
       {this.props.table === "sales" ? (
         <div className="table-filters">
           <div className="search-container select-box">
+            <select id="tf-fid" onChange={(e) => this.props.switch(e.target.value)}>
+              {
+                this.props.funnels.map((f) => (
+                  <option value={f.id} key={f.id}>{f.funnel}</option>
+                ))
+              }
+            </select>
+          </div>
+          <div className="search-container select-box" style={{width: "80px"}}>
             <select>
               <option>5</option>
               <option>10</option>
@@ -87,7 +96,8 @@ class TableFilters extends Component {
           </div>
 
           <div className="filter-actions">
-            <button className="create-btn" onClick={this.props.add}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> Funnel</button>
+            <button className="create-btn" onClick={this.props.new}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> New Funnel</button>&nbsp;&nbsp;&nbsp;
+            <button className="create-btn" onClick={this.props.add}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> New Stage</button>
           </div>
         </div>
       ) : null}

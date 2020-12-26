@@ -10,6 +10,7 @@ import Ptab from '../../components/ptabs/index';
 import calls from "./calls.svg";
 import view from "./view.svg";
 import AddFunnel from '../../components/addfunnel/index';
+import AddStage from '../../components/addstage/index';
 import TableFilters from '../../components/tablefilters/index';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
 import server from '../../services/server';
@@ -51,7 +52,7 @@ const dropIt = async (ev, dis) => {
     let sourceIdEl=document.getElementById(sourceId);
     let targetEl=document.getElementById(ev.target.id);
     if(!targetEl || !targetEl.parentElement || !sourceIdEl || !sourceIdEl.parentElement) {
-    	console.log("Werey dey disguise");
+    	// console.log("Werey dey disguise");
     	return null;
     }
     let sourceIdParentEl=sourceIdEl.parentElement;
@@ -64,7 +65,7 @@ const dropIt = async (ev, dis) => {
             $(".putable.hide").removeClass("hide");
             $("#"+sourceIdEl.id+"-alt").attr("id", tid);
             try {
-	            let uf = await server.updateFunnel($(sourceIdEl).data("uid"), $(targetParentEl).data("funnel"), $(targetParentEl).data("funnel_stage"));
+	            let uf = await server.updateFunnel($(sourceIdEl).data("uid"), {fid: $(targetParentEl).data("funnel_id"), sid: $(targetParentEl).data("funnel_stage")});
 	            let code = "#000000";
 	            dis.state.funnels.forEach((v, k) => {
 	            	if(v.id == $(targetParentEl).data("funnel_stage")) {
@@ -92,6 +93,17 @@ const dataFunnel = () => {
   }, 150);
 }
 
+const funnelStage = (d, f) => {
+  if(d.length) {
+    d = JSON.parse(d);
+    let ret = d.hasOwnProperty(f) ? parseInt(d[f]) : 0;
+    console.log(d, f, d.hasOwnProperty(f), d[f], ret);
+    return ret;
+  } else {
+    return 0;
+  }
+}
+
 
 class Salesfunnel extends Component {
   constructor(props) {
@@ -100,11 +112,14 @@ class Salesfunnel extends Component {
     this.state = {
     	half: false,
     	users: [],
+      sid: 1,
     	funnels: [],
       showLoader: true,
-    	addfunnel: false,
-    	stages: ["Stage 1", "Stage 2", "Stage 3", "Stage 4"],
-    	uid: 'f26bb8f5-ee2e-4a33-9a8e-7c8d68b17fee'
+      addfunnel: false,
+      sfunnel: true,
+      addStage: false,
+    	stages: [],
+    	uid: null
     }
 
   }
@@ -114,35 +129,58 @@ class Salesfunnel extends Component {
   }
 
   getAllUsers = async () => {
+    this.setState({showLoader: true});
     try {
-      let users = await server.getAllUsers();
-      let funnels = await server.getFunnel();
-      this.setState({users: users.data, funnels: funnels.data.funnels, showLoader: false});
-
+      let users   = await server.getAllUsers();
+      let funnels = await server.getFunnels();
+      let stages  = await server.getStages(this.state.sid);
+      this.setState({users: users.data, funnels: funnels.data.funnels, stages: stages.data.stages, showLoader: false});
     } catch(e) {
       return e;
     }
+    this.setState({showLoader: false});
+  }
+
+  switchFunnel = async (id) => {
+    this.setState({showLoader: true, sfunnel: false});
+    try {
+      let stages  = await server.getStages(id);
+      this.setState({stages: stages.data.stages, showLoader: false, sfunnel: true, sid: id});
+    } catch(e) {
+      return e;
+    }
+    this.setState({showLoader: false, sfunnel: true});
   }
 
   render() {
-    const { navi, half, uid, stages, funnels, users, addfunnel } = this.state;
+    const { navi, half, uid, sid, stages, funnels, users, addfunnel, addstage, sfunnel } = this.state;
     dataFunnel();
 
     return (
       <Container>
       <div className="col-12" id="sales-container">
         <div className="sales-section-right">
-	        {
-	        	addfunnel ?
-		        	<AddFunnel
-		        		cancel={(e) => this.setState({addfunnel: false})}
-		        	/>
-		        : null
-	        }
+          {
+            addfunnel ?
+              <AddFunnel
+                funnels={funnels}
+                cancel={(e) => this.setState({addfunnel: false})}
+              />
+            : null
+          }
+          {
+            addstage ?
+              <AddStage
+                funnels={funnels}
+                sid={sid}
+                cancel={(e) => this.setState({addstage: false})}
+              />
+            : null
+          }
 	        
 			<Breadcrumbs breads="Home, Salesfunnel" />
 			<h1 className="page-title">Salesfunnel</h1>
-			<TableFilters table="sales" add={(e) => this.setState({addfunnel: true})} />
+			<TableFilters table="sales" switch={this.switchFunnel} funnels={this.state.funnels} new={(e) => this.setState({addfunnel: true})} add={(e) => this.setState({addstage: true})} />
 
         <div
           className='loader-container'
@@ -151,26 +189,28 @@ class Salesfunnel extends Component {
           <div className='loader'></div>
         </div>
 
+          {sfunnel ? 
           	<div className="board-layout">
-		      	<div id='boardlists' className="board-lists">
-				  	{
-					  	funnels.map((st, sk) => (
-					    <div id={'list'+st.id} className="board-list" onDrop={(e) => dropIt(e, this)} data-funnel={st.funnel} data-funnel_stage={st.id} onDragOver={(e) => allowDrop(e)}>
-							<div className="list-title">{st.funnel}<br /><b id={"bl-"+st.id}>0 lead</b></div>
-					  		{
-					  			users.map((ut, uk) => (
-					  				ut.funnel_stage == st.id || (st.id == 1 && ut.funnel_stage < 1) ?
-						          	<div id={'card-'+uk+'-'+st.id} className="card sf-card npt" draggable="true" style={{borderLeft: "5px solid "+st.code}} data-row={"row-"+uk} data-uid={ut.user_id} onDragStart={(e) => dragStart(e)}>
-						          		<img src={ut.profile_image.length ? ut.profile_image : userDp} /> <b>{ut.first_name+" "+ut.last_name}</b>
-						          		<div className="s2">${ut.bal.toFixed(2)} | 16 days ago <img src={calls} className="call" /> <img src={view} className="view" onClick={(e) => this.setState({uid: ut.user_id, half: true})} /></div>
-						          	</div> : <div id={'card-'+uk+'-'+st.id} className="card sf-card putable" data-row={"row-"+uk} data-uid={ut.user_id}></div>
-					        	))
-					        }
-					    </div>
-					  	))
-				  	}
-		      	</div>
-		    </div>
+  		      	<div id='boardlists' className="board-lists">
+  				  	{
+  					  	stages.map((st, sk) => (
+  					    <div id={'list'+st.id} className="board-list" onDrop={(e) => dropIt(e, this)} data-funnel={st.stage} data-funnel_stage={st.id} data-funnel_id={st.funnel_id} onDragOver={(e) => allowDrop(e)}>
+  							<div className="list-title">{st.stage}<br /><b id={"bl-"+st.id}>0 lead</b></div>
+  					  		{
+  					  			users.map((ut, uk) => (
+  					  				funnelStage(ut.funnel, st.funnel_id) == st.id || (sk == 0 && funnelStage(ut.funnel, st.funnel_id) < 1) ?
+  					          	<div id={'card-'+uk+'-'+st.id} className="card sf-card npt" draggable="true" style={{borderLeft: "5px solid "+st.code}} data-row={"row-"+uk} data-uid={ut.user_id} onDragStart={(e) => dragStart(e)}>
+  					          		<img src={ut.profile_image.length ? ut.profile_image : userDp} /> <b>{ut.first_name+" "+ut.last_name}</b>
+  					          		<div className="s2">${ut.bal.toFixed(2)} | 16 days ago <img src={calls} className="call" /> <img src={view} className="view" onClick={(e) => this.setState({uid: ut.user_id, half: true})} /></div>
+  					          	</div> : <div id={'card-'+uk+'-'+st.id} className="card sf-card putable" data-row={"row-"+uk} data-uid={ut.user_id}></div>
+  					        	))
+  					      }
+  					    </div>
+  					  	))
+  				  	}
+  		      	</div>
+		        </div>
+            : null}
 
 		    {half ?
 		    <div className="half-screen">
