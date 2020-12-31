@@ -41,6 +41,7 @@ class DocumentsTable extends Component {
         c.first_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
         c.last_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
         c.email.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        app.uid(c.user_id).toLowerCase().match(this.props.filter.toLowerCase()) ||
         (c.first_name + " " + c.last_name).toLowerCase().match(this.props.filter.toLowerCase()) ||
         (c.last_name + " " + c.first_name).toLowerCase().match(this.props.filter.toLowerCase())
       );

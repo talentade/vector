@@ -18,6 +18,7 @@ import CreateAdmin from '../containers/createadmin/index';
 import Restrictions from '../containers/restrictions/index';
 import Chats from '../containers/chats/index';
 import Transactions from '../containers/transactions/index';
+import AllTranasactions from '../containers/allTranasactions/index';
 import Salesfunnel from '../containers/salesfunnel/index';
 
 import Users from '../containers/users/index';
@@ -59,7 +60,7 @@ export default props => (
         <Route path='/Chats' exact component={Chats} />
         <Route path='/Trades' exact component={Trades} />
 
-        <Route path='/Transactions' exact component={Transactions} />
+        <Route path='/Transactions' exact component={AllTranasactions} />
         <Route path='/MailAccounts' exact component={MailAccounts} />
         <Route path='/Unsubscribers' exact component={Unsubscribers} />
 

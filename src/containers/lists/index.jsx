@@ -67,7 +67,7 @@ class Lists extends Component {
               <li>LAST UPDATED {this.Thesvg()}</li>
               <li>CREATOR {this.Thesvg()}</li>
               <li>USED IN {this.Thesvg()}</li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             <ul className="table-body _all">
@@ -77,7 +77,7 @@ class Lists extends Component {
               <li><span className="txt-light">{this.state.time.all.length ? moment(this.state.time.all).calendar() : '-'}</span></li>
               <li><span className="txt-light">-</span></li>
               <li><span className="txt-default">0</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             <ul className="table-body _users">
@@ -87,7 +87,7 @@ class Lists extends Component {
               <li><span className="txt-light">{this.state.time.users.length ? moment(this.state.time.users).calendar() : '-'}</span></li>
               <li><span className="txt-light">-</span></li>
               <li><span className="txt-default">0</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             <ul className="table-body _admins">
@@ -97,7 +97,7 @@ class Lists extends Component {
               <li><span className="txt-light">{this.state.time.admin.length ? moment(this.state.time.admin).calendar() : '-'}</span></li>
               <li><span className="txt-light">-</span></li>
               <li><span className="txt-default">0</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             {/*<ul className="table-body _south">

@@ -3,6 +3,10 @@ const app = {
     u = u.split("-");
     return u[u.length - 1].toUpperCase();
   },
+  ref: (r) => {
+    let s = r.replace(/(undefined)/g, "0");
+    return s;
+  },
   id: () => {
     let profile = JSON.parse(localStorage.getItem("avariz_profile"));
     if(!profile) window.location.href = "/login";
@@ -105,7 +109,7 @@ const app = {
     return profile.phone_number.trim();
   },
   retryLimit: 10,
-  maxrow: 5,
+  maxrow: 8,
   profile: (p = null) => {
     if(p) {
       localStorage.setItem('avariz_profile', JSON.stringify(p));

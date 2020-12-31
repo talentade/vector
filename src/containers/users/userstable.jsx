@@ -71,6 +71,7 @@ class UsersTable extends Component {
         c.phone_number.toLowerCase().match(this.props.filter.toLowerCase()) ||
         c.country.toLowerCase().match(this.props.filter.toLowerCase()) ||
         c.email.toLowerCase().match(this.props.filter.toLowerCase()) ||
+        app.uid(c.user_id).toLowerCase().match(this.props.filter.toLowerCase()) ||
         (c.first_name + " " + c.last_name).toLowerCase().match(this.props.filter.toLowerCase()) ||
         (c.last_name + " " + c.first_name).toLowerCase().match(this.props.filter.toLowerCase())
       );
@@ -106,7 +107,7 @@ class UsersTable extends Component {
               <li>SOURCE</li>
               <li>LAST SEEN</li>
               <li>ACTION</li>
-              <div className="check-row" style={{top: "1.5em"}}><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row" style={{top: "1.5em"}}><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             {
@@ -115,7 +116,7 @@ class UsersTable extends Component {
                   <li><Link className="txt-info" to={"/usersprofile/"+user.user_id}>{app.uid(user.user_id)}</Link></li>
                   <li><Link className="txt-info" to={"/usersprofile/"+user.user_id}>{user.first_name+" "+user.last_name}</Link></li>
                   <li><span className="txt-default">{user.phone_number}</span></li>
-                  <li><span className="txt-default">{app.cleanDate(user.create_time)}</span></li>
+                  <li><span className="txt-default">{app.cleanDate(user.create_time).split(" ")[0]}<br />{app.cleanDate(user.create_time).split(" ")[1]}</span></li>
                   <li>{user.country}</li>
                   <li><span className="txt-success">${user.bal.toFixed(2)}</span></li>
                   <li><span className="txt-default">{user.aid.length ? this.accManager(user.aid) : '--'}</span></li>
@@ -132,7 +133,7 @@ class UsersTable extends Component {
                       <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#FFE602"/>
                     </svg>
                   </li>
-                  <div className="check-row"><label class="checkbox-container"><input type="checkbox" checked /><span class="checkmark"></span></label></div>
+                  {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" checked /><span class="checkmark"></span></label></div>*/}
                 </ul>
               ))
             }

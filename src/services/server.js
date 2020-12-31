@@ -269,6 +269,17 @@ export default {
     })
   },
 
+
+  getTransactionHistory2(page_size, page_no) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('history?page='+page_no+'&max='+page_size+app.noCache("&")),
+      headers: {
+        'Authorization': "*",
+      },
+    })
+  },
+
   fetchNews() {
     return axios.request({
       method: 'GET',
@@ -711,6 +722,37 @@ export default {
       headers: {
         'Authorization': app.auth()
       }
+    });
+  },
+
+  deleteStep(id) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/deleteStep/'+id),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
+  deleteFunnel(id) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/deleteFunnel/'+id),
+      headers: {
+        'Authorization': app.auth()
+      }
+    });
+  },
+
+  updateStage(id, s) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/updateStage/'+id),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: {s}
     });
   },
 

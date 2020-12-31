@@ -15,6 +15,7 @@ import ProfileMeetings from './profilemeetings.jsx';
 import UserTasks from './usertasks.jsx';
 import UserCalls from './usercalls.jsx';
 import UserEmails from './useremails.jsx';
+import Spinner from '../../components/spinner/index';
 import UsersProfile from  './userprofile.jsx';
 import server from '../../services/server';
 import app from '../../services/app';
@@ -71,9 +72,10 @@ class UsersProfileList extends Component {
 
     return (
       <Container>
-        <div className='loader-container' style={lct}>
+      <Spinner showSpinner={this.state.showLoader} />
+        {/*<div className='loader-container' style={lct}>
           <div className='loader'></div>
-        </div>
+        </div>*/}
       {profile ? <UsersProfile profile={profile} /> : null}
       {profile ?
         <div className="col-12" id="users-container">

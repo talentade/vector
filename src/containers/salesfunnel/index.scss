@@ -257,6 +257,38 @@
 	color: #fff;
     font-size: 18px;
     padding: .3em;
+    position: relative;
+
+    .stage-name {
+    	cursor: pointer;
+    }
+
+    .stage-name-val {
+    	display: none;
+	    background: transparent;
+	    color: #fff;
+	    border: 0;
+	    outline: none;
+	    font-size: 1em;
+	    padding: 0;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    padding-left: 5px;
+    }
+
+    .del-icon, .chk-icon {
+    	position: absolute;
+    	right: 5px;
+    	top: 10px;
+    	cursor: pointer;
+    }
+
+    .chk-icon {
+    	display: none;
+    	height: 20px;
+    	width: 20px;
+    }
 
     b {
     	font-size: 0.7em;

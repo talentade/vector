@@ -59,7 +59,7 @@ class ProfilePayments extends Component {
               <li className='t-from'><div><span className="th">Account(From)</span><span className="td">{transaction.type.toLowerCase() == "deposit" ? '---' : transaction.account_from}</span></div></li>
               <li className='t-to'><span className="th">Account(To)</span><span className="td">{transaction.account_to}</span></li>
               <li className="small-trans"><span className="th">Amount</span><span className="td">{transaction.amount}</span></li>
-              <li><span className="th">Reference No</span><span className="td">{transaction.reference}</span></li>
+              <li><span className="th">Reference No</span><span className="td">{app.ref(transaction.reference)}</span></li>
             </ul>
 
           ))

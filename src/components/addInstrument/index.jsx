@@ -57,8 +57,9 @@ class AddInstrument extends Component {
     Object.keys(ain).forEach((v, k) => {
       if(!ain[v].length) {
         if(
-          (ain.type.toLowerCase() == "forex" && (v == "cont" || v == "lev"))
-          || (v == "min") || (v == "max") || (v == "short") || (v == "long")
+          (ain.type.toLowerCase() == "forex"
+            && (v == "cont" || v == "lev" || v == "pips")
+          ) || (v == "min") || (v == "max") || (v == "short") || (v == "long")
         ) {} else {
           err += 1;
           _val += v+", ";

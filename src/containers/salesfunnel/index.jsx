@@ -7,12 +7,15 @@ import Pagination from '../../components/Pagination/index';
 import UsersProfileList from '../usersprofile/s';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import Ptab from '../../components/ptabs/index';
+import deleteIcon from '../../themes/images/notes/delete.png';
 import calls from "./calls.svg";
 import view from "./view.svg";
 import AddFunnel from '../../components/addfunnel/index';
 import AddStage from '../../components/addstage/index';
 import TableFilters from '../../components/tablefilters/index';
+import check from '../../themes/images/check-mark.png';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
+import { ConfirmModal } from '../../components/popups/index';
 import server from '../../services/server';
 import app from '../../services/app';
 import '../../components/standard/standard.scss';
@@ -94,10 +97,9 @@ const dataFunnel = () => {
 }
 
 const funnelStage = (d, f) => {
-  if(d.length) {
+  if(d && d.length) {
     d = JSON.parse(d);
     let ret = d.hasOwnProperty(f) ? parseInt(d[f]) : 0;
-    console.log(d, f, d.hasOwnProperty(f), d[f], ret);
     return ret;
   } else {
     return 0;
@@ -119,6 +121,10 @@ class Salesfunnel extends Component {
       sfunnel: true,
       addStage: false,
     	stages: [],
+      confirmID: 0,
+      confirmModal: false,
+      confirmModal2: false,
+      confirmStage: '',
     	uid: null
     }
 
@@ -126,6 +132,12 @@ class Salesfunnel extends Component {
 
   async componentDidMount () {
     this.getAllUsers();
+    $(document).delegate(".stage-name", "dblclick", function () {
+      $(this).css("display", "none");
+      $(this).parent().find(".stage-name-val").css("display", "block");
+      $(this).parent().find(".del-icon").css("display", "none");
+      $(this).parent().find(".chk-icon").css("display", "block");
+    });
   }
 
   getAllUsers = async () => {
@@ -135,6 +147,39 @@ class Salesfunnel extends Component {
       let funnels = await server.getFunnels();
       let stages  = await server.getStages(this.state.sid);
       this.setState({users: users.data, funnels: funnels.data.funnels, stages: stages.data.stages, showLoader: false});
+    } catch(e) {
+      return e;
+    }
+    this.setState({showLoader: false});
+  }
+
+  deleteStep = async (id) => {
+    this.setState({confirmModal: false, sfunnel: false, showLoader: true});
+    try {
+      let stages  = await server.deleteStep(id);
+      this.switchFunnel(this.state.sid);
+    } catch(e) {
+      return e;
+    }
+    this.setState({showLoader: false});
+  }
+
+  deleteFunnel = async () => {
+    this.setState({confirmModal2: false, sfunnel: false, showLoader: true});
+    try {
+      let stages  = await server.deleteFunnel(this.state.sid);
+    } catch(e) {
+      return e;
+    }
+    this.setState({showLoader: false});
+    window.location.href = "";
+  }
+
+  updateStage = async (id, s) => {
+    this.setState({sfunnel: false, showLoader: true});
+    try {
+      let stages  = await server.updateStage(id, s);
+      this.switchFunnel(this.state.sid);
     } catch(e) {
       return e;
     }
@@ -155,6 +200,14 @@ class Salesfunnel extends Component {
   render() {
     const { navi, half, uid, sid, stages, funnels, users, addfunnel, addstage, sfunnel } = this.state;
     dataFunnel();
+
+    let fnn = "Funnel";
+
+    funnels.filter((f) => {
+      if(f.id == $("#tf-fid").val()) {
+        fnn = f.funnel;
+      }
+    });
 
     return (
       <Container>
@@ -177,10 +230,33 @@ class Salesfunnel extends Component {
               />
             : null
           }
+
+      <ConfirmModal
+        head={"Delete "+this.state.confirmStage+"?"}
+        text="Click YES to confirm"
+        show={this.state.confirmModal}
+        cancel={() => this.setState({confirmModal: false})}
+        confirm={() => this.deleteStep(this.state.confirmID)}
+      />
+
+      <ConfirmModal
+        head={"Delete "+fnn+"?"}
+        text="Click YES to confirm"
+        show={this.state.confirmModal2}
+        cancel={() => this.setState({confirmModal2: false})}
+        confirm={() => this.deleteFunnel()}
+      />
 	        
 			<Breadcrumbs breads="Home, Salesfunnel" />
 			<h1 className="page-title">Salesfunnel</h1>
-			<TableFilters table="sales" switch={this.switchFunnel} funnels={this.state.funnels} new={(e) => this.setState({addfunnel: true})} add={(e) => this.setState({addstage: true})} />
+			<TableFilters
+        table="sales"
+        switch={this.switchFunnel}
+        funnels={this.state.funnels}
+        new={(e) => this.setState({addfunnel: true})}
+        add={(e) => this.setState({addstage: true})}
+        delete={() => this.setState({confirmModal2: true})}
+      />
 
         <div
           className='loader-container'
@@ -195,13 +271,19 @@ class Salesfunnel extends Component {
   				  	{
   					  	stages.map((st, sk) => (
   					    <div id={'list'+st.id} className="board-list" onDrop={(e) => dropIt(e, this)} data-funnel={st.stage} data-funnel_stage={st.id} data-funnel_id={st.funnel_id} onDragOver={(e) => allowDrop(e)}>
-  							<div className="list-title">{st.stage}<br /><b id={"bl-"+st.id}>0 lead</b></div>
+  							<div className="list-title">
+                  <input defaultValue={st.stage} className="stage-name-val" id={"stnv-"+st.id} />
+                  <span className="stage-name">{st.stage}</span><br />
+                  <b id={"bl-"+st.id}>0 lead</b>
+                  <img className="chk-icon" onClick={() => this.updateStage(st.id, $("#stnv-"+st.id).val())} src={check} />
+                  <img className="del-icon" onClick={() => this.setState({confirmID: st.id, confirmStage: st.stage, confirmModal: true})} src={deleteIcon} />
+                </div>
   					  		{
   					  			users.map((ut, uk) => (
   					  				funnelStage(ut.funnel, st.funnel_id) == st.id || (sk == 0 && funnelStage(ut.funnel, st.funnel_id) < 1) ?
   					          	<div id={'card-'+uk+'-'+st.id} className="card sf-card npt" draggable="true" style={{borderLeft: "5px solid "+st.code}} data-row={"row-"+uk} data-uid={ut.user_id} onDragStart={(e) => dragStart(e)}>
   					          		<img src={ut.profile_image.length ? ut.profile_image : userDp} /> <b>{ut.first_name+" "+ut.last_name}</b>
-  					          		<div className="s2">${ut.bal.toFixed(2)} | 16 days ago <img src={calls} className="call" /> <img src={view} className="view" onClick={(e) => this.setState({uid: ut.user_id, half: true})} /></div>
+  					          		<div className="s2">${ut.bal.toFixed(2)} | days ago <img src={calls} className="call" /> <img src={view} className="view" onClick={(e) => this.setState({uid: ut.user_id, half: true})} /></div>
   					          	</div> : <div id={'card-'+uk+'-'+st.id} className="card sf-card putable" data-row={"row-"+uk} data-uid={ut.user_id}></div>
   					        	))
   					      }

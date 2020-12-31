@@ -34,8 +34,9 @@ class OutterLeftNav extends Component {
     const isAdmin  = this.props.isAdmin;
     const navData  = isAdmin ? adminLeftNavData : leftNavData;
     let nClicked   = this.props.outterNavClicked;
-    let page = window.location.pathname.replace("/", "").toLowerCase();
-    let isclk = app.isVerified() || app.isAdmin();
+    let badge      = this.props.badge;
+    let page       = window.location.pathname.replace("/", "").toLowerCase();
+    let isclk      = app.isVerified() || app.isAdmin();
 
     return (
       <div
@@ -90,6 +91,7 @@ class OutterLeftNav extends Component {
                 }
               >
                 <img src={nav.imageUrl} alt='nav-logo' />
+                {badge > 0 && nav.name.toLowerCase() == "chats" ? <span id="badge-cnt-i">{badge}</span> : null}
                 {!nClicked ? (
                   <p className='outter-lnav-text'>{nav.text}</p>
                 ) : null}

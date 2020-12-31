@@ -11,8 +11,9 @@ import app from '../../services/app';
 import $ from 'jquery';
 import './index.scss';
 
-let isOnApp = ["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1;
-if(isOnApp) {
+let dpage = window.location.pathname.replace("/", "").toLowerCase();
+let isOnApp = ["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"].indexOf(dpage) > -1;
+if(isOnApp && !app.isAdmin()) {
   (async () => {
     if(app.loggedIn()) {
       setTimeout(() => { $("#_sphs_").remove(); }, 100);
@@ -32,6 +33,7 @@ class Container extends Component {
     super(props);
 
     this.state = {
+      badge: 0,
       selectedAccount: app.accountDetail(),
     };
 
@@ -44,11 +46,61 @@ class Container extends Component {
     socketPlug();
     this.props.saveUserProfile(this.profile);
     if(this.isAdmin) {
+      if(dpage != "chats") {
+
+        this.gmc();
+        
+        setInterval(() => { this.gmc(); }, 1000);
+
+        window.WebSocketPlug.addEventListener('message', ({data}) => {
+          try {
+            let message = JSON.parse(`${data}`);
+            let payload = message.payload;
+            switch(message.event) {
+              case "ADMIN_UNREAD":
+                if(payload.count > 0) {
+                  this.setState({badge: payload.count});
+                }
+              break;
+            }
+          } catch (e) {
+            return e;
+          }
+        });
+      } else {
+        window.WebSocketPlug.addEventListener('message', ({data}) => {
+          try {
+            let message = JSON.parse(`${data}`);
+            let payload = message.payload;
+            switch(message.event) {
+              case "NEW_CHAT":
+                if(payload.badge > 0) {
+                  this.setState({badge: payload.badge});
+                }
+              break;
+            }
+          } catch (e) {
+            return e;
+          }
+        });
+      }
+
       if(!window.__toggleOutterNav) {
         this.props.toggleOutterNav();
         window.__toggleOutterNav = true;
       }
       $("html").attr("style", 'min-width: 1400px; overflow: auto !important; background: #004044;');
+    }
+  }
+
+  gmc = () => {
+    if(window.WebSocketPlugged) {
+      window.WebSocketPlug.send(JSON.stringify({
+        "event": "ADMIN_UNREAD",
+        "payload": {
+          admin: true
+        }
+      }));
     }
   }
 
@@ -75,6 +127,7 @@ class Container extends Component {
       <div className='dash-container'>
         <OutterLeftNav
           isAdmin={isAdmin}
+          badge={this.state.badge}
           handleNavClick={this.props.toggleSideNav}
           handleOutterClick={this.props.toggleOutterNav}
           handleTransactionNavClick={this.props.toggleTransactionNav}

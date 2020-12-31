@@ -41,12 +41,28 @@
     width: 150px;
     height: 30px;
     display: flex;
+    position: relative;
     border-radius: 5px;
 
     &.active {
       background: #00A880;
       border-radius: 5px;
       height: 38px;
+    }
+
+    #badge-cnt-i {
+      position: absolute;
+      top: -1px;
+      right: -3px;
+      height: 20px;
+      padding: 5px;
+      background: red;
+      display: flex;
+      width: 20px;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 1px 2px 3px #000;
+      border-radius: 50%;
     }
 
     .l-nav-link {

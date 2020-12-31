@@ -19,8 +19,8 @@ class Finance extends Component {
 
     this.state = {
       navi: 1,
-      stat: {withdraw: 0, deposit: 0},
-      time: {withdraw: '', deposit: ''}
+      stat: {withdraw: 0, deposit: 0, transactions: 0},
+      time: {withdraw: '', deposit: '', transactions: ''}
     }
 
   }
@@ -47,7 +47,7 @@ class Finance extends Component {
             <Breadcrumbs breads="Home, Finance" />
 
             <h1 className="page-title">Finance</h1>
-            <Ptab tabs="Finance (2)" handleClick={() => {}} active="Finance (2)" />
+            <Ptab tabs="Finance (3)" handleClick={() => {}} active="Finance (3)" />
             <TableFilters table="lists" />
 
             <ul className="table-header">
@@ -55,24 +55,33 @@ class Finance extends Component {
               <li>SIZE</li>
               <li>TYPE</li>
               <li>LAST UPDATED</li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+            </ul>
+
+            <ul className="table-body _all">
+              <li><Link to="/Transactions" className="txt-light">Transactions</Link></li>
+              <li><span className="txt-light">{this.state.stat.transactions}</span></li>
+              <li><span className="txt-light">Automatic</span></li>
+              <li><span className="txt-light">{this.state.time.transactions.length ? moment(this.state.time.transactions).calendar() : '-'}</span></li>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
             <ul className="table-body _users">
-              <li><Link to="/Withdrawals" className="txt-light">Withdrawals</Link></li>
-              <li><span className="txt-light">{this.state.stat.withdraw}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.withdraw.length ? moment(this.state.time.withdraw).calendar() : '-'}</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            </ul>
-
-            <ul className="table-body _admins">
               <li><Link to="/Deposits" className="txt-light">Deposits</Link></li>
               <li><span className="txt-light">{this.state.stat.deposit}</span></li>
               <li><span className="txt-light">Automatic</span></li>
               <li><span className="txt-light">{this.state.time.deposit.length ? moment(this.state.time.deposit).calendar() : '-'}</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
+
+            <ul className="table-body _admins">
+              <li><Link to="/Withdrawals" className="txt-light">Withdrawals</Link></li>
+              <li><span className="txt-light">{this.state.stat.withdraw}</span></li>
+              <li><span className="txt-light">Automatic</span></li>
+              <li><span className="txt-light">{this.state.time.withdraw.length ? moment(this.state.time.withdraw).calendar() : '-'}</span></li>
+              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+            </ul>
+
             {/*<Pagination2 />*/}
         </div>
       </div>

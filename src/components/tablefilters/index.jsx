@@ -98,6 +98,7 @@ class TableFilters extends Component {
           <div className="filter-actions">
             <button className="create-btn" onClick={this.props.new}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> New Funnel</button>&nbsp;&nbsp;&nbsp;
             <button className="create-btn" onClick={this.props.add}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> New Stage</button>
+            <img src={deleteIcon} className="del-icon df" onClick={this.props.delete} />
           </div>
         </div>
       ) : null}
