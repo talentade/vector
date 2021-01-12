@@ -15,7 +15,6 @@ class Documents extends Component {
     super(props);
 
     this.state = {
-      filter: ''
     }
 
   }
@@ -27,18 +26,8 @@ class Documents extends Component {
       <div className="col-12" id="document-container">
         <div className="users-section-right">
           <Breadcrumbs breads="Home, Documents" />
-          <h1 className="page-title">Documents
-            <div className="search-container" style={{width: "280px"}}>
-              <input
-                type='text'
-                name='search'
-                placeholder='Search'
-                onChange={(e) => this.setState({filter: e.target.value})}
-              />
-              <img src={SearchIcon} className="search-img" alt="" />
-            </div>
-          </h1>
-          <DocumentsTable filter={this.state.filter} />
+          <h1 className="page-title">Documents</h1>
+          <DocumentsTable />
         </div>
       </div>
       </Container>

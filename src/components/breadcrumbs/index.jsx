@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import bread from '../../themes/images/bread.svg';
 import './index.scss';
 
@@ -8,7 +9,18 @@ class Breadcrumbs extends Component {
   }
 
   render () {
-  	let breads = this.props.breads.split(",");
+  let breads = this.props.breads.split(",");
+
+  if(breads.length > 2) {
+    let subject = breads[1].trim().toLowerCase();
+    
+    if($(".link-icons."+subject).length) {
+      if(!$(".link-icons."+subject).hasClass("active")) {
+        $(".link-icons."+subject).addClass("active");
+      }
+    }
+  }
+
 	return (
         <ul className="breadcrumbs">
           <li>

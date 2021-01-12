@@ -310,6 +310,13 @@
 		&.short {
 			width: 150px !important;
 
+      &.short2 {
+        width: 200px !important;
+        display: inline-flex;
+        flex-direction: inherit;
+        justify-content: flex-end;
+      }
+
 			img, svg {
 				margin-left: 10px;
 			}

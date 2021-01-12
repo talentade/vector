@@ -19,6 +19,7 @@ import Spinner from '../../components/spinner/index';
 import UsersProfile from  './userprofile.jsx';
 import server from '../../services/server';
 import app from '../../services/app';
+import { ConfirmModal, CallBack } from '../../components/popups/index';
 
 import '../../components/standard/standard.scss';
 import './index.scss';
@@ -33,16 +34,40 @@ class UsersProfileList extends Component {
       showLoader: true,
       userTab: "Profile",
       uid: '',
+      admins: [],
+      callback: false,
+      callbackTxt: '',
       counter: 0
     }
+
+    window.callbackTxt = "";
+    window.showCallback = true;
 
   }
 
   async componentDidMount () {
-    this.refreshTab(this.state.userTab);
+    this.getAllAdmins();
+    this.refreshTab(this.state.userTab, 0);
   }
 
-  refreshTab = async (t) => {
+  getAllAdmins = async () => {
+    try {
+      let users = await server.getAllAdmins();
+      window.listofadmins = users.data;
+      this.setState({admins: users.data});
+    } catch(e) {
+      return e;
+    }
+  }
+
+  refreshTab = async (t, c = 1) => {
+    if(c && window.showCallback) {
+      this.setState({callback: true, callbackTxt: window.callbackTxt.length ? window.callbackTxt : 'Profile Updated'});
+    }
+
+    window.callbackTxt = "";
+    window.showCallback = true;
+
     this.setState({showLoader: true});
     let u = this.props.match.params.user_id;
     let profile = await server.getUser(u);
@@ -61,8 +86,14 @@ class UsersProfileList extends Component {
   }
 
   selectActiveTab = (e) => {
-    let name = e.target.getAttribute("name");
-    if(name.length) this.setState({userTab: name});
+    try {
+      if(e.target.getAttribute("name")) {
+        let name = e.target.getAttribute("name");
+        if(name.length) this.setState({userTab: name});
+      }
+    } catch (e) {
+      return e;
+    }
   }
 
   render() {
@@ -73,9 +104,12 @@ class UsersProfileList extends Component {
     return (
       <Container>
       <Spinner showSpinner={this.state.showLoader} />
-        {/*<div className='loader-container' style={lct}>
-          <div className='loader'></div>
-        </div>*/}
+      <CallBack
+        head="Success"
+        show={this.state.callback}
+        text={this.state.callbackTxt}
+        cancel={(e) => this.setState({callback: false})}
+      />
       {profile ? <UsersProfile profile={profile} /> : null}
       {profile ?
         <div className="col-12" id="users-container">

@@ -244,6 +244,7 @@
           display: flex;
 
           div.m-text {
+            word-break: break-all;
             padding: 12px 1em;
             width: auto;
             min-width: 140px;
@@ -268,6 +269,7 @@
           justify-content: flex-end;
 
           div.m-text {
+            word-break: break-all;
             float: right;
             padding: 12px 1em;
             width: auto;

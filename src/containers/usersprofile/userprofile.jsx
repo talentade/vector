@@ -3,6 +3,7 @@ import $ from 'jquery';
 import '../../components/standard/userprofile.scss';
 import userDp from '../../themes/images/dummydp.png';
 import files from "./files.svg";
+import { Link } from 'react-router-dom';
 import notes from '../../themes/images/profile/notes.png';
 import tasks from '../../themes/images/profile/tasks.png';
 import email from '../../themes/images/profile/email.png';
@@ -47,6 +48,17 @@ class UsersProfile extends Component {
           }, 1000);
         }, 1000);
       }, 1000);
+    }
+  }
+
+  accManager = (aid) => {
+    if(window.listofadmins && aid.length) {
+      let assto = window.listofadmins.filter((o) => {
+        return o.user_id == aid
+      })[0];
+      return (assto.first_name+" "+assto.last_name).ucwords();
+    } else {
+      return "UNASSIGNED";
     }
   }
 
@@ -108,7 +120,7 @@ class UsersProfile extends Component {
               <td className="full">
                 <span className="txt-default">ACCOUNT MANAGER</span>
                 <span className="td-b">Admin</span>
-                <span className="txt-default">A47392740</span>
+                <span className="txt-default">{this.accManager(this.state.aid)}</span>
               </td>
             </tr>
           </table>

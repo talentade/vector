@@ -6,27 +6,11 @@
     overflow: auto;
     display: flex;
 
-    .search-container {
-	    width: 280px;
-	    height: 50px;
-	    background: #00A880;
-	    border-radius: 5px;
-	    margin-left: 100px;
-
-	    input {
-	    	position: absolute;
-	    }
-
-	    img {
-	    	top: 15px;
-	    }
-    }
-
 	table {
 		width: 100%;
 		border: 0;
 		background: #002022;
-		margin-top: 50px;
+		margin-top: 10px;
 		border-collapse: collapse;
 		thead, tbody {
 			width: 100%;

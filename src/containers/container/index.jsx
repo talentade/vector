@@ -40,11 +40,15 @@ class Container extends Component {
     this.profile   = app.profile();
     this.id        = app.id();
     this.isAdmin   = app.isAdmin();
+    this.audio = new Audio(require("../../themes/sounds/new.ogg").default);
+    this.notify = new Audio(require("../../themes/sounds/note.ogg").default);
   }
 
   componentDidMount() {
     socketPlug();
     this.props.saveUserProfile(this.profile);
+    let dis = this;
+
     if(this.isAdmin) {
       if(dpage != "chats") {
 
@@ -59,6 +63,9 @@ class Container extends Component {
             switch(message.event) {
               case "ADMIN_UNREAD":
                 if(payload.count > 0) {
+                  if(payload.count != this.state.badge) {
+                    // $(this.audio)[0].play();
+                  }
                   this.setState({badge: payload.count});
                 }
               break;
@@ -85,6 +92,16 @@ class Container extends Component {
         });
       }
 
+
+      $(".maxrow").change(function () {
+        app.setMaxrow($(this).val());
+        if(window.NO_AUTO_PAGER) {
+          $(window).trigger("resetPager");
+        } else {
+          window.location.reload();
+        }
+      });
+      
       if(!window.__toggleOutterNav) {
         this.props.toggleOutterNav();
         window.__toggleOutterNav = true;

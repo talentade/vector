@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import $ from 'jquery';
 import Container from '../container/index';
 import { Link } from 'react-router-dom';
+import Pagination from '../../components/paginationTwo/index';
 import TableFilters from '../../components/tablefilters/index';
 import meeting from '../../themes/images/meeting.png';
 import eye from '../../themes/images/eye.png';
@@ -26,11 +28,21 @@ class Activities extends Component {
       filter: '',
       type: 'new',
       showLoader: true,
+      page_no: 1,
+      callback: false,
+      callbackTxt: '',
+      page_size: app.maxrow,
     }
   }
 
   async componentDidMount () {
     this.getCalls();
+
+    window.NO_AUTO_PAGER = true;
+
+    $(window).on("resetPager", () => {
+      this.setState({page_size: app.page_size(), page_no: 1});
+    });
   }
 
   getCalls = async () => {
@@ -56,28 +68,34 @@ class Activities extends Component {
   }
 
   render () {
-    let logs = this.state.filter.length ? this.state.logs.filter((c) => {
+    let { page_no, page_size, logs, filter } = this.state;
+
+    filter = filter.toLowerCase();
+
+    logs = filter.length ? logs.filter((c) => {
       return (
-        String(c.destination).match(this.state.filter.toLowerCase()) ||
-        c.disposition.toLowerCase().match(this.state.filter.toLowerCase())
+        String(c.destination).match(filter.toLowerCase()) ||
+        c.disposition.toLowerCase().match(filter.toLowerCase())
       );
-    }) : this.state.logs;
+    }) : logs;
+
+    let max_rows = logs.length;
+    let stt = (page_no-1)*page_size;
+    let max = stt+page_size;
+        max = max > max_rows ? max_rows : max;
+      logs = logs.slice(stt, max > max_rows ? max_rows : max);
 
   	return (
       <Container>
       <div className="col-12" id="document-container">
-      <div className="users-section-right tab-row profile-tasks _active">
+      <div className="users-section-right">
         
         <Breadcrumbs breads="Home, Call Logs" />
 
-        <h1 className="page-title">Call Logs
-          <div className="search-container" style={{width: "280px"}}>
-            <input type="text" placeholder="Search" onChange={(e) => this.setState({filter: e.target.value})}/>
-            <img src={SearchIcon} className="search-img" alt="" />
-          </div>
-        </h1>
+        <h1 className="page-title">Call Logs</h1>
+        <TableFilters table="calls" search={(e) => this.setState({filter: e.target.value})} />
 
-        <ul className="table-header for-tasks" style={{marginTop: "4em"}}>
+        <ul className="table-header for-tasks" style={{marginTop: "10px"}}>
           <li style={{width: "100px"}}>S/N</li>
           <li className="len">PHONE</li>
           <li className="len">TIME</li>
@@ -107,6 +125,8 @@ class Activities extends Component {
             </ul>
           ))
         }
+
+        <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
 
       </div>
       </div>

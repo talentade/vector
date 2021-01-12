@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import TableFilters from '../../components/tablefilters/index';
 import TradeHistory from '../../components/tradeHistory/index';
 import ai_n from '../../themes/images/ai-normal.png';
@@ -12,11 +13,19 @@ class TradingActivities extends Component {
     this.state = {
       filterOptions: ["ALL TYPES", "FOREX", "CRYPTO", "STOCK", "COMMODITIES", "INDICES"],
       trade: this.props.trade,
-      type: 0,
+      type: 1,
       page_no: 1,
       filterPair: '',
       filterType: ''
     }
+  }
+
+  async componentDidMount () {
+
+    $(window).on("refreshMod", () => {
+      window.showCallback = false;
+      this.props.refresh();
+    })
   }
 
   changeType = (e) => {

@@ -77,6 +77,7 @@ class AddInstrument extends Component {
       const ai_n = this.props.data ? await server.updateInstrument(this.props.data.id, ain) : await server.addInstrument(ain);
       // this.props.unsending();
       if(ai_n.status == 200 && ai_n.data.success) {
+        this.props.cancel();
         window.location.href = "";
       } else {
         this.setState({errorMessage: ai_n.data.message});

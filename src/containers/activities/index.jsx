@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import moment from 'moment';
 import Container from '../container/index';
 import { Link } from 'react-router-dom';
-import Pagination from '../../components/paginationTwo/index'
+import Pagination from '../../components/paginationTwo/index';
 import TableFilters from '../../components/tablefilters/index';
 import meeting from '../../themes/images/meeting.png';
 import Spinner from '../../components/spinner/index';
@@ -12,7 +13,7 @@ import deleteIcon from '../../themes/images/notes/delete.png';
 import { Task } from '../../components/popups/index';
 import server from '../../services/server';
 import app from '../../services/app';
-import { ConfirmModal } from '../../components/popups/index';
+import { ConfirmModal, CallBack } from '../../components/popups/index';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
 
@@ -28,6 +29,8 @@ class Activities extends Component {
       tid: 0,
       tasks: [],
       page_no: 1,
+      callback: false,
+      callbackTxt: '',
       page_size: app.maxrow,
       data: null,
       filter: '',
@@ -41,15 +44,23 @@ class Activities extends Component {
 
   async componentDidMount () {
     this.getAllTask();
+
+    window.NO_AUTO_PAGER = true;
+
+    $(window).on("resetPager", () => {
+      this.setState({page_size: app.page_size(), page_no: 1});
+    });
   }
 
   getAllTask = async () => {
+    this.setState({showLoader: true});
     try {
       let t = await server.getAllTask();
       this.setState({tasks: t.data.data, showLoader: false});
     } catch(e) {
       return e;
     }
+    this.setState({showLoader: false});
   }
 
   saveTask = async (data) => {
@@ -62,45 +73,48 @@ class Activities extends Component {
       let _task =  this.state.type == 'new'
                    ? await server.saveTask(this.uid, data)
                    : await server.updateTask(this.state.tid, data);
-      this.setState({showTask: false, showLoader: false});
+      this.setState({showTask: false, showLoader: false, callback: true, callbackTxt: this.state.type == 'new' ? "Task saved" : "Task updated"});
+      this.getAllTask();
     } catch (e) {
       return e;
     }
     this.setState({showLoader: false});
-    window.location.href = "";
   }
 
   checkTask = async (id, e) => {
     this.setState({showLoader: true});
     try {
       let stat = await server.changeTaskStatus(this.uid, id, e.target.checked ? 1 : 0);
+      this.setState({showLoader: false, callback: true, callbackTxt: 'Task updated'});
+      this.getAllTask();
     } catch (e) {
       return e;
     }
     this.setState({showLoader: false});
-    window.location.href = "";
   }
 
   checkTask2 = async (tid, id) => {
     this.setState({showLoader: true});
     try {
       let stat = await server.changeTaskStatus(tid, id, 1);
+      this.setState({showLoader: false, callback: true, callbackTxt: 'Task Completed'});
+      this.getAllTask();
     } catch (e) {
       return e;
     }
     this.setState({showLoader: false});
-    window.location.href = "";
   }
 
   deleteTask = async (tid, id) => {
     this.setState({showLoader: true, confirmModal: false});
     try {
       let _task = await server.deleteTask(tid, id);
+      this.setState({showLoader: false, callback: true, callbackTxt: 'Task deleted'});
+      this.getAllTask();
     } catch (e) {
       return e;
     }
     this.setState({showLoader: false});
-    window.location.href = "";
   }
 
   render () {
@@ -127,12 +141,8 @@ class Activities extends Component {
       <div className="col-12" id="document-container">
       <div className="users-section-right tab-row profile-tasks _active">
         <Breadcrumbs breads="Home, Activities" />
-        <h1 className="page-title">Activities
-          <div className="search-container" style={{width: "280px"}}>
-            <input type="text" placeholder="Search activities" onChange={(e) => this.setState({filter: e.target.value})} />
-            <img src={SearchIcon} className="search-img" alt="" />
-          </div>
-        </h1>
+        <h1 className="page-title">Activities</h1>
+        <TableFilters table="activities" search={(e) => this.setState({filter: e.target.value})} />
 
         {/*<TableFilters table="tasks" addTask={() => this.setState({type: 'new', data: null, showTask: true})} />*/}
 
@@ -141,7 +151,14 @@ class Activities extends Component {
         text="Click YES to confirm"
         show={this.state.confirmModal}
         cancel={() => this.setState({confirmModal: false})}
-        confirm={() => this.deleteTask(this.state.confirmUID, this.state.confirmID)}
+        confirm={() => { this.setState({confirmModal: false}); this.deleteTask(this.state.confirmUID, this.state.confirmID); }}
+      />
+
+      <CallBack
+        head="Success"
+        show={this.state.callback}
+        text={this.state.callbackTxt}
+        cancel={(e) => this.setState({callback: false})}
       />
 
         {this.state.showTask ?
@@ -149,12 +166,12 @@ class Activities extends Component {
             data={this.state.data}
             type={this.state.type}
             show={this.state.showTask}
-            action={(data) => this.saveTask(data)}
+            action={(data) => { this.setState({showTask: false}); this.saveTask(data); }}
             cancel={(e) => this.setState({showTask: false})}
           />
         : null}
 
-        <ul className="table-header for-tasks" style={{marginTop: "4em"}}>
+        <ul className="table-header for-tasks" style={{marginTop: "10px"}}>
           <li style={{width: "100px"}}>S/N</li>
           <li className="len">TITLES</li>
           <li className="len">USER ID</li>
@@ -162,7 +179,7 @@ class Activities extends Component {
           <li className="len">CREATED</li>
           <li className="len">SCHEDULED TIME</li>
           <li className="short">STATUS</li>
-          <li className="short">ACTIONS</li>
+          <li className="short short2">ACTIONS</li>
           {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
         </ul>
 
@@ -185,17 +202,18 @@ class Activities extends Component {
               <li className="len"><span className="txt-light">{moment(t.create_time).calendar()}</span></li>
               <li className="len"><span className="txt-light">{moment(t.due_date).calendar()}</span></li>
               <li className="short"><span className="txt-light">{t.status > 0 ? 'Completed' : 'Pending'}</span></li>
-              <li className="short">
-                <img onClick={() => this.setState({tid: t.id, type: 'view', showTask: true, data: t})} src={eye} style={{cursor: 'pointer'}} />&nbsp;
-                <svg onClick={() => this.setState({tid: t.id, type: 'edit', showTask: true, data: t})} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{cursor: 'pointer'}}>
-                  <path d="M14.9243 4.04436L19.8064 8.92646L7.44837 21.2845L2.569 16.4024L14.9243 4.04436ZM23.511 2.86691L21.3338 0.689667C20.4923 -0.151764 19.126 -0.151764 18.2817 0.689667L16.1962 2.77525L21.0783 7.65739L23.511 5.22467C24.1636 4.57201 24.1636 3.51953 23.511 2.86691ZM0.0140741 23.2646C-0.0747746 23.6645 0.286247 24.0228 0.686157 23.9255L6.12649 22.6064L1.24711 17.7243L0.0140741 23.2646Z" fill="#A09F9F"/>
-                </svg>&nbsp;
-                <img src={check} onClick={(e) => this.checkTask2(t.user_id, t.id)} style={{height: "19px", width: "20px", cursor: "pointer"}} />&nbsp;
+              <li className="short short2">
+                <img onClick={() => this.setState({tid: t.id, type: 'view', showTask: true, data: t})} src={eye} style={{cursor: 'pointer'}} />
+                {t.status > 0 ? null : (
+                  <>
+                    <svg onClick={() => this.setState({tid: t.id, type: 'edit', showTask: true, data: t})} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{cursor: 'pointer'}}>
+                      <path d="M14.9243 4.04436L19.8064 8.92646L7.44837 21.2845L2.569 16.4024L14.9243 4.04436ZM23.511 2.86691L21.3338 0.689667C20.4923 -0.151764 19.126 -0.151764 18.2817 0.689667L16.1962 2.77525L21.0783 7.65739L23.511 5.22467C24.1636 4.57201 24.1636 3.51953 23.511 2.86691ZM0.0140741 23.2646C-0.0747746 23.6645 0.286247 24.0228 0.686157 23.9255L6.12649 22.6064L1.24711 17.7243L0.0140741 23.2646Z" fill="#A09F9F"/>
+                    </svg>
+                    <img src={check} onClick={(e) => this.checkTask2(t.user_id, t.id)} style={{height: "19px", width: "20px", cursor: "pointer"}} />
+                  </>
+                )}
                 <img src={deleteIcon} onClick={() => this.setState({confirmUID: t.user_id, confirmID: t.id, confirmModal: true})} style={{cursor: 'pointer'}}/>
               </li>
-              {/*<div className="check-row"><label class="checkbox-container">
-              <input type="checkbox" key={Math.random()+"_"+t.id} checked={t.status > 0} />
-              <span class="checkmark"></span></label></div>*/}
             </ul>
           ))
         }

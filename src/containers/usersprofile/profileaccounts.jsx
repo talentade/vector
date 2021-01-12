@@ -40,6 +40,7 @@ class ProfileDetails extends Component {
     this.props.load();
     try {
       await server.changeLeverage(this.props.uid, a, e.target.value);
+      window.callbackTxt = "Leverage updated successfully";
     } catch (e) {
       return e;
     }
@@ -70,7 +71,7 @@ class ProfileDetails extends Component {
           unsending={() => this.props.load()}
           sent={() => this.setState({showSpinner : false})}
           showCreated={(i, t) => this.setState({showSpinner: false, showCreated: true, cid: i, ctype: t})}
-          confirmClick={(e) => { this.props.refresh(); this.setState({addAcc: false})}}
+          confirmClick={(e) => { this.setState({addAcc: false}); this.props.refresh(); }}
           cancelClick={(e) => this.setState({addAcc: false})}
         /> : null }
 

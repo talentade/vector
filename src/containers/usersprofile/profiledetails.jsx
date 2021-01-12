@@ -39,9 +39,11 @@ class ProfileDetails extends Component {
   }
 
   kyc = async (e) => {
+    let v =  e.target.value;
     this.props.load();
     try {
-      await server.KYCStatus(this.props.uid, e.target.value);
+      await server.KYCStatus(this.props.uid, v);
+      window.callbackTxt = "KYC "+(v ? "Approved" : "Disapproved");
     } catch (e) {
       return e;
     }
@@ -52,6 +54,7 @@ class ProfileDetails extends Component {
     this.props.load();
     try {
       await server.changeTransferStatus(this.props.uid, s);
+      window.callbackTxt = "Transfer Availability "+(s ? "Enabled" : "Disabled");
     } catch (e) {
       return e;
     }
@@ -61,7 +64,8 @@ class ProfileDetails extends Component {
   deleteCard = async (id, cardPAN) => {
     this.props.load();
     try {
-      await server.deleteCard(id, cardPAN, this.props.uid); 
+      await server.deleteCard(id, cardPAN, this.props.uid);
+      window.callbackTxt = "Card Removed";
     } catch (error) {
       return error
     }

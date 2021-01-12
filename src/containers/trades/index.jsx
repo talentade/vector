@@ -13,6 +13,8 @@ import con_buysell from '../../themes/images/con_buysell.png';
 import Spinner from '../../components/spinner/index';
 import server from '../../services/server';
 import app from '../../services/app';
+import Breadcrumbs from '../../components/breadcrumbs/index';
+import TableFilters from '../../components/tablefilters/index';
 import { saveUserProfile } from '../../redux/actions/index';
 import Container from '../container/index';
 import './index.scss';
@@ -193,31 +195,31 @@ class TradeDashboard extends Component {
     return (
       <Container>
         <Spinner showSpinner={showSpinner} />
-        <div className='trade-section'>
-          { this.state.showNav ? 
-            <SideBar
-              clickHandler={this.toggleSideBar}
-              hideText={this.state.clicked}
-              currentTab={this.state.currentTab}
-              handleClick={this.handleClick}
-              showNav={this.state.showNav}
-              admin={true}
-              hideNav={(e) => {
-                window.innerWidth <= 1200 ? $(".link-icons.trade").click() : this.setState({clicked: !this.state.clicked});
-              }}
-            /> : null }
-          <div
-            className='right'
-            style={{ width: this.state.clicked ? 'calc(100% - 50px)' : null }}
-          >
-            <div className='trade-comp-container'>
-              {currentTab === 'Open Trades' ? (
-                <OpenTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.open_trades} />
-              ) : currentTab === 'Closed Trades' ? (
-                <ClosedTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.closed_trades} />
-              ) : currentTab === 'Pending Trades' ? (
-                <PendingTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.pending_trades} />
-              ) : null}
+        <div className="col-12" id="instrument-container">
+          <div className="users-section-right">
+          <Breadcrumbs breads={"Home, Trades, "+currentTab} />
+          <h1 className="page-title">Trades</h1>
+          <TableFilters
+            table="trades"
+            currentTab={this.state.currentTab}
+            filterOptions={this.state.filterOptions}
+            switchTo={(i) => this.setState({currentTab: i})}
+          />
+            <div className='trade-section'>
+              <div
+                className='right'
+                style={{ width: '100%' }}
+              >
+                <div className='trade-comp-container' style={{padding: 0}}>
+                  {currentTab === 'Open Trades' ? (
+                    <OpenTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.open_trades} />
+                  ) : currentTab === 'Closed Trades' ? (
+                    <ClosedTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.closed_trades} />
+                  ) : currentTab === 'Pending Trades' ? (
+                    <PendingTrade filterOptions={this.state.filterOptions} admin={true} history={this.state.pending_trades} />
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
         </div>

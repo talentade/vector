@@ -50,7 +50,8 @@ class AddAccount extends Component {
       const acc = await server.addAccount(nam, sel, pas, uid);
       this.props.unsending();
       if(acc.status == 200 && acc.data.success) {
-        if(this.props.admin) {          
+        window.showCallback = false;
+        if(this.props.admin) {
           this.props.sent();
           this.props.confirmClick();
           this.props.showCreated(acc.data.account.account_id, acc.data.account.account_type);

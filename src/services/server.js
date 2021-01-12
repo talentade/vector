@@ -192,7 +192,7 @@ export default {
   getCalls() {
     return axios.request({
       method: 'GET',
-      url: "https://trading.avarizgroup.com/zadarma/?records",
+      url: "https://trading.primmegroup.com/zadarma/?records",
       headers: {
         'Authorization': app.auth()
       }
@@ -652,6 +652,17 @@ export default {
     return axios.request({
       method: 'PUT',
       url: app.hostURL('admin/deleteUser/'+uid),
+      headers: {
+        'Authorization': app.auth()
+      },
+      data: null
+    });
+  },
+
+  restoreUser(uid) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('admin/restoreUser/'+uid),
       headers: {
         'Authorization': app.auth()
       },

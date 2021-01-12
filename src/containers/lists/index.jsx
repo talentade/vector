@@ -58,59 +58,52 @@ class Lists extends Component {
             </h1>
 
             <Ptab tabs="Lists library (3)" handleClick={() => {}} active="Lists library (3)" />
-            <TableFilters table="lists" />
+            {/*<TableFilters table="lists" />*/}
 
-            <ul className="table-header">
-              <li>NAME {this.Thesvg()}</li>
-              <li>SIZE {this.Thesvg()}</li>
-              <li>TYPE {this.Thesvg()}</li>
-              <li>LAST UPDATED {this.Thesvg()}</li>
-              <li>CREATOR {this.Thesvg()}</li>
-              <li>USED IN {this.Thesvg()}</li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+              <ul className="table-header">
+                <li>NAME</li>
+                <li>SIZE</li>
+                <li>TYPE</li>
+                <li>LAST UPDATED</li>
+                <li>CREATOR</li>
+                <li>USED IN</li>
+              </ul>
 
-            <ul className="table-body _all">
-              <li><span className="txt-light">All</span></li>
-              <li><span className="txt-light">{this.state.stat.users+this.state.stat.admin}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.all.length ? moment(this.state.time.all).calendar() : '-'}</span></li>
-              <li><span className="txt-light">-</span></li>
-              <li><span className="txt-default">0</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+            <Link to="/Users">
+              <ul className="table-body _all">
+                <li><span className="txt-light">All</span></li>
+                <li><span className="txt-light">{this.state.stat.users+this.state.stat.admin}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.all.length ? moment(this.state.time.all).calendar() : '-'}</span></li>
+                <li><span className="txt-light">-</span></li>
+                <li><span className="txt-default">0</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
 
-            <ul className="table-body _users">
-              <li><Link to="/Users" className="txt-light">Users</Link></li>
-              <li><span className="txt-light">{this.state.stat.users}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.users.length ? moment(this.state.time.users).calendar() : '-'}</span></li>
-              <li><span className="txt-light">-</span></li>
-              <li><span className="txt-default">0</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+            <Link to="/Users">
+              <ul className="table-body _users">
+                <li><Link to="/Users" className="txt-light">Users</Link></li>
+                <li><span className="txt-light">{this.state.stat.users}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.users.length ? moment(this.state.time.users).calendar() : '-'}</span></li>
+                <li><span className="txt-light">-</span></li>
+                <li><span className="txt-default">0</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
 
-            <ul className="table-body _admins">
-              <li><Link to="/Admins" className="txt-light">Admins</Link></li>
-              <li><span className="txt-light">{this.state.stat.admin}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.admin.length ? moment(this.state.time.admin).calendar() : '-'}</span></li>
-              <li><span className="txt-light">-</span></li>
-              <li><span className="txt-default">0</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
-
-            {/*<ul className="table-body _south">
-              <li><span className="txt-info">South African Leads form</span></li>
-              <li><span className="txt-info">7000</span></li>
-              <li><span className="txt-info">Manual</span></li>
-              <li><span className="txt-default">May 4, 2020 3:11 PM</span></li>
-              <li><span className="txt-default">joe young</span></li>
-              <li><span className="txt-info">0</span></li>
-              <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-            </ul>*/}
-
-            {/*<Pagination2 />*/}
+            <Link to="/Admins">
+              <ul className="table-body _admins">
+                <li><Link to="/Admins" className="txt-light">Admins</Link></li>
+                <li><span className="txt-light">{this.state.stat.admin}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.admin.length ? moment(this.state.time.admin).calendar() : '-'}</span></li>
+                <li><span className="txt-light">-</span></li>
+                <li><span className="txt-default">0</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
         </div>
       </div>
       </Container>

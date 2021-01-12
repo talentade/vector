@@ -48,7 +48,6 @@ class Finance extends Component {
 
             <h1 className="page-title">Finance</h1>
             <Ptab tabs="Finance (3)" handleClick={() => {}} active="Finance (3)" />
-            <TableFilters table="lists" />
 
             <ul className="table-header">
               <li>NAME</li>
@@ -58,29 +57,35 @@ class Finance extends Component {
               {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
             </ul>
 
-            <ul className="table-body _all">
-              <li><Link to="/Transactions" className="txt-light">Transactions</Link></li>
-              <li><span className="txt-light">{this.state.stat.transactions}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.transactions.length ? moment(this.state.time.transactions).calendar() : '-'}</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+            <Link to="/Transactions">
+              <ul className="table-body _all">
+                <li>Transactions</li>
+                <li><span className="txt-light">{this.state.stat.transactions}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.transactions.length ? moment(this.state.time.transactions).calendar() : '-'}</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
 
-            <ul className="table-body _users">
-              <li><Link to="/Deposits" className="txt-light">Deposits</Link></li>
-              <li><span className="txt-light">{this.state.stat.deposit}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.deposit.length ? moment(this.state.time.deposit).calendar() : '-'}</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+            <Link to="/Deposits">
+              <ul className="table-body _users">
+                <li>Deposit</li>
+                <li><span className="txt-light">{this.state.stat.deposit}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.deposit.length ? moment(this.state.time.deposit).calendar() : '-'}</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
 
-            <ul className="table-body _admins">
-              <li><Link to="/Withdrawals" className="txt-light">Withdrawals</Link></li>
-              <li><span className="txt-light">{this.state.stat.withdraw}</span></li>
-              <li><span className="txt-light">Automatic</span></li>
-              <li><span className="txt-light">{this.state.time.withdraw.length ? moment(this.state.time.withdraw).calendar() : '-'}</span></li>
-              {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-            </ul>
+            <Link to="/Withdrawals" className="txt-light">
+              <ul className="table-body _admins">
+                <li>Withdrawals</li>
+                <li><span className="txt-light">{this.state.stat.withdraw}</span></li>
+                <li><span className="txt-light">Automatic</span></li>
+                <li><span className="txt-light">{this.state.time.withdraw.length ? moment(this.state.time.withdraw).calendar() : '-'}</span></li>
+                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+              </ul>
+            </Link>
 
             {/*<Pagination2 />*/}
         </div>

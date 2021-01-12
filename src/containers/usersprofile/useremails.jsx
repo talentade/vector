@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import TableFilters from '../../components/tablefilters/index';
-import { Email } from '../../components/popups/index';
+import { Email, Success } from '../../components/popups/index';
 import server from '../../services/server';
 import app from '../../services/app';
 import './useremails.scss';
+import checkCB from './cb/check.png';
 import '../../components/standard/table.scss';
 
 class UserEmails extends Component {
@@ -18,7 +19,8 @@ class UserEmails extends Component {
       nid: 0,
       type: 'new',
       filter: 'all',
-      showEmail: false
+      showEmail: false,
+      showSuccess: false
     }
 
   }
@@ -26,8 +28,10 @@ class UserEmails extends Component {
   sendEmail = async (e, f, c) => {
     this.props.load();
     try {
-      let sm = await server.sendEmail({uid: this.props.uid, email: e, from: f, content: c});
       this.setState({showEmail: false});
+      let sm = await server.sendEmail({uid: this.props.uid, email: e, from: f, content: c});
+      this.setState({showSuccess: true});
+      window.showCallback = false;
     } catch (e) {
       return e;
     }
@@ -52,6 +56,14 @@ class UserEmails extends Component {
           email={this.state.profile.email}
           action={this.sendEmail}
           cancel={(e) => this.setState({showEmail: false})}
+        />
+
+        <Success 
+          src={checkCB}
+          head={"Email Sent"}
+          show={this.state.showSuccess}
+          text={"Email sent successfully"}
+          cancel={(e) => this.setState({showSuccess: false})}
         />
 
 

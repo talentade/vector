@@ -109,7 +109,13 @@ const app = {
     return profile.phone_number.trim();
   },
   retryLimit: 10,
-  maxrow: 8,
+  maxrow: Number(localStorage.getItem("avariz_pager")) || 5,
+  page_size: () => {
+    return Number(localStorage.getItem("avariz_pager")) || 5;
+  },
+  setMaxrow: (r) => {
+    localStorage.setItem("avariz_pager", r);
+  },
   profile: (p = null) => {
     if(p) {
       localStorage.setItem('avariz_profile', JSON.stringify(p));

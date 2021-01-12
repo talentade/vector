@@ -3,7 +3,7 @@ import $ from 'jquery';
 import userDp from '../../themes/images/dummydp.png';
 import cancel from '../../themes/images/cancel.png';
 import Container from '../container/index';
-import Pagination from '../../components/Pagination/index';
+import Pagination from '../../components/paginationTwo/index';
 import UsersProfileList from '../usersprofile/s';
 import Breadcrumbs from '../../components/breadcrumbs/index';
 import Ptab from '../../components/ptabs/index';
@@ -96,6 +96,18 @@ const dataFunnel = () => {
   }, 150);
 }
 
+const _notEX = (d, f, fd, name = "") => {
+  if(d) {
+    let jp = JSON.parse(d);
+    if(jp.hasOwnProperty(fd)) {
+      if(f.indexOf(jp[fd]) > -1) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 const funnelStage = (d, f) => {
   if(d && d.length) {
     d = JSON.parse(d);
@@ -114,6 +126,8 @@ class Salesfunnel extends Component {
     this.state = {
     	half: false,
     	users: [],
+      page_no: 1,
+      page_size: app.page_size(),
       sid: 1,
     	funnels: [],
       showLoader: true,
@@ -132,11 +146,32 @@ class Salesfunnel extends Component {
 
   async componentDidMount () {
     this.getAllUsers();
+
+    window.NO_AUTO_PAGER = true;
+    
     $(document).delegate(".stage-name", "dblclick", function () {
       $(this).css("display", "none");
       $(this).parent().find(".stage-name-val").css("display", "block");
       $(this).parent().find(".del-icon").css("display", "none");
       $(this).parent().find(".chk-icon").css("display", "block");
+    });
+
+    $(window).on("resetPager", () => {
+      this.setState({page_size: app.page_size(), page_no: 1});
+    });
+
+    $("#boardlists").scroll(() => {
+
+      if($("#list1").offset().top < 205) {
+        $(".salt-title").removeClass("hide");
+        $("#boardlists").attr("style", "height: calc(100vh - 363px) !important;");
+      } else {
+        $(".salt-title").addClass("hide");
+        $("#boardlists").attr("style", "height: calc(100vh - 310px) !important;");
+      }
+
+      $(".salt-title").css("left", "calc("+$("#list1").offset().left + "px - 92px)");
+
     });
   }
 
@@ -198,16 +233,28 @@ class Salesfunnel extends Component {
   }
 
   render() {
-    const { navi, half, uid, sid, stages, funnels, users, addfunnel, addstage, sfunnel } = this.state;
+    let { page_no, page_size, navi, half, uid, sid, stages, funnels, users, addfunnel, addstage, sfunnel } = this.state;
     dataFunnel();
 
-    let fnn = "Funnel";
+    let fnn = "Funnel", fids = [];
 
     funnels.filter((f) => {
       if(f.id == $("#tf-fid").val()) {
         fnn = f.funnel;
       }
     });
+
+    stages.forEach((stg, sti) => {
+      fids.push(stg.id);
+    });
+
+
+  let max_rows = users.length;
+  let stt = (page_no-1)*page_size;
+  let max = stt+page_size;
+      max = max > max_rows ? max_rows : max;
+    users = users.slice(stt, max > max_rows ? max_rows : max);
+
 
     return (
       <Container>
@@ -267,6 +314,18 @@ class Salesfunnel extends Component {
 
           {sfunnel ? 
           	<div className="board-layout">
+              <div style={{width: "calc(100% - 5px)", overflow: "hidden", position: "relative"}}>
+                <table className="salt-title hide">
+                  <tr>
+                    {
+                      stages.map((st, sk) => (
+                        <td>{st.stage}</td>
+                      ))
+                    }
+                    
+                  </tr>
+                </table>
+              </div>
   		      	<div id='boardlists' className="board-lists">
   				  	{
   					  	stages.map((st, sk) => (
@@ -280,7 +339,7 @@ class Salesfunnel extends Component {
                 </div>
   					  		{
   					  			users.map((ut, uk) => (
-  					  				funnelStage(ut.funnel, st.funnel_id) == st.id || (sk == 0 && funnelStage(ut.funnel, st.funnel_id) < 1) ?
+  					  				(!_notEX(ut.funnel, fids, st.funnel_id, ut.first_name+" "+ut.last_name) && sk == 0) || funnelStage(ut.funnel, st.funnel_id) == st.id || (sk == 0 && funnelStage(ut.funnel, st.funnel_id) < 1) ?
   					          	<div id={'card-'+uk+'-'+st.id} className="card sf-card npt" draggable="true" style={{borderLeft: "5px solid "+st.code}} data-row={"row-"+uk} data-uid={ut.user_id} onDragStart={(e) => dragStart(e)}>
   					          		<img src={ut.profile_image.length ? ut.profile_image : userDp} /> <b>{ut.first_name+" "+ut.last_name}</b>
   					          		<div className="s2">${ut.bal.toFixed(2)} | days ago <img src={calls} className="call" /> <img src={view} className="view" onClick={(e) => this.setState({uid: ut.user_id, half: true})} /></div>
@@ -302,6 +361,8 @@ class Salesfunnel extends Component {
 		    	</div>
 		    </div> : null}
 
+
+        <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
 
         </div>
       </div>

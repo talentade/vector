@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import Pagination from '../../components/paginationTwo/index';
 import '../../components/standard/table.scss';
@@ -6,6 +7,7 @@ import download from '../../themes/images/download-doc.png';
 import view from '../../themes/images/view-doc.png';
 import server from '../../services/server';
 import app from '../../services/app';
+import TableFilters from '../../components/tablefilters/index';
 import { ImageView } from '../../components/popups/index';
 
 class DocumentsTable extends Component {
@@ -17,12 +19,19 @@ class DocumentsTable extends Component {
       page_size: app.maxrow,
       iview: false,
       src: null,
+      filter: '',
       showLoader: true
     }
   }
 
   async componentDidMount () {
     this.getAllDoc();
+
+    window.NO_AUTO_PAGER = true;
+
+    $(window).on("resetPager", () => {
+      this.setState({page_size: app.page_size(), page_no: 1});
+    });
   }
 
   getAllDoc = async () => {
@@ -35,27 +44,30 @@ class DocumentsTable extends Component {
   }
 
   render () {
-    let { page_no, page_size } = this.state;
-    let users = this.props.filter.length ? this.state.users.filter((c) => {
-      return (
-        c.first_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
-        c.last_name.toLowerCase().match(this.props.filter.toLowerCase()) ||
-        c.email.toLowerCase().match(this.props.filter.toLowerCase()) ||
-        app.uid(c.user_id).toLowerCase().match(this.props.filter.toLowerCase()) ||
-        (c.first_name + " " + c.last_name).toLowerCase().match(this.props.filter.toLowerCase()) ||
-        (c.last_name + " " + c.first_name).toLowerCase().match(this.props.filter.toLowerCase())
-      );
-    }) : this.state.users;
+    let { page_no, page_size, filter, users } = this.state;
 
+    if(filter.length) {
+      users = users.filter((c) => {
+        return (
+          c.first_name.toLowerCase().match(filter.toLowerCase()) ||
+          c.last_name.toLowerCase().match(filter.toLowerCase()) ||
+          c.email.toLowerCase().match(filter.toLowerCase()) ||
+          app.uid(c.user_id).toLowerCase().match(filter.toLowerCase()) ||
+          (c.first_name + " " + c.last_name).toLowerCase().match(filter.toLowerCase()) ||
+          (c.last_name + " " + c.first_name).toLowerCase().match(filter.toLowerCase())
+        );
+      });
+    }
 
-  let max_rows = users.length;
-  let stt = (page_no-1)*page_size;
-  let max = stt+page_size;
-      max = max > max_rows ? max_rows : max;
-    users = users.slice(stt, max > max_rows ? max_rows : max);
+    let max_rows = users.length;
+    let stt = (page_no-1)*page_size;
+    let max = stt+page_size;
+        max = max > max_rows ? max_rows : max;
+      users = users.slice(stt, max > max_rows ? max_rows : max);
 
     return (
           <>
+          <TableFilters table="docs" search={(e) => this.setState({filter: e.target.value})} />
 
           <ImageView
             src={this.state.src}

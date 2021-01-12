@@ -3,8 +3,9 @@ import moment from 'moment';
 import TableFilters from '../../components/tablefilters/index';
 import folder from '../../themes/images/folder.png';
 import pencil from '../../themes/images/notes/pencil.png';
-import { Note } from '../../components/popups/index';
+import { Note, Success } from '../../components/popups/index';
 import deleteIcon from '../../themes/images/notes/delete.png';
+import noteCB from './cb/note.png';
 import server from '../../services/server';
 import app from '../../services/app';
 import eye from '../../themes/images/notes/eye.png';
@@ -21,16 +22,21 @@ class UserNotes extends Component {
       type: 'new',
       filter: 'all',
       showNote: false,
+      showSuccess: false,
     }
   }
+
+  async componentDidMount () {}
 
   saveNote = async (title, note) => {
     this.props.load();
     try {
+      this.setState({showNote: false});
       let _note =  this.state.type == 'new'
                    ? await server.saveNote(this.props.uid, title, note)
                    : await server.updateNote(this.state.nid, title, note);
-      this.setState({showNote: false});
+      this.setState({showSuccess: true});
+      window.showCallback = false;
     } catch (e) {
       return e;
     }
@@ -41,6 +47,7 @@ class UserNotes extends Component {
     this.props.load();
     try {
       let _note = await server.deleteNote(this.props.uid, id);
+      window.callbackTxt = "Note Deleted";
     } catch (e) {
       return e;
     }
@@ -78,6 +85,14 @@ class UserNotes extends Component {
           show={this.state.showNote}
           action={(t, n) => this.saveNote(t, n)}
           cancel={(e) => this.setState({showNote: false})}
+        />
+
+        <Success 
+          src={noteCB}
+          show={this.state.showSuccess}
+          cancel={(e) => this.setState({showSuccess: false})}
+          head={this.state.type == 'new' ? "Note Added" : "Note updated"}
+          text={this.state.type == 'new' ? "A new note has been successfully added" : "Note updated successfully"}
         />
 
         <ul className="for-notes">

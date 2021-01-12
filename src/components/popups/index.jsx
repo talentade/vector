@@ -117,7 +117,7 @@ class CallBack extends React.Component {
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "30%"}} />
+              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "50%"}} />
             </div>
             <div className='lower-modal'>
               <div className='lower-modal-content'>
@@ -211,17 +211,19 @@ class Email extends React.Component {
 
 class Success extends React.Component {
   render() {
-    const { src, show, cancel } = this.props;
+    const { src, show, head, text, cancel } = this.props;
     return (
       show ? (
         <div className='overlay popups' onClick={popupOut}>
           <div className='edit-modal-section' style={{height: "500px", position: "relative", borderRadius: "5px"}}>
+            <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
             <img src={vector} className="vector" />
             <img src={radar1} className="radar1" />
             <img src={radar2} className="radar2" />
             <img src={radar3} className="radar3" />
-            <h3 className="r-head">Transaction Completed</h3>
-            <p className="r-text txt-success">A Deposit of USD 500 has been successfully made<br />to Credit the account of 0138423(LIVE)</p>
+            <img src={src} className="srcb" />
+            <h3 className="r-head">{head}</h3>
+            <p className="r-text txt-success">{text}</p>
           </div>
         </div>
       ) : (null)
@@ -254,8 +256,17 @@ class Task extends React.Component {
     this.state = {
       date1Selected: "Day",
       date2Selected: "Day",
+      admins: []
     }
     this.updated = false;
+  }
+
+  async componentDidMount () {
+    if(window.listofadmins) {
+      this.setState({admins: window.listofadmins});
+    } else {
+      this.getAllAdmins();
+    }
   }
 
   canAct = () => {
@@ -266,6 +277,16 @@ class Task extends React.Component {
       $(".edit-content").text().length &&
       $("select[name=assigned]").val() != '- Select -'
     );
+  }
+
+  getAllAdmins = async () => {
+    try {
+      let users = await server.getAllAdmins();
+      window.listofadmins = users.data;
+      this.setState({admins: users.data});
+    } catch(e) {
+      return e;
+    }
   }
 
   action = async () => {
@@ -407,7 +428,9 @@ class Task extends React.Component {
                 <div className='field'>
                   <select name="assigned">
                     <option>- Select -</option>
-                    <option>Adeoye Talent</option>
+                    {this.state.admins.map((a) => (
+                      <option>{(a.first_name+" "+a.last_name).ucwords()}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -605,7 +628,7 @@ class ConfirmModal extends React.Component {
           <div className='deposit-modal-section'>
             <div className='upper-modal'>
               <img src={CancelIcon} alt='' className='modal-cancel' onClick={cancel} />
-              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "30%"}} />
+              <img src={confirm_m} alt='' className='modal-main-img' style={{background: "#fff", borderRadius: "50%"}} />
             </div>
             <div className='lower-modal'>
               <div className='lower-modal-content'>

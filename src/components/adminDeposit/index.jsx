@@ -16,6 +16,7 @@ class Deposit extends Component {
       amt: 0,
       step : 0,
       accounts: [],
+      sent: false,
       errorMessage: '',
       account_bal: '0',
       account_name: '',
@@ -42,7 +43,7 @@ class Deposit extends Component {
       document.getElementById("tr-pass").value.length &&
       (this.state.account_name.length || this.state.account_name != "-- Select Account --")
     ) {
-      this.setState({errorMessage: ""});
+      this.setState({errorMessage: "", sent: true});
       try {
         let fa = await server.fundAccount(
           this.state.amt,
@@ -55,13 +56,13 @@ class Deposit extends Component {
         if(fa.status == 200 && fa.data.success) {
           this.props.confirmClick();
         } else {
-          this.setState({errorMessage: fa.data.message});
+          this.setState({errorMessage: fa.data.message, sent: false});
         }
       } catch (e) {
         return e;
       }
     } else {
-      this.setState({errorMessage: "Please fill all fields"});
+      this.setState({errorMessage: "Please fill all fields", sent: false});
     }
   }
 
@@ -109,7 +110,7 @@ class Deposit extends Component {
 
                 {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 
-                <button className="sacc" disabled={!this.state.accounts.length} onClick={this.fundAccount}>{this.props.type == 'deduct' ? "Deduct balance" : "Deposit to "+this.props.type.ucwords()}</button>
+                <button className="sacc" disabled={!this.state.accounts.length || this.state.sent} onClick={this.fundAccount}>{this.props.type == 'deduct' ? "Deduct balance" : "Deposit to "+this.props.type.ucwords()}</button>
               </p>
             </div>
           </div>

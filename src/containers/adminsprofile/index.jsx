@@ -15,6 +15,7 @@ import Sales from '../usersprofile/admin-sales';
 
 import UsersProfile from  './userprofile.jsx';
 
+import Spinner from '../../components/spinner/index';
 import server from '../../services/server';
 import app from '../../services/app';
 
@@ -113,9 +114,10 @@ class AdminsProfile extends Component {
 
     return (
       <Container>
-        <div className='loader-container' style={lct}>
+      <Spinner showSpinner={this.state.showLoader} />
+        {/*<div className='loader-container' style={lct}>
           <div className='loader'></div>
-        </div>
+        </div>*/}
       {profile ? <UsersProfile profile={profile} /> : null}
       {profile ?
         <div className="col-12" id="users-container">

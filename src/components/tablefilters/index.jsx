@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
+import moment from 'moment';
 import app from '../../services/app';
 import { Link } from 'react-router-dom';
+import Search from "../search/index";
+import Filter from "../filter/index";
 import Breadcrumbs from '../breadcrumbs/index';
 import sp from '../../themes/images/circle-plus.png';
 import SearchIcon from "../../themes/images/tradeDashboard/search.svg";
@@ -14,13 +17,17 @@ import checkCircle from "../../themes/images/check-circle.png";
 import deleteIcon from "../../themes/images/delete.png";
 import more from "../../themes/images/more.png";
 import refresh from "../../themes/images/refil.png";
+import '../../themes/js/datepicker.min.css';
+import datepicker from '../../themes/js/datepicker.js';
 import './index.scss';
 
 class TableFilters extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newsSearchDrop: false
+      newsSearchDrop: false,
+      date1Selected: '',
+      date2Selected: ''
     }
   }
 
@@ -31,31 +38,72 @@ class TableFilters extends Component {
     e.target.classList.add("_active");
   }
 
-  componentDidMount () { }
+  componentDidMount () {
+
+    let   dis     = this;
+    const picker1 = datepicker();
+    const picker2 = datepicker();
+
+    setTimeout(() => {
+      if($(".dpicker1").length) {
+        picker1(".dpicker1", {
+          id: 1,
+          onSelect: instance => {
+            dis.setState({date1Selected: moment(instance.dateSelected.toDateString()).format("DD/MM/YYYY")});
+            $(".dpicker1").addClass("hide");
+            $(".dpicker2").removeClass("hide");
+            $(".dpicker2")[0].click();
+          },
+          formatter: (input, date, instance) => {
+            input.value = date.toDateString();
+          },
+        });
+      }
+
+      if($(".dpicker2").length) {
+        picker1(".dpicker2", {
+          id: 1,
+          onSelect: instance => {
+            dis.setState({date2Selected: moment(instance.dateSelected.toDateString()).format("DD/MM/YYYY")});
+            $(".dpicker2").addClass("hide");
+            $(".dpicker1").removeClass("hide");
+            $(".dpicker1")[0].click();
+          },
+          formatter: (input, date, instance) => {
+            input.value = date.toDateString();
+          },
+        });
+      }
+    }, 1000);
+  }
+
+  maxrow = () => {
+    return (
+      <select className="maxrow">
+        {
+          [5, 10, 15, 25, 50, 100].map((rx, rk) => (
+            rx == app.maxrow ? <option selected key={"mx-"+rk}>{rx}</option> : <option key={"mx-"+rk}>{rx}</option>
+          ))
+        }
+      </select>
+    );
+  }
 
   render () {
   	return (
       <>
       {this.props.table === "users" ? (
         <div className="table-filters">
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
+          <div className="search-container select-box" style={{width: "80px"}}>{this.maxrow()}</div>
           <div className="search-container select-box" style={{width: "170px"}}>
-            <select>
-              <option>All users</option>
-              <option>Deleted Users</option>
+            <select onChange={this.props.sd}>
+              <option value="all">All users</option>
+              <option value="0">Active Users</option>
+              <option value="1">Deleted Users</option>
             </select>
           </div>
-          <div className="search-container" style={{width: "220px"}}>
-            <input type="text" placeholder="05/03/2020 - 05/03/2020" />
-          </div>
+          <div className="search-container datepicker dpicker1">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
+          <div className="search-container datepicker dpicker2 hide">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
@@ -63,13 +111,36 @@ class TableFilters extends Component {
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
 
-            <button className="fil-act-btn"><img src={downloadIcon} /></button>
-            {/*<button className="fil-act-btn"><img src={refreshIcon} /></button>*/}
+            {/*<button className="fil-act-btn"><img src={downloadIcon} /></button>
+            <button className="fil-act-btn"><img src={refreshIcon} /></button>*/}
             {/*<button className="fil-act-btn" onClick={this.props.assign}><img src={exportIcon} /></button> */}
           </div>
         </div>
       ) : null}
 
+      {this.props.table === "admins" ? (
+        <div className="table-filters">
+          <div className="search-container select-box" style={{width: "80px"}}>{this.maxrow()}</div>
+          <div className="search-container select-box" style={{width: "170px"}}>
+            <select onChange={this.props.sd}>
+              <option value="all">All Admins</option>
+              <option value="0">Active Admins</option>
+              <option value="1">Deleted Admins</option>
+            </select>
+          </div>
+          {/*<img src={calendar} className="calendar-search"/>*/}
+          <div className="search-container datepicker dpicker1">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
+          <div className="search-container datepicker dpicker2 hide">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
+
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "250px"}}>
+              <input type="text" placeholder="Search" onChange={this.props.search}/>
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
+            <Link to="/CreateAdmin"><button className="create-btn">Create Admin</button></Link>
+          </div>
+        </div>
+      ) : null}
 
       {this.props.table === "sales" ? (
         <div className="table-filters">
@@ -82,18 +153,10 @@ class TableFilters extends Component {
               }
             </select>
           </div>
-          <div className="search-container select-box" style={{width: "80px"}}>
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
-          <div className="search-container" style={{width: "220px"}}>
-            <input type="text" placeholder="05/03/2020 - 05/03/2020" />
-          </div>
+          <div className="search-container select-box" style={{width: "80px"}}>{this.maxrow()}</div>
+
+          <div className="search-container datepicker dpicker1">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
+          <div className="search-container datepicker dpicker2 hide">{this.state.date1Selected+" - "+this.state.date2Selected}</div>
 
           <div className="filter-actions">
             <button className="create-btn" onClick={this.props.new}><b style={{fontSize: "1.4em", position: "relative", top: "2px"}}>+</b> New Funnel</button>&nbsp;&nbsp;&nbsp;
@@ -105,20 +168,13 @@ class TableFilters extends Component {
 
       {this.props.table === "withdrawals" ? (
         <div className="table-filters">
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
+          <div className="search-container select-box">{this.maxrow()}</div>
           <div className="search-container select-box" style={{width: "170px"}}>
-            <select>
-              <option>All</option>
-              <option>Pending</option>
-              <option>Confirmed</option>
+            <select onChange={this.props.ctype}>
+              <option value="all">All</option>
+              <option value="0">Pending</option>
+              <option value="1">Processing</option>
+              <option value="2">Confirmed</option>
             </select>
           </div>
 
@@ -134,15 +190,7 @@ class TableFilters extends Component {
 
       {this.props.table === "deposits" ? (
         <div className="table-filters">
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
+          <div className="search-container select-box">{this.maxrow()}</div>
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
               <input type="text" placeholder="Search" onChange={this.props.search} />
@@ -152,22 +200,15 @@ class TableFilters extends Component {
         </div>
       ) : null}
 
-      {this.props.table === "admins" ? (
-        <div className="table-filters">
-          <div className="search-container select-box" style={{width: "174px"}}>
-            <select>
-              <option>Active Admins</option>
-              <option>Inactive Admins</option>
-            </select>
-          </div>
-          <img src={calendar} className="calendar-search"/>
 
+      {this.props.table === "alltrans" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">{this.maxrow()}</div>
           <div className="filter-actions">
-            <div className="search-container" style={{width: "250px"}}>
-              <input type="text" placeholder="Search" onChange={this.props.search}/>
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" onChange={this.props.search} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
-            <Link to="/CreateAdmin"><button className="create-btn">Create Admin</button></Link>
           </div>
         </div>
       ) : null}
@@ -196,6 +237,58 @@ class TableFilters extends Component {
               }
               </div>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {this.props.table === "docs" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">{this.maxrow()}</div>
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" onChange={this.props.search} />
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {this.props.table === "calls" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">{this.maxrow()}</div>
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" onChange={this.props.search} />
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {this.props.table === "activities" ? (
+        <div className="table-filters">
+          <div className="search-container select-box">{this.maxrow()}</div>
+          <div className="filter-actions">
+            <div className="search-container" style={{width: "300px"}}>
+              <input type="text" placeholder="Search" onChange={this.props.search} />
+              <img src={SearchIcon} className="search-img" alt="" />
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {this.props.table === "trades" ? (
+        <div className="table-filters" style={{marginTop: "2em"}}>
+          <ul className="borderad-menu">
+            <li className="tr _active" onClick={(e) => { this.props.switchTo("Open Trades"); this.toggleActive(e, '.borderad-menu')}}>Open Trades</li>
+            <li className="tr" onClick={(e) => { this.props.switchTo("Pending Trades"); this.toggleActive(e, '.borderad-menu')}}>Pending Trades</li>
+            <li className="tr" onClick={(e) => { this.props.switchTo("Closed Trades"); this.toggleActive(e, '.borderad-menu')}}>Closed Trades</li>
+          </ul>
+
+          <div className="filter-actions tr">
+          <div className="search-container select-box">{this.maxrow()}</div>
+            <Filter selectOptions={this.props.filterOptions}  id="afilter" />
+            <Search name="keyword" id="sfilter" placeholder="Search here" />
           </div>
         </div>
       ) : null}
@@ -229,27 +322,12 @@ class TableFilters extends Component {
       </div>) : null}
 
 
-      {this.props.table === "calls" ? (
-        <div className="table-filters lab">
-          <small>Show :</small>
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
-      </div>) : null}
-
-
       {this.props.table === "trade" ? (
         <div className="table-filters" style={{margin: "0 1em 1em"}}>
           <div className="search-container select-box" style={{width: "160px"}}>
             <select onChange={this.props.changeType}>
-              <option value="0">Pending Trades</option>
               <option value="1">Open Trades</option>
+              <option value="0">Pending Trades</option>
               <option value="2">Closed Trades</option>
             </select>
           </div>
@@ -278,28 +356,19 @@ class TableFilters extends Component {
 
       {this.props.table === "tasks" ? (
         <div className="table-filters lab">
-          <small>Show :</small>
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
+          {/*<small>Show :</small>
+          <div className="search-container select-box">{this.maxrow()}</div>*/}
           <div className="search-container select-box" style={{width: "130px"}}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: "absolute", top: "9px", left: "4px"}}>
               <path d="M19.2569 0H0.820313C0.388794 0 0.0390625 0.349732 0.0390625 0.78125C0.0390625 2.95685 0.97168 5.03388 2.59781 6.47934L6.01929 9.52042C6.61255 10.0478 6.95282 10.8055 6.95282 11.5994V19.2178C6.95282 19.8404 7.64862 20.2136 8.16727 19.8677L12.7765 16.795C12.9938 16.6501 13.1244 16.4063 13.1244 16.145V11.5994C13.1244 10.8055 13.4647 10.0478 14.0579 9.52042L17.4793 6.47934C19.1054 5.03388 20.038 2.95685 20.038 0.78125C20.038 0.349732 19.6883 0 19.2569 0ZM16.4412 5.31143L13.0199 8.35266C12.0934 9.17633 11.5619 10.3597 11.5619 11.5993V15.7269L8.51517 17.758V11.5994C8.51517 10.3597 7.98371 9.17633 7.05719 8.35266L3.63587 5.31159C2.53937 4.3367 1.83945 3.00095 1.65207 1.56235H18.425C18.2376 3.00095 17.5378 4.3367 16.4412 5.31143Z" fill="#03CF9E"/>
             </svg>
-            <select style={{paddingLeft: "25px"}}>
-              <option>All</option>
-              <option>Active</option>
-              <option>Completed</option>
-              <option>Overdue</option>
+            <select style={{paddingLeft: "25px"}} onChange={this.props.ctype}>
+              <option value="all">All</option>
+              <option value="0">Pending</option>
+              <option value="1">Completed</option>
             </select>
           </div>
-          <img src={calendar} className="calendar-search"/>
+          {/*<img src={calendar} className="calendar-search"/>*/}
 
           <div className="filter-actions">
             <div className="search-container" style={{width: "300px"}}>
@@ -337,15 +406,16 @@ class TableFilters extends Component {
             </select>
           </div>
           <div className="search-container select-box" style={{width: "140px"}}>
-            <select>
-              <option>Pending</option>
-              <option>Processing</option>
-              <option>Completed</option>
+            <select onChange={this.props.ctype}>
+              <option value="all">All</option>
+              <option value="0">Pending</option>
+              <option value="1">Processing</option>
+              <option value="2">Confirmed</option>
             </select>
           </div>
           <div className="filter-actions">
             <div className="search-container" style={{width: "230px"}}>
-              <input type="text" placeholder="Search" />
+              <input type="text" placeholder="Search" onChange={this.props.search} />
               <img src={SearchIcon} className="search-img" alt="" />
             </div>
           </div>
@@ -398,15 +468,7 @@ class TableFilters extends Component {
       {this.props.table === "meets" ? (
         <div className="table-filters lab">
           <small>Show :</small>
-          <div className="search-container select-box">
-            <select>
-              <option>5</option>
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>100</option>
-            </select>
-          </div>
+          <div className="search-container select-box">{this.maxrow()}</div>
           <div className="search-container select-box" style={{width: "130px"}}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{position: "absolute", top: "9px", left: "4px"}}>
               <path d="M19.2569 0H0.820313C0.388794 0 0.0390625 0.349732 0.0390625 0.78125C0.0390625 2.95685 0.97168 5.03388 2.59781 6.47934L6.01929 9.52042C6.61255 10.0478 6.95282 10.8055 6.95282 11.5994V19.2178C6.95282 19.8404 7.64862 20.2136 8.16727 19.8677L12.7765 16.795C12.9938 16.6501 13.1244 16.4063 13.1244 16.145V11.5994C13.1244 10.8055 13.4647 10.0478 14.0579 9.52042L17.4793 6.47934C19.1054 5.03388 20.038 2.95685 20.038 0.78125C20.038 0.349732 19.6883 0 19.2569 0ZM16.4412 5.31143L13.0199 8.35266C12.0934 9.17633 11.5619 10.3597 11.5619 11.5993V15.7269L8.51517 17.758V11.5994C8.51517 10.3597 7.98371 9.17633 7.05719 8.35266L3.63587 5.31159C2.53937 4.3367 1.83945 3.00095 1.65207 1.56235H18.425C18.2376 3.00095 17.5378 4.3367 16.4412 5.31143Z" fill="#03CF9E"/>

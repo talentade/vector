@@ -4,8 +4,10 @@ import TableFilters from '../../components/tablefilters/index';
 import meeting from '../../themes/images/meeting.png';
 import eye from '../../themes/images/eye.png';
 import deleteIcon from '../../themes/images/notes/delete.png';
-import { Task } from '../../components/popups/index';
+import { Task, Success } from '../../components/popups/index';
 import server from '../../services/server';
+import taskCB from './cb/task.png';
+import check from '../../themes/images/check-mark.png';
 import app from '../../services/app';
 import './usertasks.scss';
 import '../../components/standard/table.scss';
@@ -17,6 +19,8 @@ class UserTasks extends Component {
       tid: 0,
       data: null,
       type: 'new',
+      ctype: 'all',
+      showSuccess: false,
       showTask: false,
     }
   }
@@ -24,13 +28,14 @@ class UserTasks extends Component {
   async componentDidMount () {}
 
   saveTask = async (data) => {
-    console.log(data);
     this.props.load();
     try {
+      this.setState({showTask: false});
       let _task =  this.state.type == 'new'
                    ? await server.saveTask(this.props.uid, data)
                    : await server.updateTask(this.state.tid, data);
-      this.setState({showTask: false});
+      this.setState({showSuccess: true});
+      window.showCallback = false;
     } catch (e) {
       return e;
     }
@@ -41,6 +46,18 @@ class UserTasks extends Component {
     this.props.load();
     try {
       let stat = await server.changeTaskStatus(this.props.uid, id, e.target.checked ? 1 : 0);
+      window.callbackTxt = e.target.checked ? "Task completed successfully" : "Task is Pending";
+    } catch (e) {
+      return e;
+    }
+    this.props.refresh();
+  }
+
+  checkTask2 = async (tid, id) => {
+    this.props.load();
+    try {
+      let stat = await server.changeTaskStatus(tid, id, 1);
+      window.callbackTxt = "Task Completed";
     } catch (e) {
       return e;
     }
@@ -51,6 +68,7 @@ class UserTasks extends Component {
     this.props.load();
     try {
       let _task = await server.deleteTask(this.props.uid, id);
+      window.callbackTxt = "Task Deleted";
     } catch (e) {
       return e;
     }
@@ -60,11 +78,17 @@ class UserTasks extends Component {
   render () {
     let active = parseInt(this.props.active);
     let tasks = this.props.tasks;
+    let ctype = this.state.ctype;
+
+    if(ctype != 'all') {
+      tasks = tasks.filter((t) => t.status == ctype);
+    }
+
 
   	return (
       <div className={"tab-row profile-tasks"+(active ? ' _active' : '')} id="tab-row-tasks">
 
-        <TableFilters table="tasks" addTask={() => this.setState({type: 'new', data: null, showTask: true})} />
+        <TableFilters table="tasks" ctype={(e) => this.setState({ctype: e.target.value}) } addTask={() => this.setState({type: 'new', data: null, showTask: true})} />
 
         {this.state.showTask ?
           <Task
@@ -76,6 +100,14 @@ class UserTasks extends Component {
           />
         : null}
 
+        <Success 
+          src={taskCB}
+          show={this.state.showSuccess}
+          cancel={(e) => this.setState({showSuccess: false})}
+          head={this.state.type == 'new' ? "Task Added" : "Task updated"}
+          text={this.state.type == 'new' ? "A new task has been successfully added" : "Task updated successfully"}
+        />
+
         <ul className="table-header for-tasks">
           <li>TITLES</li>
           <li className="len">ASSIGNED</li>
@@ -83,7 +115,7 @@ class UserTasks extends Component {
           <li className="len">SCHEDULED TIME</li>
           <li className="short">STATUS</li>
           <li className="short">ACTIONS</li>
-          <div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
+          {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
         </ul>
 
         {
@@ -99,11 +131,12 @@ class UserTasks extends Component {
                 <svg onClick={() => this.setState({tid: t.id, type: 'edit', showTask: true, data: t})} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{cursor: 'pointer'}}>
                   <path d="M14.9243 4.04436L19.8064 8.92646L7.44837 21.2845L2.569 16.4024L14.9243 4.04436ZM23.511 2.86691L21.3338 0.689667C20.4923 -0.151764 19.126 -0.151764 18.2817 0.689667L16.1962 2.77525L21.0783 7.65739L23.511 5.22467C24.1636 4.57201 24.1636 3.51953 23.511 2.86691ZM0.0140741 23.2646C-0.0747746 23.6645 0.286247 24.0228 0.686157 23.9255L6.12649 22.6064L1.24711 17.7243L0.0140741 23.2646Z" fill="#A09F9F"/>
                 </svg>&nbsp;
+                <img src={check} onClick={(e) => this.checkTask2(t.user_id, t.id)} style={{height: "19px", width: "20px", cursor: "pointer"}} />
                 <img src={deleteIcon} onClick={() => this.deleteTask(t.id)} style={{cursor: 'pointer'}}/>
               </li>
-              <div className="check-row"><label class="checkbox-container">
+              {/*<div className="check-row"><label class="checkbox-container">
               <input type="checkbox" onClick={(e) => this.checkTask(t.id, e)} key={Math.random()+"_"+t.id} checked={t.status > 0} />
-              <span class="checkmark"></span></label></div>
+              <span class="checkmark"></span></label></div>*/}
             </ul>
           ))
         }

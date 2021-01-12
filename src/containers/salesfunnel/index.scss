@@ -1,10 +1,50 @@
 #sales-container {
 	padding: 2em !important;
 	width: 100%;
-	position: relative;
-    height: calc(100vh - 70px);
-    overflow: auto;
     display: flex;
+	overflow-x: hidden !important;
+	position: relative;
+
+
+    #boardlists {
+	    height: calc(100vh - 315px) !important;
+	    // height: 500px !important;
+	    overflow: auto;
+    }
+
+	.pagination-2 {
+	    display: flex;
+	    justify-content: center;
+	    margin-top: 0;
+	}
+
+	.table-filters {
+	    margin-top: 0px;
+	}
+
+    .salt-title {
+		top: 0 !important;
+		margin-top: 0px !important;
+		padding-top: 0px !important;
+		position: relative !important;
+		width: 100%;
+		z-index: 1000;
+		background: #004044;
+
+    	tr {
+    		display: flex;
+    		width: 100%;
+
+    		td {
+			    width: 275px;
+			    margin-right: 10px;
+			    background: #195256;
+			    padding: 1em;
+			    color: #fff;
+    		}
+    	}
+    }
+
 
     .page-title {
     	justify-content: space-between;
@@ -220,7 +260,9 @@
     grid-template-rows: max-content auto;
     grid-gap: 10px;
     padding: 10px 0;
-    height:800px;
+    height: 800px;
+    height: auto;
+    position: relative;
 }
 
 .list-layout {
@@ -255,7 +297,7 @@
   
   .list-title {
 	color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     padding: .3em;
     position: relative;
 
@@ -269,7 +311,7 @@
 	    color: #fff;
 	    border: 0;
 	    outline: none;
-	    font-size: 1em;
+	    font-size: 16px;
 	    padding: 0;
 	    position: absolute;
 	    top: 0;
@@ -333,7 +375,7 @@
     text-align: center;
     padding: 3px;
     display: inline-flex;
-    height: 100px;
+    height: 80px;
     border-radius: 0 1em 1em 0;
     flex-direction: row;
     position: relative;
@@ -368,10 +410,10 @@
 
 
 .sf-card > img {
-	width: 40px;
-    height: 40px;
+	width: 35px;
+    height: 35px;
     border-radius: 50%;
-    margin: 5px;
+    margin: 2px 1px;
     border: 1px solid #000000;
 }
 
@@ -379,7 +421,7 @@
     font-size: 1.1em;
     font-family: Poppins;
     margin-left: 10px;
-    height: 50px;
+    height: 40px;
     color: #00a880;
     display: inline-flex;
     justify-content: center;
@@ -436,6 +478,26 @@
 
 }
 
-html, body, #root {
-    overflow: hidden;
+// html, body, #root {
+//     overflow: hidden;
+// }
+
+#boardlists::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+	background: #004044;
+	border-radius: 0px;
+}
+
+#boardlists::-webkit-scrollbar-track {
+	background: #004044 !important;
+	border-radius: 0px;
+}
+
+#boardlists::-webkit-scrollbar-thumb {
+	cursor: pointer;
+	background: #00A880 !important;
+	border-radius: 0;
+	width: 5px;
+	height: 5px;
 }

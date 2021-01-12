@@ -7,6 +7,7 @@ import Search from "../search/index";
 import Filter from "../filter/index";
 import Table from "../table/index";
 import Pagination from '../Pagination/index';
+import Pagination2 from '../paginationTwo/index';
 import ins_up from '../../themes/images/ins-up.png';
 import ins_down from '../../themes/images/ins-down.png';
 import ai_n from '../../themes/images/ai-normal.png';
@@ -36,6 +37,26 @@ class TradeHistory extends Component {
     document.getElementById(i).classList.add("_active");
   }
 
+  componentDidMount () {
+
+    $("#sfilter").keyup((e) => {
+      this.handleChange(e);
+    });
+
+    window.NO_AUTO_PAGER = true;
+
+    $(window).on("resetPager", () => {
+      this.setState({page_size: app.page_size(), page_no: 1});
+    });
+
+    if(this.props.admin) {
+      $("#afilter").change((e) => {
+        this.onChange(e);
+      });
+    }
+
+  }
+
   Profit = (p) => {
     let cl, pr;
     if(p > 0) {
@@ -59,9 +80,12 @@ class TradeHistory extends Component {
     try{
       let close = await server.closeTrade(id, account, cr, uid);
       if(close.status == 200) {
-        const gp = await server.getProfile();
-        app.profile(gp.data.profile);
-        $(".balance").trigger("refresh");
+        $(window).trigger("refreshMod");
+        if(!this.props.admin) {
+          const gp = await server.getProfile();
+          app.profile(gp.data.profile);
+          $(".balance").trigger("refresh");
+        }
         this.setState({showSpinner: false, showClosed: true});
       } else {
         this.setState({showSpinner: false, showClosed: false});
@@ -105,6 +129,7 @@ class TradeHistory extends Component {
     history = history.filter((pair) => {
       if(pair.type && pair.instrument && pair.mode) {
         return (
+          (this.props.admin ? app.uid(pair.user_id).toLowerCase().match(fp) : false) ||
           pair.type.toLowerCase().match(fp) || fp == pair.type.toLowerCase() ||
           pair.instrument.toLowerCase().match(fp) || fp == pair.instrument.toLowerCase() ||
           pair.mode.toLowerCase().match(fp) || fp == pair.mode.toLowerCase()
@@ -203,8 +228,11 @@ class TradeHistory extends Component {
                   ) : null}
                 </ul>
               ))}
-              {history.length ?
-                <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
+              {history.length ? (
+                this.props.admin ?
+                  <Pagination2 length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/> :
+                  <Pagination length={page_size} max_rows={max_rows} page_no={page_no} paginationChange={(p) => { this.setState({page_no: p}); }}/>
+                )
               : this.props.admin ? null : <TradeNotFound text={"No "+type+" trade"} /> }
               {this.props.admin && !history.length ? <TradeNotFound text={"No "+type+" trade"} /> : null}
           </div>

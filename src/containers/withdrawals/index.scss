@@ -7,6 +7,14 @@
 
     .table-header li, .table-body li {
     	min-width: calc(100% / 9);
+    	&.sn {
+    		width: 80px !important;
+    		min-width: 80px !important;
+    	}
+    }
+
+    .pointers > * {
+    	cursor: pointer;
     }
 
 

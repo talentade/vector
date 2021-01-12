@@ -205,6 +205,7 @@ class CreateAdmin extends Component {
 
     return (
       <Container>
+      <div className="col-12" id="cadmin-container">
         <span id="s-all-2"><Link to="/Restrictions">See all Restrictions</Link></span>
         <div className='createadmin-section'>
           <Spinner showSpinner={this.showSpinner} />
@@ -349,6 +350,7 @@ class CreateAdmin extends Component {
               </form>
             </div>
           </div>
+        </div>
         </div>
       </Container>
     );

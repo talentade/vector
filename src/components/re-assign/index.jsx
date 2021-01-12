@@ -18,7 +18,8 @@ class Assign extends Component {
 
     this.state = {
       errorMessage: '',
-      active: true
+      active: true,
+      sent: false
     };
 
   }
@@ -34,14 +35,17 @@ class Assign extends Component {
   }
 
   btnSave = async () => {
+    this.setState({sent: true});
     let aid = $("#assaid").val();
     try {
       let ass = await server.assignAdmin(this.props.data.user_id, aid);
-      this.props.cancel();
-      window.location.href = "";
+      this.props.success();
     } catch (e) {
+      this.setState({sent: false});
       return e;
     }
+    this.props.cancel();
+    this.setState({sent: false});
   }
 
   render () {
@@ -110,7 +114,7 @@ class Assign extends Component {
 
                   {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 
-                  <button className="sacc" onClick={this.btnSave}>Assign</button>
+                  <button className="sacc" onClick={this.btnSave} disabled={this.state.sent}>Assign</button>
                 </p>
                 : <p className="inps txt-success" style={{marginTop: "5px"}}>
                 Sorry <strong>{(data.first_name+" "+data.last_name).ucwords()}</strong> {!this.state.active ? "has not been" : "has been"} asssigned to {assto}. Please click <strong onClick={() => this.setState({active: !this.state.active})} style={{cursor: "pointer"}}>here</strong> to {!this.state.active ? "" : "re-"}assign user.
