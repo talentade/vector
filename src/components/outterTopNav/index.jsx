@@ -12,7 +12,7 @@ import Tnav4 from "../../themes/images/tradeDashboard/t_nav4.svg";
 import newMessage from "../../themes/sounds/new.ogg";
 import liveChat from "../../themes/images/live-chat.png";
 import { Logout } from '../../components/popups/index';
-import HeaderImage from "../../themes/images/company_logo.png";
+import HeaderImage from "../../themes/images/avariz_logo.png";
 import app from '../../services/app';
 import './index.scss';
 
@@ -63,7 +63,7 @@ class OutterTopNav extends Component {
         <Logout show={this.state.showLogout} cancel={(e) => this.setState({showLogout: false})} confirm={handleLogout} />
         <div className='top-nav'>
           {isAdmin ? (null) : (
-            <img src={HeaderImage} alt='' />
+            <img src={HeaderImage} alt='' style={{width: "30px"}} />
           )}
           {isAdmin ? (
             <ul className={'top-nav-list'+(isAdmin ? " _admin" : "")} style={{width: "auto"}}>
@@ -102,7 +102,19 @@ class OutterTopNav extends Component {
                   show={this.state.mbox}
                 />
               </li>*/}
-              <li style={{marginLeft: "2em"}}><img src={Tnav2} alt='' /></li>
+              <li style={{position: "relative", cursor: "pointer", marginLeft: "2em"}}>
+                {this.state.ibox && (
+                  <div className='overlay drop' onClick={() => { this.setState({newMessage: 0, mbox: false, hover: false, ibox: false}); }}></div>
+                )}
+                <img src={Tnav2} alt='' onMouseEnter={() => { if(!window.BuyandsellModalPopup) { this.setState({mbox: false, ibox: true, newNotice: 0}); }}} onClick={() => { window.BuyandsellModalPopup = false; this.setState({mbox: false, ibox: true, newNotice: 0}); }} />
+                {this.state.newNotice > 0 ? <span className="__newNotice"></span> : null}
+
+                <NotificationBox
+                  show={this.state.ibox}
+                  ring={(n) => this.ring2(n)}
+                />
+              </li>
+              {/*<li style={{marginLeft: "2em"}}><img src={Tnav2} alt='' /></li>*/}
               <li onClick={(e) => this.setState({showLogout: true})} className="logout-btn" style={{marginLeft: "2em"}}><img src={Tnav4} alt='' /></li>
             </ul>
           ) : (

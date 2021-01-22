@@ -103,8 +103,8 @@ class AdminsProfile extends Component {
   }
 
   selectActiveTab = (e) => {
-    let name = e.target.getAttribute("name");
-    if(name.length) this.setState({userTab: name});
+    let name = e.target.getAttribute("name") || false;
+    if(name) this.setState({userTab: name});
   }
 
   render() {

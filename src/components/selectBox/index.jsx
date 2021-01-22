@@ -2,7 +2,7 @@ import React from 'react';
 import './index.scss';
 
 const selectBox = ({ selectOptions, onChange, id, defaultOption }) => (
-  <select onChange={onChange} required className="f select" id={id.length ? id : ""}>
+  <select onChange={onChange} required className="f select" id={id ? id : ""}>
     {defaultOption ? (
       <option value="">
         {defaultOption}

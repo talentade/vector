@@ -64,7 +64,7 @@ class Container extends Component {
               case "ADMIN_UNREAD":
                 if(payload.count > 0) {
                   if(payload.count != this.state.badge) {
-                    // $(this.audio)[0].play();
+                    $(this.audio)[0].play();
                   }
                   this.setState({badge: payload.count});
                 }
@@ -112,12 +112,21 @@ class Container extends Component {
 
   gmc = () => {
     if(window.WebSocketPlugged) {
-      window.WebSocketPlug.send(JSON.stringify({
-        "event": "ADMIN_UNREAD",
-        "payload": {
-          admin: true
+        let clr = window.nclear || false;
+        let nid = window.lastnid > 0 ? window.lastnid : (app.profile()["notifications"] || []).length ? app.profile()["notifications"][0]["id"] : 0;
+        if(clr) {
+          window.nclear = false;
         }
-      }));
+        window.WebSocketPlug.send(JSON.stringify({
+          "event": "ADMIN_UNREAD",
+          "payload": {
+            admin:   true,
+            user:    app.id(),
+            nclear : clr,
+            lastnid: nid,
+            nflag  : window.nread
+          }
+        }));
     }
   }
 

@@ -131,10 +131,10 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   isAdmin: () => {
-    return !false;
+    return false;
   },
   hostURL: (url, type = 0) => {
-    let live = true;
+    let live = !true;
     if(type > 0) {
       return live ? "wss://avarizsocket.herokuapp.com/" : "ws://localhost:3003";
     } else {

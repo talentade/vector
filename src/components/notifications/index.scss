@@ -18,6 +18,10 @@
     right: -5px;
   }
 
+  &.admin {
+    right: -50px;
+  }
+
   .nhead {
     color: #000 !important;
     height: 40px;
@@ -289,7 +293,7 @@
 }
 
 .notification-dropdown.admin::before {
-  right: 100px;
+  right: 53px;
 }
 
 #notificationList::-webkit-scrollbar {

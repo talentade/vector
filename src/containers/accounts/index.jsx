@@ -13,6 +13,7 @@ import '../../components/standard/standard.scss';
 import { Created } from '../../components/popups/index';
 import AddAccount from '../../components/addAccount/index';
 import './index.scss';
+import anychart from './anychart-base.min.js';
 
 class Accounts extends Component {
   constructor(props) {
@@ -38,6 +39,35 @@ class Accounts extends Component {
         that.accountList();
       });
     }
+
+    anychart.onDocumentReady(function() {
+ 
+      // set the data
+      var data = {
+          header: ["Stat", "Stat"],
+          rows: [
+            ["Sun", 50000],
+            ["Mon", 1500],
+            ["Tue", 87000],
+            ["Wed", 175000],
+            ["Thur", 10000],
+            ["Fri", 242000],
+            ["Sat", 25000],
+      ]};
+
+      // create the chart
+      var chart = anychart.column();
+
+      // add the data
+      chart.data(data);
+
+      // set the chart title
+      chart.title("");
+
+      // draw
+      chart.container("account-graph");
+      chart.draw();
+    });
   }
 
   accountList = async () => {
@@ -153,9 +183,7 @@ class Accounts extends Component {
                 </tr>
               </table>
             </li>
-            <div id="account-graph">
-
-            </div>
+            <div id="account-graph"></div>
             <li className="acc-stat-row-2">
               <table>
                 <tr>
