@@ -33,41 +33,41 @@ class Accounts extends Component {
 
   async componentDidMount () {
     this.accountList();
-    let that = this;
-    if(document.getElementById("account-container")) {
-       document.getElementById("account-container").addEventListener('refreshAccList', async (e) => {
-        that.accountList();
-      });
-    }
+    // let that = this;
+    // if(document.getElementById("account-container")) {
+    //    document.getElementById("account-container").addEventListener('refreshAccList', async (e) => {
+    //     that.accountList();
+    //   });
+    // }
 
-    anychart.onDocumentReady(function() {
+    // anychart.onDocumentReady(function() {
  
-      // set the data
-      var data = {
-          header: ["Stat", "Stat"],
-          rows: [
-            ["Sun", 50000],
-            ["Mon", 1500],
-            ["Tue", 87000],
-            ["Wed", 175000],
-            ["Thur", 10000],
-            ["Fri", 242000],
-            ["Sat", 25000],
-      ]};
+    //   // set the data
+    //   var data = {
+    //       header: ["Stat", "Stat"],
+    //       rows: [
+    //         ["Sun", 50000],
+    //         ["Mon", 1500],
+    //         ["Tue", 87000],
+    //         ["Wed", 175000],
+    //         ["Thur", 10000],
+    //         ["Fri", 242000],
+    //         ["Sat", 25000],
+    //   ]};
 
-      // create the chart
-      var chart = anychart.column();
+    //   // create the chart
+    //   var chart = anychart.column();
 
-      // add the data
-      chart.data(data);
+    //   // add the data
+    //   chart.data(data);
 
-      // set the chart title
-      chart.title("");
+    //   // set the chart title
+    //   chart.title("");
 
-      // draw
-      chart.container("account-graph");
-      chart.draw();
-    });
+    //   // draw
+    //   chart.container("account-graph");
+    //   chart.draw();
+    // });
   }
 
   accountList = async () => {
