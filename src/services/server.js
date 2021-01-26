@@ -198,6 +198,16 @@ export default {
       }
     })
   },
+
+  getAstat(a) {
+    return axios.request({
+      method: 'GET',
+      url: app.hostURL('astat/'+a),
+      headers: {
+        'Authorization': app.auth()
+      }
+    })
+  },
   
   fundAccount(amount, currency, account, uid = null, use = "", ps = "") {
     if(ps.length) {

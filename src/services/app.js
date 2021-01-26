@@ -131,7 +131,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   isAdmin: () => {
-    return !false;
+    return false;
   },
   hostURL: (url, type = 0) => {
     let live = true;
