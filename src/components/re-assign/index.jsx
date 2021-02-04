@@ -91,10 +91,9 @@ class Assign extends Component {
                     ))}
                     </select>
                   </span>
-
+                  {/*
                   <br />
                   <br />
-                  
                   <span><b>Restrictions:</b></span>
                   <span>
                     <div className="check-row">Edit Profile <label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
@@ -110,7 +109,7 @@ class Assign extends Component {
                     <div className="check-row">Calls <label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
                     <div className="check-row">Emails <label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
                     <div className="check-row">Tasks <label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>
-                  </span>
+                  </span>*/}
 
                   {this.state.errorMessage.length ? <span className='err'>{this.state.errorMessage}</span> : null}
 

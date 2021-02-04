@@ -69,17 +69,19 @@ class Lists extends Component {
                 <li>USED IN</li>
               </ul>
 
-            <Link to="/Users">
-              <ul className="table-body _all">
-                <li><span className="txt-light">All</span></li>
-                <li><span className="txt-light">{this.state.stat.users+this.state.stat.admin}</span></li>
-                <li><span className="txt-light">Automatic</span></li>
-                <li><span className="txt-light">{this.state.time.all.length ? moment(this.state.time.all).calendar() : '-'}</span></li>
-                <li><span className="txt-light">-</span></li>
-                <li><span className="txt-default">0</span></li>
-                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-              </ul>
-            </Link>
+            {app.super() ?
+              <Link to="/Users">
+                <ul className="table-body _all">
+                  <li><span className="txt-light">All</span></li>
+                  <li><span className="txt-light">{this.state.stat.users+this.state.stat.admin}</span></li>
+                  <li><span className="txt-light">Automatic</span></li>
+                  <li><span className="txt-light">{this.state.time.all.length ? moment(this.state.time.all).calendar() : '-'}</span></li>
+                  <li><span className="txt-light">-</span></li>
+                  <li><span className="txt-default">0</span></li>
+                  {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+                </ul>
+              </Link>
+            : null}
 
             <Link to="/Users">
               <ul className="table-body _users">
@@ -93,17 +95,19 @@ class Lists extends Component {
               </ul>
             </Link>
 
-            <Link to="/Admins">
-              <ul className="table-body _admins">
-                <li><Link to="/Admins" className="txt-light">Admins</Link></li>
-                <li><span className="txt-light">{this.state.stat.admin}</span></li>
-                <li><span className="txt-light">Automatic</span></li>
-                <li><span className="txt-light">{this.state.time.admin.length ? moment(this.state.time.admin).calendar() : '-'}</span></li>
-                <li><span className="txt-light">-</span></li>
-                <li><span className="txt-default">0</span></li>
-                {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
-              </ul>
-            </Link>
+            {app.super() ?
+              <Link to="/Admins">
+                <ul className="table-body _admins">
+                  <li><Link to="/Admins" className="txt-light">Admins</Link></li>
+                  <li><span className="txt-light">{this.state.stat.admin}</span></li>
+                  <li><span className="txt-light">Automatic</span></li>
+                  <li><span className="txt-light">{this.state.time.admin.length ? moment(this.state.time.admin).calendar() : '-'}</span></li>
+                  <li><span className="txt-light">-</span></li>
+                  <li><span className="txt-default">0</span></li>
+                  {/*<div className="check-row"><label class="checkbox-container"><input type="checkbox" /><span class="checkmark"></span></label></div>*/}
+                </ul>
+              </Link>
+            : null}
         </div>
       </div>
       </Container>

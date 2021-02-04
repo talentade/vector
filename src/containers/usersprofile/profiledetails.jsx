@@ -39,6 +39,7 @@ class ProfileDetails extends Component {
   }
 
   kyc = async (e) => {
+    if(!app.permitted("kyc")) return null;
     let v =  e.target.value;
     this.props.load();
     try {

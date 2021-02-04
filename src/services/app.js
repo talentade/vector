@@ -113,6 +113,16 @@ const app = {
   page_size: () => {
     return Number(localStorage.getItem("avariz_pager")) || 5;
   },
+  permitted: (x) => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    let p = profile.permissions.split(",");
+    let r = p.filter((_p) => _p.toLowerCase().trim() == x);
+    return r.length ? true : false;
+  },
+  super: (x) => {
+    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    return profile.permissions.trim() == "*";
+  },
   setMaxrow: (r) => {
     localStorage.setItem("avariz_pager", r);
   },
@@ -131,7 +141,7 @@ const app = {
     return JSON.parse(localStorage.getItem("avariz_info"));
   },
   isAdmin: () => {
-    return false;
+    return !false;
   },
   hostURL: (url, type = 0) => {
     let live = true;

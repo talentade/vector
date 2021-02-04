@@ -23,17 +23,7 @@ class UsersTable extends Component {
   }
 
   async componentDidMount() {
-    await this.getAllUsers();
     await this.getAllAdmins();
-  }
-
-  getAllUsers = async () => {
-    try {
-      let users = await server.getAllUsers();
-      this.setState({users: users.data, showLoader: false});
-    } catch(e) {
-      return e;
-    }
   }
 
   getAllAdmins = async () => {
@@ -46,6 +36,8 @@ class UsersTable extends Component {
   }
 
   render () {
+    if(!this.state.admins.length) return null;
+    
     return (
           <>
             {
@@ -66,7 +58,7 @@ class UsersTable extends Component {
             </ul>
 
             {
-              this.state.users.map((user) => (
+              this.props.users.map((user) => (
                 <ul className="table-body adm" key={`${Math.random()} ${Math.random()}`}>
                   <li><Link className="txt-info" to={"/usersprofile/"+user.user_id}>{user.first_name+" "+user.last_name}</Link></li>
                   <li><small className="txt-default">{user.email}</small></li>

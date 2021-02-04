@@ -123,12 +123,13 @@ class AdminsProfile extends Component {
         <div className="col-12" id="users-container">
           <div className="users-section-right shared">
             <Breadcrumbs breads={"Home, Lists, Users, "+(this.state.userTab)} />
-            <Ptab tabs="Assigned Users, Activity, Sales, Tasks, Notes, Calls, Profiles Visited" handleClick={this.selectActiveTab} active={this.state.userTab} />
+            <Ptab tabs="Assigned Users, Activity, Sales, Notes, Calls, Profiles Visited" handleClick={this.selectActiveTab} active={this.state.userTab} />
+            <div className='chart admin-chart' style={{width: "100%", display:
+            this.state.userTab.toLowerCase() === "activity" ||
+            this.state.userTab.toLowerCase() === "calls" ? "flex" : "none"}} ref={this.chartContainerRef}></div>
 
-            <div className='chart admin-chart' style={{width: "100%", display: "flex"}} ref={this.chartContainerRef}></div>
-            {this.state.userTab.toLowerCase() === "assigned users" && profile  ? <UsersTable profile={profile} uid={this.state.uid} refresh={() => this.refreshTab("Assigned Users")} load={() => this.setState({showLoader: !this.state.showLoader})} />              : null}
+            {this.state.userTab.toLowerCase() === "assigned users" && profile  ? <UsersTable profile={profile} users={profile.assigned} uid={this.state.uid} refresh={() => this.refreshTab("Assigned Users")} load={() => this.setState({showLoader: !this.state.showLoader})} />              : null}
             {this.state.userTab.toLowerCase() === "activity"            ? <Activity active="1" tasks={profile.tasks} uid={this.state.uid} refresh={() => this.refreshTab("Activity")} load={() => this.setState({showLoader: !this.state.showLoader})} />         : null}
-            {this.state.userTab.toLowerCase() === "tasks"               ? <Activity active="1" tasks={profile.tasks} uid={this.state.uid} refresh={() => this.refreshTab("Tasks")} load={() => this.setState({showLoader: !this.state.showLoader})} />         : null}
             {this.state.userTab.toLowerCase() === "notes"               ? <Notes active="1" notes={profile.notes} uid={this.state.uid} refresh={() => this.refreshTab("Notes")} load={() => this.setState({showLoader: !this.state.showLoader})} />         : null}
             {this.state.userTab.toLowerCase() === "calls"               ? <Calls active="1" calls={null} uid={this.state.uid} refresh={() => this.refreshTab("Calls")} load={() => this.setState({showLoader: !this.state.showLoader})} />         : null}
             {this.state.userTab.toLowerCase() === "sales"               ? <Sales active="1" calls={null} uid={this.state.uid} refresh={() => this.refreshTab("Sales")} load={() => this.setState({showLoader: !this.state.showLoader})} />         : null}
