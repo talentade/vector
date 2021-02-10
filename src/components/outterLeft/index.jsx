@@ -31,12 +31,16 @@ class OutterLeftNav extends Component {
       borderRadius: '5px !important',
     };
 
-    const isAdmin  = this.props.isAdmin;
-    const navData  = isAdmin ? adminLeftNavData : leftNavData;
+    let isAdmin  = this.props.isAdmin;
+    let navData  = isAdmin ? adminLeftNavData : leftNavData;
     let nClicked   = this.props.outterNavClicked;
     let badge      = this.props.badge;
     let page       = window.location.pathname.replace("/", "").toLowerCase();
     let isclk      = app.isVerified() || app.isAdmin();
+
+    if(app.isAdmin() && !app.super()) {
+      navData = navData.filter((nd) => nd.name != "createadmin");
+    }
 
     return (
       <div

@@ -54,8 +54,10 @@ export default props => (
         <Route path='/PostNews' exact component={PostNews} />
         <Route path='/Dashboard' exact component={Dashboard} />
 
-        <Route path='/CreateAdmin' exact component={CreateAdmin} />
+        {app.super() ? <Route path='/CreateAdmin' exact component={CreateAdmin} /> : null}
+        
         <Route path='/Restrictions' exact component={Restrictions} />
+
 
         <Route path='/Chats' exact component={Chats} />
         <Route path='/Trades' exact component={Trades} />
@@ -71,7 +73,9 @@ export default props => (
         <Route path='/Salesfunnel' exact component={Salesfunnel} />
 
         <Route path='/Calllogs' exact component={Calllogs} />
-        <Route path='/Admins' exact component={Admins} />
+        
+        {app.super() ? <Route path='/Admins' exact component={Admins} /> : null}
+
         <Route path='/AdminsProfile/:user_id' exact component={AdminsProfile} />
         <Route path='/Activities' exact component={Activities} />
         <Route path='/Finance' exact component={Finance} />

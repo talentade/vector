@@ -120,7 +120,8 @@ const app = {
     return r.length ? true : false;
   },
   super: (x) => {
-    let profile = JSON.parse(localStorage.getItem("avariz_profile"));
+    let profile = JSON.parse(localStorage.getItem("avariz_profile")) || false;
+    if(!profile) return false;
     return profile.permissions.trim() == "*";
   },
   setMaxrow: (r) => {
