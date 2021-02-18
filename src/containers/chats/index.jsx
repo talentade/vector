@@ -79,7 +79,7 @@ class Chats extends Component {
   }
 
   refreshMsg = () => {
-    if(window.WebSocketPlugged) {
+    if(window.WebSocketPlugged && (this.state.active.user_id || false)) {
       window.WebSocketPlug.send(JSON.stringify({
         "event": "GET_MESSAGES2",
         "payload": {

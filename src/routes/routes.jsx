@@ -49,6 +49,8 @@ export default props => (
       <Switch>
         <Route exact path='/' component={Login} />
         <Route exact path='/Login' component={Login} />
+        <Route exact path='/ForgotPassword' component={ForgotPassword} />
+        <Route exact path='/ChangePassword' component={ChangePassword} />
         <Route path='/Accounts' exact component={Accounts} />
         <Route path='/News' exact component={News} />
         <Route path='/PostNews' exact component={PostNews} />
@@ -57,21 +59,15 @@ export default props => (
         {app.super() ? <Route path='/CreateAdmin' exact component={CreateAdmin} /> : null}
         
         <Route path='/Restrictions' exact component={Restrictions} />
-
-
         <Route path='/Chats' exact component={Chats} />
         <Route path='/Trades' exact component={Trades} />
-
         <Route path='/Transactions' exact component={AllTranasactions} />
         <Route path='/MailAccounts' exact component={MailAccounts} />
         <Route path='/Unsubscribers' exact component={Unsubscribers} />
-
         <Route path='/Users' exact component={Users} />
         <Route path='/Withdrawals' exact component={Withdrawals} />
         <Route path='/Deposits' exact component={Deposits} />
-
         <Route path='/Salesfunnel' exact component={Salesfunnel} />
-
         <Route path='/Calllogs' exact component={Calllogs} />
         
         {app.super() ? <Route path='/Admins' exact component={Admins} /> : null}
@@ -110,6 +106,8 @@ export default props => (
             <Route exact path='/' component={Login} />
             <Route exact path='/Login' component={Login} />
             <Route exact path='/Register' component={Register} />
+            <Route exact path='/ForgotPassword' component={ForgotPassword} />
+            <Route exact path='/ChangePassword' component={ChangePassword} />
             <Route exact path='/VerifyEmail' component={VerifyEmail} />
             <Route exact path='/VerifyPhone' component={VerifyPhone} />
             <Route exact path='/Book' component={BookCall} />

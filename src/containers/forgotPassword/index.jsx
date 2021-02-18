@@ -33,19 +33,20 @@ class ForgotPassword extends Component {
     })
   }
 
-  resetPassword = async (e) => {
+  resetPassword1 = async (e) => {
     e.preventDefault();
 
     const { email } = this.state;
-
     this.clearMessages();
 
     try {
       this.setState({ showSpinner: true });
-
       await server.sendResetEmail(email);
-
       this.setState({ showSpinner: false, successMessage: true });
+
+      this.props.history.push('/ChangePassword');
+      // window.location.href = "/ChangePassword";
+      // process.exit(0);
     } catch (error) {
       if (!error.response) {
         return error.message;
@@ -73,7 +74,7 @@ class ForgotPassword extends Component {
             <img src={ForgotPasswordImage} alt='' />
           </div>
           <div className='forgot-password-form'>
-            <form onSubmit={this.resetPassword}>
+            <form onSubmit={this.resetPassword1}>
               <h2>Forgot password?</h2>
               <p
                 className='error'

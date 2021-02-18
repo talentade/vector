@@ -370,6 +370,29 @@ export default {
     });
   },
 
+  sendResetEmail(email) {
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('forgotPassword'),
+      headers: {
+        'Authorization': "---"
+      },
+      data: {email},
+    });
+  },
+
+  resetPassword(credentials) {
+    credentials.new_password = sha256(credentials.new_password);
+    return axios.request({
+      method: 'PUT',
+      url: app.hostURL('resetPassword'),
+      headers: {
+        'Authorization': "---"
+      },
+      data: credentials,
+    });
+  },
+
   addNewCard(card) {
     card.time = new Date().toLocaleString("en-US", {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
     return axios.request({

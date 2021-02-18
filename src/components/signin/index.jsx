@@ -105,7 +105,8 @@ class SignIn extends Component {
 
             <p className='error'>{signinError}</p>
             
-            {app.isAdmin() ? (null) : <p className='forget-password'><NavLink to="/ForgotPassword">Forgot Password?</NavLink></p>}
+            {/*app.isAdmin() ? (null) : <p className='forget-password'><a href="/ForgotPassword">Forgot Password?</a></p>*/}
+            <p className='forget-password'><a href="/ForgotPassword">Forgot Password?</a></p>
             
             <CheckBox onClick={this.handleClick} id="check" />
             <input

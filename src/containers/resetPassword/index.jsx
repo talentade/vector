@@ -13,6 +13,7 @@ class ResetPassword extends Component {
     super(props);
 
     this.state = {
+      email: '',
       password: '',
       confirmPassword: '',
       showSpinner: false,
@@ -26,28 +27,28 @@ class ResetPassword extends Component {
     this.setState({ error: null, success: '' });
   }
 
-  resetPassword = async (e) => {
+  resetPassword2 = async (e) => {
     e.preventDefault();
 
-    const { otp, password, confirmPassword } = this.state;
+    const { email, otp, password, confirmPassword } = this.state;
 
-    if (this.props.location.search === '') {
+    // if (this.props.location.search === '') {
+    //   return this.setState({ error: 'Unauthorized' });
+    // }
+
+    // let searchObj = this.props.location.search.split('');
+
+    // searchObj.shift('');
+
+    // searchObj = qs.parse(searchObj.join(''));
+
+    // const { email } = searchObj;
+
+    if (!email.length) {
       return this.setState({ error: 'Unauthorized' });
     }
 
-    let searchObj = this.props.location.search.split('');
-
-    searchObj.shift('');
-
-    searchObj = qs.parse(searchObj.join(''));
-
-    const { email } = searchObj;
-
-    if (!email) {
-      return this.setState({ error: 'Unauthorized' });
-    }
-
-    if (password !== confirmPassword) {
+    if (password !== confirmPassword || !password.length) {
       return this.setState({ error: 'Passwords must match' });
     }
 
@@ -62,6 +63,11 @@ class ResetPassword extends Component {
         });
 
         this.setState({ showSpinner: false, success: 'Password reset successful' });
+        setTimeout(() => {
+          // this.props.history.push('/Login');
+          window.location.href = "/Login";
+          process.exit(0);
+        }, 500);
       } catch (error) {
         if (!error.response) {
           return error.message;
@@ -96,7 +102,7 @@ class ResetPassword extends Component {
             <img src={ResetImage} alt='' />
           </div>
           <div className='reset-form-section'>
-            <form onSubmit={this.resetPassword}>
+            <form onSubmit={this.resetPassword2}>
               <div className='reset-form-heading'>
                 <img src={Padlock} alt='Padlock' />
                 <div className='reset-header-text'>
@@ -106,6 +112,16 @@ class ResetPassword extends Component {
               </div>
               <p className='error'>{error}</p>
               <p className="success">{success}</p>
+              <div className='reset-form-container'>
+                <label htmlFor='email'>Email</label>
+                <input
+                  type='email'
+                  name='email'
+                  id='email'
+                  required
+                  onChange={this.handleChange}
+                />
+              </div>
               <div className='reset-form-container'>
                 <label htmlFor='otp'>OTP</label>
                 <input
