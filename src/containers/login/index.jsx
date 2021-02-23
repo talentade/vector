@@ -7,18 +7,19 @@ import './index.css';
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = { email: '', password: ''}
+    this.state = { email: '', password: '', sending: false, error: ""}
   }
 
   login = async () => {
+    this.setState({sending: true, error: ""});
     try {
       let login = await Api.login({email: this.state.email, password: this.state.password});
-      console.log(login.data.access_token);
       App.access_token(login.data.access_token);
+      this.setState({sending: false});
       window.location.href = "/Dashboard";
       // this.props.history.push("/Dashboard");
     } catch (e) {
-      alert("Invalid Credential");
+      this.setState({sending: false, error: "Invalid Credential"});
     }
   }
 
@@ -33,6 +34,7 @@ class Login extends Component {
                   <div className="col-8">
                       <div className="box bg-white p-5">
                           <h3 className="text-center signin">Sign In</h3>
+                          {this.state.error.length > 0 && (<p className="err">{this.state.error}</p>)}
                           <form action="" className="mt-5" onsubmit={() => {return false}}>
                               <div className="form-group mb-5">
                                 <label for="email" className="text-muted">Email address:</label>
@@ -49,7 +51,7 @@ class Login extends Component {
                                 <a href="" className="float-right">Forgot Password</a>
                               </div>
                               <div className="text-center">
-                                  <button type="button" onClick={() => this.login()} className="btn btn-primary px-5 py-3">Submit</button>
+                                  <button type="button" onClick={() => this.login()} disabled={this.state.sending} style={{cursor: "pointer"}} className="btn btn-primary px-5 py-3">Submit</button>
                                   {/*<Link to="Dashboard" className="btn btn-primary px-5 py-3">Submit</Link>*/}
                                   <p className="mt-4">Dont have an Account? Sign Up Instead</p>
                               </div>

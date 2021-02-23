@@ -10,6 +10,17 @@ body{
 .section1{
 
 }
+
+.err {
+    font-weight: bold;
+    margin: 0px;
+    text-align: center;
+    background: #D14;
+    color: #fff;
+    margin-top: 10px;
+    margin-bottom: -10px;
+}
+
 .well{
     box-shadow: 10px 10px 25px lightgrey;
     min-height: 100px;
