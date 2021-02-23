@@ -1,90 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/logo.png" />
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=no;" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="PRIMME GROUP" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo.png" />
-    <style type="text/css">
-      #_sphs_ {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        position: fixed;
-        background: #004044;
-        align-items: center;
-        z-index: 100000000000;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      #_sphs_ img._logo {
-        margin-top: .5em;
-        width: 80px;
-        height: 80px;
-      }
-
-      #_sphs_ img._logo2 {
-        /*margin-top: 1em;*/
-        height: 50px;
-      }
-
-      #_sphs_ h4 {
-        margin-top: 1em;
-        font-size: .9em !important;
-        font-family: sans-serif;
-        color: #fff;
-      }
-
-      #_sphs_ img._svg {
-        position: absolute;
-        margin-top: 1em;
-        height: auto;
-        width: 200px;
-        z-index: -1;
-      }
-    </style>
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <title>PRIMME GROUP</title>
-</head>
-
-<body>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coolchi</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  </head>
+  <body style="overflow: auto;">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <div id="_sphs_">
-      <img src="./logo.png" class="_logo" />
-      <h4>PRIMME GROUP</h4>
-      <img src="./360.gif" class="_svg" />
-    </div>
-</body>
-<script type="text/javascript">
-function fadeOutEffect() {
-  var fadeTarget = document.getElementById("_sphs_");
-  var fadeEffect = setInterval(function () {
-    if (!fadeTarget.style.opacity) {
-      fadeTarget.style.opacity = 1;
-    }
-    if (fadeTarget.style.opacity > 0) {
-      fadeTarget.style.opacity -= 0.1;
-    } else {
-      clearInterval(fadeEffect);
-    }
-  }, 10);
-}
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
 
-window.onload = function () {
-  if(
-      ["book", "trade", "accounts", "profile", "forgotPassword", "changePassword", "market", "news", "transactions"]
-      .indexOf(window.location.pathname.replace("/", "").toLowerCase()) > -1
-    ) {
-    fadeOutEffect();
-  } else {
-    document.getElementById("_sphs_").style.display = 'none';
-  }
-}
-</script>
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
 </html>

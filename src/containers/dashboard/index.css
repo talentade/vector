@@ -1,0 +1,19 @@
+body{
+    font-family: poppins;
+    color: #00528B !important;
+}
+
+.well{
+    box-shadow: 10px 10px 25px lightgrey;
+    min-height: 100px;
+}
+.box{
+    box-shadow: 10px 10px 25px lightgrey;
+    border-radius: 7px;
+    background-color: #fff;
+    min-height: 80px;
+}
+.logout{
+    position: absolute;
+    top: 300px;
+}

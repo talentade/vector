@@ -1,0 +1,68 @@
+body{
+    font-family: poppins;
+    color: #00528B !important;
+}
+
+.well{
+    box-shadow: 10px 10px 25px lightgrey;
+    min-height: 100px;
+}
+.box{
+    box-shadow: 10px 10px 25px lightgrey;
+    border-radius: 7px;
+    /* background-color: #fff; */
+    min-height: 80px;
+}
+.form-control{
+    outline: none;
+    border: none;
+    border-radius: 0px;
+    padding: 25px 10px !important;
+    border-bottom: solid 3px grey !important;
+}
+.form-control:focus{
+    outline: none !important;
+    background-color: white !important;
+}
+.form-control:focus {
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+input:focus, textarea:focus, select:focus{
+outline: none !important;
+}
+.but{
+    border-radius: 3px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    padding:15px 30px;
+    font-weight: 700;
+    transition: ease-in .3s;
+}
+.but:last-child{
+    color: #03416c;
+    border: 2px solid #03416c !important;
+}
+.but:last-child:hover{
+    color: white;
+    background-color: #03416c;
+}
+.but:first-child{
+    color: white;
+    border: 2px solid #03416c !important;
+    background-color:#03416c;
+}
+.but:first-child:hover{
+    color: #03416c;
+    background-color: #fff !important;
+    border: 2px solid #03416c;
+}
+.myfile{
+    border: 2px solid; 
+    padding:15px; 
+    position: absolute; 
+    width: 89%; 
+    right: 0%; 
+    background-color: white;
+}

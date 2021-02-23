@@ -1,9 +1,0 @@
-#users-container .table-header.adm li,
-#users-container .table-body.adm li {
-	min-width: calc(100% / 5) !important;
-
-	&.act {
-		min-width: 80px !important;
-		width: 80px !important;
-	}
-}
